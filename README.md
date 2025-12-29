@@ -49,3 +49,7 @@ See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for system design documentation
 ## Contributing
 
 See [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md) for guidelines.
+
+## Agent Workspaces
+
+This repository supports parallel Cascade agents using Git worktrees. See [docs/agent-workspaces.md](docs/agent-workspaces.md) for operating procedures.

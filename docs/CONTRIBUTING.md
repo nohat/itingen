@@ -48,3 +48,17 @@ Add `AIDEV-NOTE:` comments when code is:
 ## Code Style
 
 [To be documented based on tech stack]
+
+## Cascade Agent Workflow
+
+Cascade agents are expected to:
+1. **Create a Git worktree** before starting work:
+   ```bash
+   git worktree add .ws/<agent-id> -b agent/<agent-id>
+   cd .ws/<agent-id>
+   ```
+2. **Work exclusively in the worktree** - never in the repository root
+3. **Use parallel execution** - multiple agents can work simultaneously
+4. **Clean up after completion** - remove worktree and branch
+
+See [docs/agent-workspaces.md](agent-workspaces.md) for complete operating procedures.
