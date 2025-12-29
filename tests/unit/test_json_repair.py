@@ -107,3 +107,12 @@ class TestJsonRepair:
         assert repaired is not None
         parsed = json.loads(repaired)
         assert parsed == {"key": "value"}
+
+    def test_extract_first_valid_json_with_multiple_structures(self):
+        """Extract only the first valid JSON structure when multiple exist."""
+        text = 'Here is [1, 2] and then {"a": 1}'
+        repaired = extract_json(text)
+        assert repaired is not None
+        # Currently this would return '[1, 2] and then {"a": 1}' which is invalid
+        parsed = json.loads(repaired)
+        assert parsed == [1, 2]

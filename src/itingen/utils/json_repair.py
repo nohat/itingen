@@ -16,7 +16,7 @@ def extract_json(text: str) -> Optional[str]:
 
     This function:
     1. Strips markdown code fences (```json or ```)
-    2. Finds JSON boundaries ([ or { to ] or })
+    2. Finds a balanced JSON structure ([ or { to matching ] or })
     3. Repairs trailing commas in objects and arrays (TD-002)
 
     Args:
@@ -24,16 +24,6 @@ def extract_json(text: str) -> Optional[str]:
 
     Returns:
         Repaired JSON string, or None if no valid JSON structure found
-
-    Example:
-        >>> extract_json('{"key": "value",}')
-        '{"key": "value"}'
-
-        >>> extract_json('```json\\n{"key": "value"}\\n```')
-        '{"key": "value"}'
-
-        >>> extract_json('Here is: {"a": 1} and more')
-        '{"a": 1}'
     """
     if not text:
         return None
@@ -44,18 +34,58 @@ def extract_json(text: str) -> Optional[str]:
     t = re.sub(r"^```(?:json)?\s*", "", t, flags=re.IGNORECASE)
     t = re.sub(r"\s*```\s*$", "", t)
 
-    # Find JSON boundaries
-    start = None
-    for ch in ("[", "{"):
-        i = t.find(ch)
-        if i != -1:
-            start = i if start is None else min(start, i)
+    # Find first JSON boundary
+    start = -1
+    for i, ch in enumerate(t):
+        if ch in ("[", "{"):
+            start = i
+            break
 
-    if start is None:
+    if start == -1:
         return None
 
-    end = max(t.rfind("]"), t.rfind("}"))
-    if end == -1 or end <= start:
+    # Find matching closing bracket with basic counting
+    # Note: This doesn't handle brackets inside strings perfectly,
+    # but is much better than rfind.
+    bracket_stack = []
+    end = -1
+    in_string = False
+    escape = False
+
+    for i in range(start, len(t)):
+        ch = t[i]
+        
+        if escape:
+            escape = False
+            continue
+            
+        if ch == '"':
+            in_string = not in_string
+            continue
+            
+        if in_string:
+            if ch == '\\':
+                escape = True
+            continue
+
+        if ch in ("[", "{"):
+            bracket_stack.append(ch)
+        elif ch == "]":
+            if bracket_stack and bracket_stack[-1] == "[":
+                bracket_stack.pop()
+            else:
+                return None # Unbalanced
+        elif ch == "}":
+            if bracket_stack and bracket_stack[-1] == "{":
+                bracket_stack.pop()
+            else:
+                return None # Unbalanced
+
+        if not bracket_stack:
+            end = i
+            break
+
+    if end == -1:
         return None
 
     json_str = t[start : end + 1].strip()
