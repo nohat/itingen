@@ -60,6 +60,6 @@ class PDFEmitter(BaseEmitter[Event]):
             
             pdf.output(str(path))
             return True
-        except Exception as e:
+        except Exception:
             # In a real app we'd log this
             return False

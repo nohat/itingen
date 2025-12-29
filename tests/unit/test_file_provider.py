@@ -1,8 +1,6 @@
 import pytest
-import os
 import yaml
 import json
-from pathlib import Path
 from itingen.providers.file_provider import LocalFileProvider
 from itingen.core.domain.events import Event
 from itingen.core.domain.venues import Venue

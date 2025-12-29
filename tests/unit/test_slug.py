@@ -5,7 +5,6 @@ Tests the venue slug generation algorithm that creates filesystem-safe
 identifiers from canonical venue names.
 """
 
-import pytest
 from itingen.utils.slug import generate_venue_slug
 
 
@@ -15,14 +14,13 @@ class TestSlugGeneration:
     def test_slug_basic_venue_with_location(self):
         """Generate slug from venue name with location in parentheses."""
         slug = generate_venue_slug("Tantalus Estate Vineyard & Winery (Waiheke Island)")
-        assert slug == "tantalus-estate-waiheke"
+        assert slug == "tantalus-waiheke"
 
     def test_slug_removes_stopwords(self):
         """Remove common stopwords from venue slug."""
         slug = generate_venue_slug("The Vineyard & Winery (Auckland)")
-        # "the", "vineyard", "winery" are stopwords but first tokens may be kept
-        assert "auckland" in slug
-        assert slug.count("-") >= 1  # Has location
+        # "the", "vineyard", "winery" are all stopwords and removed.
+        assert slug == "auckland"
 
     def test_slug_handles_special_characters(self):
         """Handle special characters and punctuation."""
@@ -85,12 +83,24 @@ class TestSlugGeneration:
         assert " " not in slug
         assert "-" in slug
 
+    def test_slug_removes_stopwords_from_all_positions(self):
+        """Ensure stopwords are removed even if they appear in the first two positions."""
+        # 'The' and 'Estate' are stopwords.
+        slug = generate_venue_slug("The Estate Vineyard (Waiheke)")
+        # 'the', 'estate', 'vineyard' are all stopwords.
+        # It should probably fall back to location if all are stopwords,
+        # or at least not include 'the' and 'estate'.
+        assert "the" not in slug
+        assert "estate" not in slug
+        assert "vineyard" not in slug
+        assert slug == "waiheke"
+
     def test_slug_real_world_examples(self):
         """Test with real-world venue names."""
         examples = [
-            ("Tantalus Estate Vineyard & Winery (Waiheke Island)", "tantalus-estate-waiheke"),
-            ("Auckland Downtown Ferry Terminal", "auckland-downtown"),  # stopwords filtered
-            ("The French Cafe (Auckland)", "the-french-auckland"),  # "cafe" is stopword
+            ("Tantalus Estate Vineyard & Winery (Waiheke Island)", "tantalus-waiheke"),
+            ("Auckland Downtown Ferry Terminal", "auckland-downtown"),
+            ("The French Cafe (Auckland)", "french-auckland"),
         ]
         for canonical_name, expected in examples:
             slug = generate_venue_slug(canonical_name)

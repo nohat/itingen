@@ -90,13 +90,13 @@ def generate_venue_slug(canonical_name: str, max_tokens: int = 3) -> str:
     }
 
     significant_tokens = []
+    # AIDEV-DECISION: Stopwords are removed from all positions to ensure cleaner slugs.
+    # AIDEV-NOTE: Identity preservation logic (keeping first 2 tokens) was removed to prioritize brevity.
     for token in tokens:
         token_lower = token.lower()
 
-        # Keep token if:
-        # 1. Not a stopword, OR
-        # 2. One of the first two tokens (preserve identity even if stopword)
-        if token_lower not in stopwords or len(significant_tokens) < 2:
+        # Keep token if not a stopword
+        if token_lower not in stopwords:
             significant_tokens.append(token_lower)
 
         # Stop once we have enough tokens

@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from typing import Optional, Any
+from typing import Optional
 from itingen.utils.fingerprint import compute_fingerprint
 
 class AiCache:

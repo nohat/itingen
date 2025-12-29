@@ -1,5 +1,4 @@
-from typing import List, Optional, Dict, Any
-from pathlib import Path
+from typing import List, Optional
 from itingen.core.base import BaseHydrator
 from itingen.core.domain.events import Event
 from itingen.integrations.ai.gemini import GeminiClient

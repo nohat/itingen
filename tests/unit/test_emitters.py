@@ -1,5 +1,4 @@
 import pytest
-from pathlib import Path
 from itingen.core.domain.events import Event
 from itingen.rendering.markdown import MarkdownEmitter
 from itingen.rendering.pdf import PDFEmitter

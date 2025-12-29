@@ -5,7 +5,6 @@ Tests the compute_fingerprint function that generates stable SHA256 hashes
 for payload caching in AI and Maps API integrations.
 """
 
-import pytest
 from itingen.utils.fingerprint import compute_fingerprint
 
 

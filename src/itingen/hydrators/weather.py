@@ -1,4 +1,4 @@
-from typing import List, Optional, Dict, Any
+from typing import List, Optional
 from itingen.core.base import BaseHydrator
 from itingen.core.domain.events import Event
 from itingen.integrations.weather.weatherspark import WeatherSparkClient

@@ -5,7 +5,6 @@ Tests the LLM JSON parsing fix that handles trailing commas in objects and array
 """
 
 import json
-import pytest
 from itingen.utils.json_repair import extract_json
 
 

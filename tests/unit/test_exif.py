@@ -6,11 +6,8 @@ including error handling for missing files and invalid images.
 """
 
 import json
-import tempfile
 from pathlib import Path
-from typing import Any, Dict, Optional
 
-import pytest
 from PIL import Image
 
 from itingen.utils.exif import read_exif_metadata, write_exif_metadata

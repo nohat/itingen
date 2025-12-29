@@ -1,4 +1,4 @@
-from typing import List, Any
+from typing import List
 from pathlib import Path
 from itingen.core.base import BaseEmitter
 from itingen.core.domain.events import Event

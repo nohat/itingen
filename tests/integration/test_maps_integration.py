@@ -1,5 +1,3 @@
-import pytest
-from pathlib import Path
 from unittest.mock import patch
 from itingen.core.domain.events import Event
 from itingen.pipeline.orchestrator import PipelineOrchestrator

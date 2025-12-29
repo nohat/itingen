@@ -1,5 +1,5 @@
 import pytest
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 from itingen.core.domain.events import Event
 from itingen.hydrators.ai.narratives import NarrativeHydrator
 from itingen.hydrators.ai.images import ImageHydrator
