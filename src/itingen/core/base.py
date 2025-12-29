@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import Any, Dict, List, Generic, TypeVar
 
+from itingen.core.domain.venues import Venue
+
 T = TypeVar("T")  # The domain model type (e.g., Event or Itinerary)
 
 class BaseProvider(ABC, Generic[T]):
@@ -9,17 +11,17 @@ class BaseProvider(ABC, Generic[T]):
     @abstractmethod
     def get_events(self) -> List[T]:
         """Load and return trip events."""
-        pass
+        raise NotImplementedError
 
     @abstractmethod
-    def get_venues(self) -> Dict[str, Any]:
+    def get_venues(self) -> Dict[str, Venue]:
         """Load and return venue information."""
-        pass
+        raise NotImplementedError
 
     @abstractmethod
     def get_config(self) -> Dict[str, Any]:
         """Load and return trip-level configuration."""
-        pass
+        raise NotImplementedError
 
 class BaseHydrator(ABC, Generic[T]):
     """Abstract base class for itinerary enrichers (pipeline stages)."""
@@ -27,7 +29,7 @@ class BaseHydrator(ABC, Generic[T]):
     @abstractmethod
     def hydrate(self, items: List[T]) -> List[T]:
         """Enrich the given items with additional data."""
-        pass
+        raise NotImplementedError
 
 class BaseEmitter(ABC, Generic[T]):
     """Abstract base class for itinerary output generators."""
@@ -35,4 +37,4 @@ class BaseEmitter(ABC, Generic[T]):
     @abstractmethod
     def emit(self, itinerary: List[T], output_path: str) -> bool:
         """Write the itinerary to the specified output format/path."""
-        pass
+        raise NotImplementedError
