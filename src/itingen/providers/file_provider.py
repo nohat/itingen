@@ -46,14 +46,10 @@ class LocalFileProvider(BaseProvider[Event]):
             return venues
             
         for venue_file in self.venues_dir.glob("*.json"):
-            try:
-                with open(venue_file, "r", encoding="utf-8") as f:
-                    data = json.load(f)
-                    venue = Venue(**data)
-                    venues[venue.venue_id] = venue
-            except (json.JSONDecodeError, ValueError):
-                # In a real app, we might want to log this
-                continue
+            with open(venue_file, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                venue = Venue(**data)
+                venues[venue.venue_id] = venue
                 
         return venues
 

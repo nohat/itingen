@@ -50,6 +50,29 @@ def trip_dir(tmp_path):
         
     return trip
 
+def test_local_file_provider_load_venues_invalid_json(trip_dir):
+    """Test that invalid JSON in a venue file raises an error."""
+    invalid_json = trip_dir / "venues" / "invalid.json"
+    with open(invalid_json, "w") as f:
+        f.write("invalid json")
+        
+    provider = LocalFileProvider(trip_dir)
+    with pytest.raises(json.JSONDecodeError):
+        provider.get_venues()
+
+def test_local_file_provider_load_venues_validation_error(trip_dir):
+    """Test that invalid venue data (validation error) raises an error."""
+    invalid_data = {"venue_id": "missing-fields"} # Missing required fields
+    invalid_venue = trip_dir / "venues" / "invalid_venue.json"
+    with open(invalid_venue, "w") as f:
+        json.dump(invalid_data, f)
+        
+    provider = LocalFileProvider(trip_dir)
+    # Pydantic raises ValidationError
+    from pydantic import ValidationError
+    with pytest.raises(ValidationError):
+        provider.get_venues()
+
 def test_local_file_provider_load_config(trip_dir):
     provider = LocalFileProvider(trip_dir)
     config = provider.get_config()

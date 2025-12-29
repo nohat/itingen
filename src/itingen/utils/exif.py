@@ -11,7 +11,10 @@ AIDEV-NOTE: EXIF metadata used for AI-generated image provenance tracking
 
 import json
 import os
+import logging
 from typing import Any, Dict, Optional
+
+logger = logging.getLogger(__name__)
 
 
 def _stable_json_dumps(obj: Any) -> str:
@@ -72,9 +75,16 @@ def read_exif_metadata(img_path: str) -> Optional[Dict[str, Any]]:
             metadata = json.loads(json_str)
             return metadata
         except json.JSONDecodeError:
+            logger.warning(f"Failed to decode EXIF JSON from {img_path}")
             return None
 
-    except Exception:
+    except ImportError:
+        logger.error("PIL (Pillow) is not installed. EXIF metadata reading disabled.")
+        return None
+    except FileNotFoundError:
+        return None
+    except Exception as e:
+        logger.exception(f"Unexpected error reading EXIF from {img_path}: {e}")
         return None
 
 
@@ -125,5 +135,11 @@ def write_exif_metadata(*, img_path: str, meta: Dict[str, Any], title: str = "It
         im.save(img_path, format="JPEG", quality=92, optimize=True, exif=exif.tobytes())
         return True
 
-    except Exception:
+    except ImportError:
+        logger.error("PIL (Pillow) is not installed. EXIF metadata writing disabled.")
+        return False
+    except FileNotFoundError:
+        return False
+    except Exception as e:
+        logger.exception(f"Unexpected error writing EXIF to {img_path}: {e}")
         return False
