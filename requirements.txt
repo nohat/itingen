@@ -1,0 +1,10 @@
+# Core dependencies for itingen
+# For development dependencies, use: pip install -e ".[dev]"
+
+google-genai>=0.1.0
+googlemaps>=4.10.0
+reportlab>=4.0.0
+Pillow>=10.0.0
+PyYAML>=6.0
+python-dateutil>=2.8.0
+requests>=2.31.0
