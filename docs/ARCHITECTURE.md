@@ -4,7 +4,27 @@
 
 `itingen` is a generic, modular trip itinerary generation system. It extracts and generalizes patterns from a specific trip (New Zealand 2026) into a reusable framework. The system is designed to be local-first, configuration-driven, and highly integrated with external APIs (Google Maps, WeatherSpark, Gemini AI) while maintaining cost efficiency through aggressive caching and resource sharing.
 
-## Core Components
+## Architectural Vision: The SPE Model
+
+To ensure long-term maintainability and extensibility, `itingen` is transitioning towards a **Source-Pipeline-Emitter (SPE)** model. This abstract workflow groups components by their role in the data lifecycle rather than their technical implementation.
+
+### 1. Providers (The Source)
+Abstracts the origin of trip data. 
+- **Role**: Unifies disparate inputs (Markdown events, YAML configs, Venue registries) into a standardized stream of domain objects.
+- **Implementations**: `LocalFileProvider` (current), `RemoteApiProvider` (future).
+
+### 2. Hydrators (The Pipeline)
+Abstracts the enrichment of the itinerary.
+- **Role**: A middleware-style pipeline where each "Hydrator" performs a specific transformation or enrichment on the event stream.
+- **Logic**: Maps, Weather, and AI are treated as Hydrators that "hydrate" raw events with external data.
+- **Components**: `MapsHydrator`, `WeatherHydrator`, `AiHydrator`.
+
+### 3. Emitters (The Target)
+Abstracts the publication of the finished itinerary.
+- **Role**: Takes a fully hydrated itinerary and "emits" it in a specific format.
+- **Implementations**: `MarkdownEmitter`, `PdfEmitter`, `JsonEmitter`.
+
+## Core Components (Implementation)
 
 The system is organized into several functional packages:
 
@@ -20,35 +40,15 @@ The system is organized into several functional packages:
     - `pdf`: High-fidelity PDF itineraries using ReportLab with custom themes and components.
 - **`itingen.utils`**: Shared utility functions such as JSON repair for LLM outputs, slug generation, and EXIF metadata handling.
 
-## Data Flow
+## Data Flow (SPE Lifecycle)
 
-The generation pipeline follows a structured path from raw input to finished itinerary:
+The system follows a linear transformation pipeline:
 
-1. **Input**:
-    - **Trip Config**: YAML file defining travelers, dates, and feature flags.
-    - **Event Data**: Markdown files with event details and day-level metadata.
-    - **Venue Data**: Registry of locations with metadata (address, coordinates, etc.).
-    - **Prompts**: YAML-based templates for AI interactions.
-
-2. **Ingestion & Validation**:
-    - Raw Markdown is parsed into a stream of `Event` objects.
-    - Data is validated against schemas to ensure consistency.
-
-3. **Core Processing**:
-    - Events are sorted chronologically, handling cross-timezone transitions.
-    - Person-specific filtering is applied based on the traveler's name/slug.
-    - Venues are matched to events using name-based lookups and slug generation.
-
-4. **Enrichment (Asset Generation)**:
-    - **Maps Enrichment**: Transit times and distances are added between events.
-    - **Weather Enrichment**: Typical weather snapshots are fetched for each location.
-    - **AI Enrichment**: Narratives are generated; image prompts are created and executed for banners/thumbnails.
-    - **Caching**: All external assets are cached using intrinsic event data (fingerprints) to minimize costs and speed up subsequent runs.
-
-5. **Rendering**:
-    - The processed and enriched event stream is passed to the renderers.
-    - **Markdown Renderer**: Produces a structured text file.
-    - **PDF Renderer**: Combines text, maps, weather cards, and AI-generated images into a themed document.
+1.  **Source Stage**: `Provider` loads raw data and converts it into a `DomainModel` (Events/Venues).
+2.  **Pipeline Stage**: The `DomainModel` passes through a sequence of `Hydrators`.
+    -   *Sort/Filter*: Initial structural cleanup.
+    -   *Enrichment*: External API calls (Maps, Weather, AI) with aggressive caching.
+3.  **Emitter Stage**: The fully hydrated `DomainModel` is passed to one or more `Emitters` for publication.
 
 ## Design Decisions
 
