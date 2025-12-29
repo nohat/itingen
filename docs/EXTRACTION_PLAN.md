@@ -479,7 +479,7 @@ features:
 1. ✅ `utils/json_repair.py`
 2. ✅ `utils/slug.py`
 3. ✅ `utils/fingerprint.py`
-4. ⏳ `utils/exif.py`
+4. ✅ `utils/exif.py`
 
 ### Phase 2: Core SPE Abstractions
 1. **`domain/`**: Pure data structures for Events and Venues.
@@ -514,8 +514,8 @@ features:
 - [x] Initialize Python package (`pyproject.toml`, `setup.py`)
 - [ ] Create directory structure
 - [x] Extract `json_repair.py`, `slug.py`, `fingerprint.py`
-- [ ] Extract `exif.py`
-- [ ] Write unit tests for all utilities
+- [x] Extract `exif.py`
+- [x] Write unit tests for all utilities
 
 **Deliverables**:
 - Working `itingen` package skeleton
