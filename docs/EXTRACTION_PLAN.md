@@ -40,108 +40,72 @@
 
 ---
 
-## 2. Proposed File Structure
+## 2. Proposed File Structure (SPE Model)
 
 ```
 itingen/                          # Root project directory
 ├── .gitignore
-├── .claude/                      # Claude Code configuration (already created)
+├── .claude/                      # Claude Code configuration
 ├── README.md
-├── pyproject.toml                # Python project config (modern standard)
+├── pyproject.toml                # Python project config
 ├── requirements.txt              # Dependencies
 ├── setup.py                      # Package setup
 │
-├── itingen/                      # Main package (generic code)
+├── itingen/                      # Main package
 │   ├── __init__.py
 │   │
-│   ├── core/                     # Core domain logic
+│   ├── domain/                   # Pure domain models (No logic)
 │   │   ├── __init__.py
-│   │   ├── events.py             # Event data structures & operations
-│   │   ├── venues.py             # Venue system
-│   │   ├── filtering.py          # Person-specific filtering
+│   │   ├── events.py             # Event data structures
+│   │   └── venues.py             # Venue data structures
+│   │
+│   ├── providers/                # The Source (Input)
+│   │   ├── __init__.py
+│   │   ├── base.py               # BaseProvider interface
+│   │   ├── file_provider.py      # Local filesystem provider
+│   │   └── markdown_parser.py    # Event parsing logic
+│   │
+│   ├── pipeline/                 # The Pipeline (Enrichment)
+│   │   ├── __init__.py
+│   │   ├── orchestrator.py       # Main SPE pipeline runner
 │   │   ├── sorting.py            # Chronological sorting
-│   │   └── transitions.py        # Transition logic framework
+│   │   ├── filtering.py          # Person-specific filtering
+│   │   └── transitions.py        # Transition logic
 │   │
-│   ├── ingest/                   # Data ingestion
+│   ├── hydrators/                # Pipeline Enrichers
 │   │   ├── __init__.py
-│   │   ├── markdown_parser.py    # Parse event markdown
-│   │   └── schema.py             # Data schemas & validation
-│   │
-│   ├── integrations/             # External service integrations
-│   │   ├── __init__.py
-│   │   ├── maps/
-│   │   │   ├── __init__.py
-│   │   │   ├── google_maps.py    # Google Maps API client
-│   │   │   └── cache.py          # Maps API caching
-│   │   ├── weather/
-│   │   │   ├── __init__.py
-│   │   │   └── weatherspark.py   # Weather API client
-│   │   └── ai/
+│   │   ├── base.py               # BaseHydrator interface
+│   │   ├── maps.py               # Google Maps enrichment
+│   │   ├── weather.py            # Weather enrichment
+│   │   └── ai/                   # AI-specific hydration
 │   │       ├── __init__.py
-│   │       ├── gemini.py         # Gemini API client
-│   │       ├── prompts.py        # Prompt loading & templating
-│   │       ├── caching.py        # AI content caching (fingerprints)
-│   │       └── image_gen.py      # Image generation (banners, thumbs)
+│   │       ├── narratives.py     # AI narrative generation
+│   │       ├── images.py         # Image generation
+│   │       └── cache.py          # AI asset caching
 │   │
-│   ├── rendering/                # Output generation
+│   ├── emitters/                 # The Target (Output)
 │   │   ├── __init__.py
-│   │   ├── markdown.py           # Markdown itinerary generation
-│   │   ├── pdf/
-│   │   │   ├── __init__.py
-│   │   │   ├── renderer.py       # PDF rendering engine
-│   │   │   ├── themes.py         # PDF themes & styling
-│   │   │   └── components.py     # Reusable PDF components
-│   │   └── assets.py             # Asset pre-generation orchestration
+│   │   ├── base.py               # BaseEmitter interface
+│   │   ├── markdown.py           # Markdown publication
+│   │   └── pdf/                  # PDF publication
+│   │       ├── __init__.py
+│   │       ├── renderer.py       # PDF engine
+│   │       ├── themes.py         # Theme system
+│   │       └── components.py     # Flowable components
 │   │
-│   ├── config/                   # Configuration management
+│   ├── config/                   # Global configuration
 │   │   ├── __init__.py
-│   │   ├── trip_config.py        # Trip configuration loader
 │   │   └── defaults.py           # Default settings
 │   │
 │   └── utils/                    # Shared utilities
 │       ├── __init__.py
-│       ├── json_repair.py        # LLM JSON parsing fix (TD-002)
+│       ├── json_repair.py        # LLM JSON fix
 │       ├── slug.py               # Slug generation
 │       ├── fingerprint.py        # Cache fingerprinting
-│       └── exif.py               # EXIF metadata handling
+│       └── exif.py               # EXIF handling
 │
-├── trips/                        # Trip-specific instances
-│   ├── example/                  # Example trip for documentation
-│   │   ├── config.yaml
-│   │   ├── events/
-│   │   ├── venues/
-│   │   └── prompts/
-│   └── new_zealand_2026/         # Original NZ trip (validation)
-│       ├── config.yaml
-│       ├── events/               # Symlink to /Users/nohat/scaffold/.../events
-│       ├── venues/               # Symlink to /Users/nohat/scaffold/.../nz_trip_venues
-│       └── prompts/              # Symlink to /Users/nohat/scaffold/.../prompt_configs
-│
-├── tests/                        # Test suite
-│   ├── __init__.py
-│   ├── conftest.py              # Pytest configuration
-│   ├── fixtures/                # Test data
-│   ├── unit/                    # Unit tests
-│   │   ├── test_events.py
-│   │   ├── test_venues.py
-│   │   ├── test_sorting.py
-│   │   └── ...
-│   └── integration/             # Integration tests
-│       ├── test_nz_trip.py      # Validate NZ trip still works
-│       └── ...
-│
-├── scripts/                      # CLI tools
-│   ├── itingen                   # Main CLI entry point
-│   ├── venue_tools.py            # Venue management utilities
-│   └── ...
-│
-└── docs/                         # Documentation (already created)
-    ├── ARCHITECTURE.md
-    ├── INHERITED_DECISIONS.md
-    ├── SOURCE_ANALYSIS.md
-    ├── EXTRACTION_PLAN.md        # This file
-    ├── TEST_PLAN.md              # Phase 1.4
-    └── decisions/
+├── trips/                        # Trip instances
+└── tests/                        # Test suite
 ```
 
 ---
@@ -509,197 +473,129 @@ features:
 
 ---
 
-## 7. Dependency Order
+## 7. Dependency Order (SPE Model)
 
-### Phase 1: Foundation (No Dependencies)
-1. ✅ `utils/json_repair.py` - LLM JSON parsing fix
-2. ✅ `utils/slug.py` - Slug generation
-3. ✅ `utils/fingerprint.py` - Cache fingerprinting
-4. ✅ `utils/exif.py` - EXIF metadata handling
-5. ✅ `core/events.py` - Event data structures
+### Phase 1: Foundation
+1. ✅ `utils/json_repair.py`
+2. ✅ `utils/slug.py`
+3. ✅ `utils/fingerprint.py`
+4. ⏳ `utils/exif.py`
 
-### Phase 2: Core Logic (Depends on Phase 1)
-1. ✅ `core/sorting.py` - Chronological sorting (depends on events)
-2. ✅ `core/filtering.py` - Person filtering (depends on events)
-3. ✅ `core/venues.py` - Venue system (depends on slug, events)
-4. ✅ `ingest/markdown_parser.py` - Event ingestion (depends on events)
-5. ✅ `ingest/schema.py` - Schema validation
+### Phase 2: Core SPE Abstractions
+1. **`domain/`**: Pure data structures for Events and Venues.
+2. **`base.py`**: Interfaces for `BaseProvider`, `BaseHydrator`, `BaseEmitter`.
+3. **`pipeline/orchestrator.py`**: Core logic for running the SPE pipeline.
 
-### Phase 3: External Integrations (Depends on Phase 1-2)
-1. ✅ `integrations/maps/google_maps.py` - Maps API (depends on events)
-2. ✅ `integrations/weather/weatherspark.py` - Weather API
-3. ✅ `integrations/ai/caching.py` - AI caching (depends on fingerprint, exif)
-4. ✅ `integrations/ai/prompts.py` - Prompt loading (depends on config)
-5. ✅ `integrations/ai/gemini.py` - Gemini client (depends on caching, prompts)
-6. ✅ `integrations/ai/image_gen.py` - Image generation (depends on gemini, venues)
+### Phase 3: Providers (The Source)
+1. **`providers/file_provider.py`**: Local filesystem implementation.
+2. **`providers/markdown_parser.py`**: Event parsing logic.
 
-### Phase 4: Configuration (Depends on Phase 1-3)
-1. ✅ `config/defaults.py` - Default settings
-2. ✅ `config/trip_config.py` - Trip config loader
+### Phase 4: Hydrators (The Pipeline)
+1. **`pipeline/sorting.py`** & **`pipeline/filtering.py`**.
+2. **`hydrators/maps.py`** & **`hydrators/weather.py`**.
+3. **`hydrators/ai/`**: Caching and AI enrichment.
 
-### Phase 5: Rendering (Depends on All Previous)
-1. ✅ `rendering/markdown.py` - Markdown generation
-2. ✅ `rendering/pdf/components.py` - PDF components
-3. ✅ `rendering/pdf/themes.py` - PDF themes (depends on config)
-4. ✅ `rendering/pdf/renderer.py` - PDF rendering (depends on themes, components)
-5. ✅ `rendering/assets.py` - Asset orchestration
+### Phase 5: Emitters (The Target)
+1. **`emitters/markdown.py`**.
+2. **`emitters/pdf/`**: PDF generation system.
 
-### Phase 6: Orchestration (Depends on All)
-1. ✅ `core/transitions.py` - Transition framework (depends on config)
-2. ✅ `core/pipeline.py` - Main pipeline orchestration
-3. ✅ `scripts/itingen` - CLI entry point
+### Phase 6: Orchestration & CLI
+1. **`scripts/itingen`**: Main entry point.
+2. **`pipeline/transitions.py`**: Plugin-based transition registry.
 
 ---
 
 ## 8. Implementation Phases
 
-### Phase 2.1: Foundation Setup (Week 1)
-**Goal**: Set up project structure, extract utilities
+### Phase 2.1: Foundation (Utilities)
+**Goal**: Finalize extraction of utility modules.
 
 **Tasks**:
 - [x] Initialize Python package (`pyproject.toml`, `setup.py`)
 - [ ] Create directory structure
-- [ ] Extract utility modules (json_repair, slug, fingerprint, exif)
-- [ ] Write unit tests for utilities
-- [ ] Document core data structures (Event, Venue schemas)
+- [x] Extract `json_repair.py`, `slug.py`, `fingerprint.py`
+- [ ] Extract `exif.py`
+- [ ] Write unit tests for all utilities
 
 **Deliverables**:
 - Working `itingen` package skeleton
 - 100% test coverage on utilities
-- Data structure documentation
 
 ---
 
-### Phase 2.2: Core Domain Logic (Week 2)
-**Goal**: Extract event/venue management, no external dependencies
+### Phase 2.2: Core SPE Abstractions & Domain Models
+**Goal**: Implement the structural foundation of the SPE model.
 
 **Tasks**:
-- [ ] Extract `core/events.py` (Event data structure)
-- [ ] Extract `core/sorting.py` (chronological sorting)
-- [ ] Extract `core/filtering.py` (person-specific filtering)
-- [ ] Extract `core/venues.py` (venue matching, slug generation)
-- [ ] Extract `ingest/markdown_parser.py` (event ingestion)
-- [ ] Write comprehensive unit tests
-- [ ] Add AIDEV-NOTE comments to complex logic
+- [ ] Implement `itingen.domain.events` and `itingen.domain.venues` (Pure data structures)
+- [ ] Implement `itingen.core.base` (`BaseProvider`, `BaseHydrator`, `BaseEmitter`)
+- [ ] Implement `itingen.pipeline.orchestrator` (The SPE runner)
+- [ ] Write unit tests for abstractions
 
 **Deliverables**:
-- Core modules with 90%+ test coverage
-- Integration test using NZ trip data
-- Updated ARCHITECTURE.md
-
-**Validation Criteria**:
-- Can ingest NZ trip events
-- Can filter by person correctly
-- Can match venues with 100% accuracy
-- All tests pass
+- Core SPE interfaces and domain models
+- Functional (though empty) pipeline orchestrator
 
 ---
 
-### Phase 2.3: External Integrations (Week 3)
-**Goal**: Extract API integrations (Maps, Weather, AI)
+### Phase 2.3: Providers (The Source)
+**Goal**: Implement data ingestion via the Provider pattern.
 
 **Tasks**:
-- [ ] Extract `integrations/maps/google_maps.py`
-- [ ] Extract `integrations/weather/weatherspark.py`
-- [ ] Extract `integrations/ai/caching.py` (fingerprinting, EXIF)
-- [ ] Extract `integrations/ai/prompts.py` (YAML loading)
-- [ ] Extract `integrations/ai/gemini.py` (Gemini client)
-- [ ] Extract `integrations/ai/image_gen.py` (banner/thumbnail generation)
-- [ ] Write integration tests (with mocks for API calls)
-- [ ] Document API integration patterns
+- [ ] Implement `itingen.providers.file_provider` (Local filesystem support)
+- [ ] Implement `itingen.providers.markdown_parser` (Extraction from Markdown)
+- [ ] Add config loading logic to `FileProvider`
+- [ ] Write unit tests for providers
 
 **Deliverables**:
-- All integration modules with tests
-- Mock fixtures for API responses
-- Integration test suite
-
-**Validation Criteria**:
-- Can enrich events with Maps API data
-- Can fetch weather data
-- Can generate AI narratives (with cache hits)
-- Can generate images (with cache hits)
+- Ability to load trip data through a unified `Provider` interface
 
 ---
 
-### Phase 2.4: Configuration System (Week 4)
-**Goal**: Implement trip-specific configuration
+### Phase 2.4: Hydrators (The Pipeline)
+**Goal**: Implement enrichment layers as Pipeline Hydrators.
 
 **Tasks**:
-- [ ] Design `config.yaml` schema
-- [ ] Implement `config/trip_config.py`
-- [ ] Create example trip configuration
-- [ ] Implement theme system (PDF, colors, fonts)
-- [ ] Implement transition registry
-- [ ] Implement annotation system
-- [ ] Write config validation tests
-- [ ] Document configuration format
+- [ ] Implement `itingen.pipeline.sorting` and `itingen.pipeline.filtering`
+- [ ] Implement `itingen.hydrators.maps` (Google Maps enrichment)
+- [ ] Implement `itingen.hydrators.weather` (WeatherSpark enrichment)
+- [ ] Implement `itingen.hydrators.ai` (Gemini narratives, image generation, and caching)
+- [ ] Write integration tests for hydrators (with mocks)
 
 **Deliverables**:
-- Trip config loader with validation
-- Example trip configuration
-- Configuration schema documentation
-
-**Validation Criteria**:
-- Can load NZ trip config
-- Can load example trip config
-- Config validation catches errors
-- All config accessors work
+- Full enrichment pipeline for event hydration
 
 ---
 
-### Phase 2.5: Rendering (Week 5)
-**Goal**: Extract Markdown and PDF rendering
+### Phase 2.5: Emitters (The Target)
+**Goal**: Implement output generation via the Emitter pattern.
 
 **Tasks**:
-- [ ] Extract `rendering/markdown.py`
-- [ ] Extract `rendering/pdf/components.py` (PDF flowables)
-- [ ] Extract `rendering/pdf/themes.py` (theme system)
-- [ ] Extract `rendering/pdf/renderer.py` (PDF generation)
-- [ ] Extract `rendering/assets.py` (asset orchestration)
-- [ ] Generalize transition logic
+- [ ] Implement `itingen.emitters.markdown`
+- [ ] Implement `itingen.emitters.pdf.renderer`
+- [ ] Implement PDF themes and components
 - [ ] Write rendering tests
-- [ ] Document rendering pipeline
 
 **Deliverables**:
-- Markdown rendering with tests
-- PDF rendering with tests
-- Theme customization examples
-
-**Validation Criteria**:
-- Can generate Markdown for NZ trip
-- Can generate PDF for NZ trip
-- PDF matches original quality
-- Themes are customizable
+- Multi-format output generation
 
 ---
 
-### Phase 2.6: Orchestration & CLI (Week 6)
-**Goal**: Main pipeline and user-facing CLI
+### Phase 2.6: Orchestration & CLI
+**Goal**: Main entry point and final logic wiring.
 
 **Tasks**:
-- [ ] Implement `core/pipeline.py` (orchestration)
+- [ ] Implement `itingen.pipeline.transitions` (Plugin-based registry)
 - [ ] Implement `scripts/itingen` CLI
 - [ ] Implement venue management tools
 - [ ] Write end-to-end integration tests
-- [ ] Create user documentation
-- [ ] Create developer documentation
-- [ ] Performance testing
 
 **Deliverables**:
 - Working CLI: `itingen generate --trip nz_2026 --person david`
-- Venue tools: `itingen venues list`, `itingen venues create`
-- Comprehensive documentation
-- Performance benchmarks
-
-**Validation Criteria**:
-- NZ trip generates correctly via CLI
-- Example trip generates correctly
-- Performance matches original system
-- All documentation complete
 
 ---
 
-### Phase 2.7: Polish & Release (Week 7)
+### Phase 2.7: Polish & Release
 **Goal**: Final testing, documentation, cleanup
 
 **Tasks**:
