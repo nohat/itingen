@@ -111,6 +111,64 @@ class TestReadExifMetadata:
 
         assert result is None
 
+    def test_read_exif_handles_non_bytes_raw_data(self, tmp_path: Path) -> None:
+        """Handle cases where exif.get() returns a non-bytes object that is not a string."""
+        img_path = tmp_path / "non_bytes.jpg"
+        img = Image.new("RGB", (10, 10))
+        img.save(img_path, format="JPEG")
+        
+        # We need to mock the behavior where exif.get() returns something weird
+        with Image.open(img_path) as im:
+            exif = im.getexif()
+            # Tag 37510 is UserComment
+            exif[37510] = 12345 # Not bytes, not string
+            
+            import unittest.mock as mock
+            with mock.patch("PIL.Image.open") as mock_open:
+                mock_im = mock.MagicMock()
+                mock_im.getexif.return_value = exif
+                mock_open.return_value = mock_im
+                
+                result = read_exif_metadata(str(img_path))
+                assert result is None
+
+    def test_read_exif_exception_handling(self, tmp_path: Path) -> None:
+        """Return None if an unexpected exception occurs during reading."""
+        img_path = tmp_path / "exception.jpg"
+        img = Image.new("RGB", (10, 10))
+        img.save(img_path, format="JPEG")
+        
+        import unittest.mock as mock
+        with mock.patch("PIL.Image.open", side_effect=RuntimeError("Unexpected error")):
+            result = read_exif_metadata(str(img_path))
+            assert result is None
+
+    def test_write_exif_exception_handling(self, tmp_path: Path) -> None:
+        """Return False if an unexpected exception occurs during writing."""
+        img_path = tmp_path / "write_exception.jpg"
+        img = Image.new("RGB", (10, 10))
+        img.save(img_path, format="JPEG")
+        
+        import unittest.mock as mock
+        with mock.patch("PIL.Image.open", side_effect=RuntimeError("Unexpected error")):
+            result = write_exif_metadata(img_path=str(img_path), meta={"test": "data"})
+            assert result is False
+
+    def test_write_exif_no_exif_object(self, tmp_path: Path) -> None:
+        """Return False if image has no EXIF object (though PIL usually provides one)."""
+        img_path = tmp_path / "no_exif_obj.jpg"
+        img = Image.new("RGB", (10, 10))
+        img.save(img_path, format="JPEG")
+        
+        import unittest.mock as mock
+        with mock.patch("PIL.Image.open") as mock_open:
+            mock_im = mock.MagicMock()
+            mock_im.getexif.return_value = None
+            mock_open.return_value = mock_im
+            
+            result = write_exif_metadata(img_path=str(img_path), meta={"test": "data"})
+            assert result is False
+
 
 class TestWriteExifMetadata:
     """Tests for writing EXIF metadata to JPEG images."""
@@ -216,3 +274,19 @@ class TestWriteExifMetadata:
         # All written fields should be readable
         for key, value in original_metadata.items():
             assert read_metadata.get(key) == value
+
+    def test_write_exif_custom_title(self, tmp_path: Path) -> None:
+        """Write EXIF metadata with a custom title and verify it's in ImageDescription."""
+        img_path = tmp_path / "custom_title.jpg"
+        img = Image.new("RGB", (100, 100), color="white")
+        img.save(img_path, format="JPEG")
+
+        metadata = {"fingerprint_sha256": "xyz789"}
+        custom_title = "Custom Trip Title"
+        write_exif_metadata(img_path=str(img_path), meta=metadata, title=custom_title)
+
+        img = Image.open(img_path)
+        exif = img.getexif()
+        description = str(exif.get(270) or "")
+        assert description.startswith(custom_title)
+

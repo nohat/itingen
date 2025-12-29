@@ -78,7 +78,7 @@ def read_exif_metadata(img_path: str) -> Optional[Dict[str, Any]]:
         return None
 
 
-def write_exif_metadata(*, img_path: str, meta: Dict[str, Any]) -> bool:
+def write_exif_metadata(*, img_path: str, meta: Dict[str, Any], title: str = "Itinerary Image") -> bool:
     """
     Write metadata to JPEG EXIF fields.
 
@@ -88,6 +88,7 @@ def write_exif_metadata(*, img_path: str, meta: Dict[str, Any]) -> bool:
     Args:
         img_path: Path to JPEG image file
         meta: Metadata dictionary to embed
+        title: Title prefix for ImageDescription
 
     Returns:
         True if successful, False otherwise
@@ -118,7 +119,7 @@ def write_exif_metadata(*, img_path: str, meta: Dict[str, Any]) -> bool:
         pm = str(meta.get("event_model") or "").strip()
         ar = str(meta.get("aspect_ratio") or "").strip()
         pv = str(meta.get("prompt_preview") or "").strip()
-        exif[270] = f"NZ Trip thumb | model={pm} | ar={ar} | fp={fp} | {pv}".strip()
+        exif[270] = f"{title} | model={pm} | ar={ar} | fp={fp} | {pv}".strip()
 
         # Save image with updated EXIF
         im.save(img_path, format="JPEG", quality=92, optimize=True, exif=exif.tobytes())
