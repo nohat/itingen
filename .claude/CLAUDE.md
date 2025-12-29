@@ -37,7 +37,7 @@ IMPORTANT: Do not write implementation before tests exist for it.
 3. Orient yourself with `grep -r "AIDEV-" src/` for context
 
 ### Ending a Session ("Land the Plane")
-ALWAYS run `/project:land` before ending work. This ensures:
+ALWAYS run `/land` before ending work. This ensures:
 - Discovered work is captured in Beads
 - Code is committed and tested
 - Issue tracker is synced
