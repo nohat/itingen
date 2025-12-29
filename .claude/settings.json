@@ -1,0 +1,29 @@
+{
+  "allowedTools": [
+    "Read",
+    "Write",
+    "Edit",
+    "Bash(npm:*)",
+    "Bash(python:*)",
+    "Bash(pytest:*)",
+    "Bash(git:*)",
+    "Bash(grep:*)",
+    "Bash(find:*)",
+    "Bash(cat:*)",
+    "Bash(ls:*)"
+  ],
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '⚠️ File modified - remember to run tests'",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}
