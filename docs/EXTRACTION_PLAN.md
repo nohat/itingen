@@ -512,7 +512,7 @@ features:
 
 **Tasks**:
 - [x] Initialize Python package (`pyproject.toml`, `setup.py`)
-- [ ] Create directory structure
+- [x] Create directory structure
 - [x] Extract `json_repair.py`, `slug.py`, `fingerprint.py`
 - [x] Extract `exif.py`
 - [x] Write unit tests for all utilities
@@ -527,10 +527,10 @@ features:
 **Goal**: Implement the structural foundation of the SPE model.
 
 **Tasks**:
-- [ ] Implement `itingen.domain.events` and `itingen.domain.venues` (Pure data structures)
-- [ ] Implement `itingen.core.base` (`BaseProvider`, `BaseHydrator`, `BaseEmitter`)
-- [ ] Implement `itingen.pipeline.orchestrator` (The SPE runner)
-- [ ] Write unit tests for abstractions
+- [x] Implement `itingen.domain.events` and `itingen.domain.venues` (Pure data structures)
+- [x] Implement `itingen.core.base` (`BaseProvider`, `BaseHydrator`, `BaseEmitter`)
+- [x] Implement `itingen.pipeline.orchestrator` (The SPE runner)
+- [x] Write unit tests for abstractions
 
 **Deliverables**:
 - Core SPE interfaces and domain models
@@ -542,10 +542,10 @@ features:
 **Goal**: Implement data ingestion via the Provider pattern.
 
 **Tasks**:
-- [ ] Implement `itingen.providers.file_provider` (Local filesystem support)
-- [ ] Implement `itingen.providers.markdown_parser` (Extraction from Markdown)
-- [ ] Add config loading logic to `FileProvider`
-- [ ] Write unit tests for providers
+- [x] Implement `itingen.providers.file_provider` (Local filesystem support)
+- [x] Implement `itingen.providers.markdown_parser` (Extraction from Markdown)
+- [x] Add config loading logic to `FileProvider`
+- [x] Write unit tests for providers
 
 **Deliverables**:
 - Ability to load trip data through a unified `Provider` interface
@@ -557,10 +557,10 @@ features:
 
 **Tasks**:
 - [ ] Implement `itingen.pipeline.sorting` and `itingen.pipeline.filtering`
-- [ ] Implement `itingen.hydrators.maps` (Google Maps enrichment)
-- [ ] Implement `itingen.hydrators.weather` (WeatherSpark enrichment)
-- [ ] Implement `itingen.hydrators.ai` (Gemini narratives, image generation, and caching)
-- [ ] Write integration tests for hydrators (with mocks)
+- [x] Implement `itingen.hydrators.maps` (Google Maps enrichment)
+- [x] Implement `itingen.hydrators.weather` (WeatherSpark enrichment)
+- [x] Implement `itingen.hydrators.ai` (Gemini narratives, image generation, and caching)
+- [x] Write integration tests for hydrators (with mocks)
 
 **Deliverables**:
 - Full enrichment pipeline for event hydration
@@ -571,10 +571,10 @@ features:
 **Goal**: Implement output generation via the Emitter pattern.
 
 **Tasks**:
-- [ ] Implement `itingen.emitters.markdown`
-- [ ] Implement `itingen.emitters.pdf.renderer`
+- [x] Implement `itingen.emitters.markdown`
+- [x] Implement `itingen.emitters.pdf.renderer`
 - [ ] Implement PDF themes and components
-- [ ] Write rendering tests
+- [x] Write rendering tests
 
 **Deliverables**:
 - Multi-format output generation
