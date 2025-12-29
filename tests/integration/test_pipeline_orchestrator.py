@@ -203,9 +203,12 @@ def test_pipeline_with_multiple_hydrators(sample_trip_dir, tmp_path):
         emitters=[emitter]
     )
     
-    result = orchestrator.execute(output_dir=tmp_path)
+    orchestrator.execute(output_dir=tmp_path)
     
     # Both hydrators should have processed the data
+    # Use result to verify length
+    result = orchestrator.execute(output_dir=tmp_path)
+    assert len(result) == 3
     assert len(hydrator1.processed) == 3
     assert len(hydrator2.processed) == 3
     assert hydrator1.processed == hydrator2.processed

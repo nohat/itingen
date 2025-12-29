@@ -1,7 +1,6 @@
 """Tests for the Pipeline Orchestrator."""
 
 import pytest
-from pathlib import Path
 from typing import Any, Dict, List
 
 from itingen.core.base import BaseProvider, BaseHydrator, BaseEmitter
@@ -225,7 +224,7 @@ def test_orchestrator_execute_with_output_dir(sample_provider, tmp_path):
     emitter = MockEmitter()
     orchestrator = PipelineOrchestrator(sample_provider, emitters=[emitter])
     
-    result = orchestrator.execute(output_dir=tmp_path)
+    orchestrator.execute(output_dir=tmp_path)
     
     # Check that output path includes the custom directory
     assert any(str(tmp_path) in path for path in emitter.outputs.keys())
@@ -240,7 +239,7 @@ def test_orchestrator_execute_multiple_emitters(sample_provider):
         sample_provider,
         emitters=[emitter1, emitter2]
     )
-    result = orchestrator.execute()
+    orchestrator.execute()
     
     # Both emitters should have been called
     assert len(emitter1.outputs) == 1
