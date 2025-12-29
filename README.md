@@ -46,6 +46,10 @@ See [.claude/skills/tdd/SKILL.md](.claude/skills/tdd/SKILL.md) for detailed TDD 
 
 See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for system design documentation.
 
+### Core Data Structures
+
+See [docs/DATA_STRUCTURES.md](docs/DATA_STRUCTURES.md) for detailed documentation of Event and Venue models.
+
 ## Contributing
 
 See [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md) for guidelines.
