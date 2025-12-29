@@ -1,8 +1,14 @@
+---
+description: Run tests with optional file pattern or full suite
+allowed-tools: Bash(npm:*), Bash(python:*), Bash(pytest:*)
+argument-hint: "[file_or_pattern]"
+---
+
 # Run Tests Command
 
 ## Usage
 ```
-/project:test [file_or_pattern]
+/test [file_or_pattern]
 ```
 
 ## Process

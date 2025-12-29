@@ -1,8 +1,14 @@
+---
+description: Create a git commit with formatted message and tests
+allowed-tools: Bash(git:*), Bash(npm:*), Bash(python:*), Bash(pytest:*)
+argument-hint: "[--no-verify]"
+---
+
 # Git Commit Command
 
 ## Usage
 ```
-/project:commit [--no-verify]
+/commit [--no-verify]
 ```
 
 ## Process

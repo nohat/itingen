@@ -1,8 +1,14 @@
+---
+description: Plan implementation with steps, tests, and risk analysis
+allowed-tools: Read, Glob, Grep, Bash(grep:*)
+argument-hint: "<feature_description>"
+---
+
 # Planning Command
 
 ## Usage
 ```
-/project:plan <feature_or_task_description>
+/plan <feature_or_task_description>
 ```
 
 ## Process

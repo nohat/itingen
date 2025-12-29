@@ -1,8 +1,14 @@
+---
+description: Review code for bugs, tests, style, and security
+allowed-tools: Bash(git:*), Bash(grep:*), Read, Glob, Grep
+argument-hint: "[file_or_directory]"
+---
+
 # Code Review Command
 
 ## Usage
 ```
-/project:review [file_or_directory]
+/review [file_or_directory]
 ```
 
 ## Process

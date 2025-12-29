@@ -1,8 +1,13 @@
+---
+description: Land the plane - session end protocol (capture work, commit, sync tracker)
+allowed-tools: Bash(git:*), Bash(bd:*), Bash(npm:*), Bash(python:*), Read, Glob, Grep
+---
+
 # Land the Plane - Session End Protocol
 
 ## Usage
 ```
-/project:land
+/land
 ```
 
 ## Process (execute in order)
