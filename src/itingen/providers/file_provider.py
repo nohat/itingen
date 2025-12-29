@@ -74,7 +74,7 @@ class LocalFileProvider(BaseProvider[Event]):
 
                 if line.startswith("### Event:"):
                     # Flush previous event block
-                    if current_block:
+                    if current_header is not None:
                         events.append(self._create_event(current_block, current_header, day_metadata))
                         current_block = []
 
@@ -84,7 +84,7 @@ class LocalFileProvider(BaseProvider[Event]):
                 # Collect lines inside current event block
                 if current_header is not None:
                     if line.startswith("## "):
-                        if current_block:
+                        if current_header is not None:
                             events.append(self._create_event(current_block, current_header, day_metadata))
                             current_block = []
                         current_header = None
@@ -92,7 +92,7 @@ class LocalFileProvider(BaseProvider[Event]):
                         current_block.append(raw)
 
         # Flush final block
-        if current_header is not None and current_block:
+        if current_header is not None:
             events.append(self._create_event(current_block, current_header, day_metadata))
 
         return events
