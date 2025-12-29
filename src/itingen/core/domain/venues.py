@@ -4,13 +4,18 @@ AIDEV-NOTE: Venues represent physical locations with rich metadata
 to support AI generation and trip planning features.
 """
 
+from datetime import datetime, timezone
 from typing import List, Optional, Union
 from pydantic import BaseModel, Field, ConfigDict
+from itingen.core.domain.base import StrictBaseModel
+
+def _get_now_iso():
+    return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
 
 class VenueMetadata(BaseModel):
     """Metadata for venue creation and updates."""
-    created_at: str = Field(..., description="ISO 8601 timestamp when venue was created")
-    updated_at: str = Field(..., description="ISO 8601 timestamp when venue was last updated")
+    created_at: str = Field(default_factory=_get_now_iso, description="ISO 8601 timestamp when venue was created")
+    updated_at: str = Field(default_factory=_get_now_iso, description="ISO 8601 timestamp when venue was last updated")
 
 class VenueContact(BaseModel):
     """Contact information for a venue."""
@@ -33,7 +38,7 @@ class VenueBooking(BaseModel):
     phone: Optional[str] = Field(None, description="Booking contact phone")
     website: Optional[str] = Field(None, description="Booking website")
 
-class Venue(BaseModel):
+class Venue(StrictBaseModel):
     """Represents a physical location where events can take place.
     
     Venues contain rich metadata to support:
@@ -52,7 +57,7 @@ class Venue(BaseModel):
     aliases: List[str] = Field(default_factory=list, description="Alternative names or spellings")
     
     # Metadata
-    metadata: VenueMetadata = Field(..., description="Creation and update timestamps")
+    metadata: VenueMetadata = Field(default_factory=VenueMetadata, description="Creation and update timestamps")
     
     # Contact and location
     contact: Optional[VenueContact] = Field(None, description="Contact information")

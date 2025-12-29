@@ -5,9 +5,10 @@ They are parsed from Markdown files and enriched through the pipeline.
 """
 
 from typing import List, Optional
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import Field, ConfigDict
+from itingen.core.domain.base import StrictBaseModel
 
-class Event(BaseModel):
+class Event(StrictBaseModel):
     """Represents a single activity, appointment, or occurrence in a trip itinerary.
     
     Events are the primary unit of work in the itinerary system. They capture
@@ -43,7 +44,8 @@ class Event(BaseModel):
     
     # Content
     description: Optional[str] = Field(None, description="Detailed description of the event")
-    travel_to: Optional[str] = Field(None, description="Travel instructions to reach this event")
+    travel_from: Optional[str] = Field(None, description="Starting location for travel events")
+    travel_to: Optional[str] = Field(None, description="Destination for travel events")
     
     # Raw data from ingest might include other fields
     # we allow extra for now to capture all Markdown key-values
