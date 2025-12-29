@@ -29,6 +29,22 @@ This project uses strict TDD. The cycle is:
 
 IMPORTANT: Do not write implementation before tests exist for it.
 
+## Session Protocol
+
+### Starting a Session
+1. Run `bd ready` to see unblocked work
+2. Review any handoff notes from previous session
+3. Orient yourself with `grep -r "AIDEV-" src/` for context
+
+### Ending a Session ("Land the Plane")
+ALWAYS run `/project:land` before ending work. This ensures:
+- Discovered work is captured in Beads
+- Code is committed and tested
+- Issue tracker is synced
+- Next session has clear handoff
+
+Never end a session with uncommitted work or unfiled issues.
+
 ## Anchor Comments System
 Use these prefixed comments throughout the codebase:
 
@@ -109,3 +125,12 @@ Write a clear error instead and handle the case when it actually occurs.
 - Untested fallback paths ARE bugs waiting to happen
 - Complexity added for theoretical robustness REDUCES actual reliability
 - Every branch in the code is a branch that needs testing and maintenance
+
+## Issue Tracking
+Use `bd` for all task tracking instead of markdown TODO lists.
+- `bd create "Task" -p 1` - Create issue
+- `bd ready` - Find unblocked work
+- `bd close <id>` - Complete work
+- `bd dep add <child> <parent>` - Track dependencies
+
+File discovered work as you go. At session end, run `bd sync`.

@@ -1,21 +1,24 @@
 {
-  "allowedTools": [
-    "Read",
-    "Write",
-    "Edit",
-    "Bash(npm:*)",
-    "Bash(python:*)",
-    "Bash(pytest:*)",
-    "Bash(git:*)",
-    "Bash(grep:*)",
-    "Bash(find:*)",
-    "Bash(cat:*)",
-    "Bash(ls:*)"
-  ],
+  "permissions": {
+    "allow": [
+      "Read",
+      "Write",
+      "Edit",
+      "Glob",
+      "Grep",
+      "TodoWrite",
+      "Bash(npm:*)",
+      "Bash(python:*)",
+      "Bash(pytest:*)",
+      "Bash(git:*)",
+      "Bash(bd:*)",
+      "Bash(ls:*)"
+    ]
+  },
   "hooks": {
     "PostToolUse": [
       {
-        "matcher": "Write|Edit|MultiEdit",
+        "matcher": "Write|Edit",
         "hooks": [
           {
             "type": "command",
