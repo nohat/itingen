@@ -4,7 +4,7 @@ AIDEV-NOTE: Events represent time-bound activities in a trip itinerary.
 They are parsed from Markdown files and enriched through the pipeline.
 """
 
-from typing import Any, Dict, List, Optional, Union
+from typing import List, Optional
 from pydantic import BaseModel, Field, ConfigDict
 
 class Event(BaseModel):

@@ -1,4 +1,3 @@
-import os
 import yaml
 import json
 import glob
@@ -52,7 +51,7 @@ class LocalFileProvider(BaseProvider[Event]):
                     data = json.load(f)
                     venue = Venue(**data)
                     venues[venue.venue_id] = venue
-            except (json.JSONDecodeError, ValueError) as e:
+            except (json.JSONDecodeError, ValueError):
                 # In a real app, we might want to log this
                 continue
                 

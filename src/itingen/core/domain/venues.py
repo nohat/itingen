@@ -4,8 +4,7 @@ AIDEV-NOTE: Venues represent physical locations with rich metadata
 to support AI generation and trip planning features.
 """
 
-from datetime import datetime
-from typing import Dict, List, Optional, Union
+from typing import List, Optional, Union
 from pydantic import BaseModel, Field, ConfigDict
 
 class VenueMetadata(BaseModel):

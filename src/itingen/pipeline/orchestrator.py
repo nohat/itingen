@@ -4,7 +4,7 @@ AIDEV-NOTE: This is the central coordinator that manages the flow from Provider
 through a sequence of Hydrators to Emitters. It implements the SPE lifecycle.
 """
 
-from typing import Any, Dict, List, Generic, TypeVar, Optional
+from typing import List, Generic, TypeVar, Optional
 from pathlib import Path
 
 from itingen.core.base import BaseProvider, BaseHydrator, BaseEmitter
@@ -72,8 +72,9 @@ class PipelineOrchestrator(Generic[T]):
         # Source Stage: Load raw data
         try:
             events = self.provider.get_events()
-            venues = self.provider.get_venues()
-            config = self.provider.get_config()
+            # Load venues and config for potential future use
+            self.provider.get_venues()
+            self.provider.get_config()
         except Exception as e:
             raise RuntimeError(f"Provider failed to load data: {e}") from e
         
