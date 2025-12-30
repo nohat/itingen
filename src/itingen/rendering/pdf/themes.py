@@ -4,7 +4,7 @@ AIDEV-NOTE: Manages colors, fonts, and spacing for PDF generation.
 Supports loading from YAML configuration for trip-specific styling.
 """
 
-from typing import Dict, Any, Optional
+from typing import Dict, Optional
 from pathlib import Path
 import yaml
 

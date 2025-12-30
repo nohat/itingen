@@ -5,7 +5,7 @@ different types of events (e.g., drive -> lodging). It allows trip-specific
 logic to be plugged into the core pipeline.
 """
 
-from typing import List, Callable, Tuple, Any, Optional
+from typing import List, Callable, Tuple, Optional
 from itingen.core.domain.events import Event
 
 

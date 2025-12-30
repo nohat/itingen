@@ -4,7 +4,7 @@ AIDEV-NOTE: These components handle the layout and styling of specific
 itinerary elements (headings, details, descriptions) using the PDFTheme.
 """
 
-from typing import List, Optional
+from typing import Any
 from fpdf import FPDF
 from itingen.rendering.pdf.themes import PDFTheme
 from itingen.core.domain.events import Event

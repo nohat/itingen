@@ -1,7 +1,6 @@
 """Tests for PDF themes and component-based rendering."""
 
 import pytest
-from pathlib import Path
 import yaml
 from itingen.rendering.pdf.themes import PDFTheme
 

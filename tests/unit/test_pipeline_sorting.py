@@ -1,7 +1,6 @@
 """Tests for chronological sorting logic in the pipeline."""
 
 import pytest
-from datetime import datetime
 from itingen.core.domain.events import Event
 from itingen.pipeline.sorting import ChronologicalSorter
 
