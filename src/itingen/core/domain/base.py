@@ -2,7 +2,11 @@ import difflib
 from pydantic import BaseModel, model_validator
 
 class StrictBaseModel(BaseModel):
-    """Base model that detects potential typos in extra fields."""
+    """Base model that detects potential typos in extra fields.
+    
+    AIDEV-NOTE: This strictness is critical for catching field name typos in 
+    Markdown files before they propagate into the pipeline.
+    """
     
     @model_validator(mode="after")
     def check_for_typos(self) -> "StrictBaseModel":

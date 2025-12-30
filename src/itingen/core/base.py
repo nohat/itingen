@@ -6,7 +6,11 @@ from itingen.core.domain.venues import Venue
 T = TypeVar("T")  # The domain model type (e.g., Event or Itinerary)
 
 class BaseProvider(ABC, Generic[T]):
-    """Abstract base class for trip data providers."""
+    """Abstract base class for trip data providers.
+    
+    AIDEV-NOTE: Providers (Sources) are responsible for loading raw data, 
+    venues, and trip-level configuration into the domain models.
+    """
 
     @abstractmethod
     def get_events(self) -> List[T]:
@@ -24,7 +28,11 @@ class BaseProvider(ABC, Generic[T]):
         raise NotImplementedError
 
 class BaseHydrator(ABC, Generic[T]):
-    """Abstract base class for itinerary enrichers (pipeline stages)."""
+    """Abstract base class for itinerary enrichers (pipeline stages).
+    
+    AIDEV-NOTE: Hydrators (Pipeline) enrich domain models with external data 
+    (Maps, Weather, AI) in a sequential, deterministic flow.
+    """
 
     @abstractmethod
     def hydrate(self, items: List[T]) -> List[T]:
@@ -32,7 +40,11 @@ class BaseHydrator(ABC, Generic[T]):
         raise NotImplementedError
 
 class BaseEmitter(ABC, Generic[T]):
-    """Abstract base class for itinerary output generators."""
+    """Abstract base class for itinerary output generators.
+    
+    AIDEV-NOTE: Emitters (Targets) transform hydrated domain models into 
+    final artifacts like Markdown, PDFs, or calendars.
+    """
 
     @abstractmethod
     def emit(self, itinerary: List[T], output_path: str) -> bool:

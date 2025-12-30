@@ -4,7 +4,11 @@ from itingen.core.domain.events import Event
 from itingen.integrations.maps.google_maps import GoogleMapsClient
 
 class MapsHydrator(BaseHydrator[Event]):
-    """Hydrator that enriches events with Google Maps data (duration, distance)."""
+    """Hydrator that enriches events with Google Maps data (duration, distance).
+    
+    AIDEV-NOTE: Uses GoogleMapsClient with local caching to minimize API calls 
+    and ensure deterministic builds when keys are missing.
+    """
 
     def __init__(self, api_key: str, cache_dir: Optional[str] = None):
         """Initialize with Google Maps API key and optional cache directory."""

@@ -2,7 +2,11 @@ import sys
 from typing import List, Optional
 
 def main(args: Optional[List[str]] = None) -> int:
-    """Main entry point for the itingen CLI."""
+    """Main entry point for the itingen CLI.
+    
+    AIDEV-NOTE: Placeholder CLI for Phase 2.6. Will use Click/Typer to 
+    orchestrate the SPE pipeline from the command line.
+    """
     if args is None:
         args = sys.argv[1:]
     

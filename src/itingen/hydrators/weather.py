@@ -4,7 +4,11 @@ from itingen.core.domain.events import Event
 from itingen.integrations.weather.weatherspark import WeatherSparkClient
 
 class WeatherHydrator(BaseHydrator[Event]):
-    """Hydrator that enriches events with typical weather data."""
+    """Hydrator that enriches events with typical weather data.
+    
+    AIDEV-NOTE: Weather enrichment is non-critical; fails fast on logic errors 
+    but should eventually handle transient provider failures gracefully.
+    """
 
     def __init__(self, cache_dir: Optional[str] = None):
         """Initialize with optional cache directory."""

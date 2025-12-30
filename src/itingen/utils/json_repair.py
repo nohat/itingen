@@ -1,6 +1,9 @@
 """
 JSON repair utility (TD-002).
 
+AIDEV-NOTE: Essential for robust LLM integration. Extracts JSON from markdown 
+and repairs trailing commas which common LLMs often include.
+
 Handles common LLM JSON formatting issues, particularly trailing commas
 in objects and arrays. Also extracts JSON from markdown code fences and
 surrounding text.
