@@ -113,14 +113,64 @@ def _handle_venues(args: argparse.Namespace) -> int:
     """Handle the 'venues' command."""
     if args.subcommand == "list":
         print(f"Listing venues for trip: {args.trip}...")
-        # TODO: Implement venue listing logic
-        print("Feature coming soon.")
-        return 0
+        try:
+            trip_path = Path("trips") / args.trip
+            if not trip_path.exists():
+                trip_path = Path(args.trip)
+            
+            provider = FileProvider(trip_dir=trip_path)
+            venues = provider.get_venues()
+            
+            if not venues:
+                print("No venues found.")
+                return 0
+                
+            for venue_id, venue in venues.items():
+                print(f"- {venue_id}: {venue.canonical_name} ({venue.address})")
+            return 0
+        except Exception as e:
+            print(f"Error: {e}", file=sys.stderr)
+            return 1
     elif args.subcommand == "create":
         print(f"Creating venue for trip: {args.trip}...")
-        # TODO: Implement venue creation logic
-        print("Feature coming soon.")
-        return 0
+        try:
+            trip_path = Path("trips") / args.trip
+            if not trip_path.exists():
+                trip_path = Path(args.trip)
+            
+            provider = FileProvider(trip_dir=trip_path)
+            
+            # Simple interactive creation
+            venue_id = input("Venue ID (slug): ").strip()
+            canonical_name = input("Canonical Name: ").strip()
+            address = input("Address: ").strip()
+            kind = input("Kind: ").strip()
+            
+            if not venue_id or not canonical_name:
+                print("Error: Venue ID and Canonical Name are required.", file=sys.stderr)
+                return 1
+                
+            venue_data = {
+                "venue_id": venue_id,
+                "canonical_name": canonical_name,
+                "address": address,
+                "kind": kind
+            }
+            
+            # Ensure venues directory exists
+            venues_dir = trip_path / "venues"
+            venues_dir.mkdir(parents=True, exist_ok=True)
+            
+            venue_file = venues_dir / f"{venue_id}.json"
+            import json
+            with open(venue_file, "w", encoding="utf-8") as f:
+                json.dump(venue_data, f, indent=2)
+                
+            print(f"Venue created successfully at {venue_file}")
+            return 0
+        except Exception as e:
+            print(f"Error: {e}", file=sys.stderr)
+            return 1
     
     return 0
 

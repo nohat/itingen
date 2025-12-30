@@ -1,0 +1,7 @@
+trip_name: "Example Adventure"
+timezone: "UTC"
+people:
+  - name: "Alice"
+    slug: "alice"
+  - name: "Bob"
+    slug: "bob"
