@@ -5,7 +5,7 @@ different types of events (e.g., drive -> lodging). It allows trip-specific
 logic to be plugged into the core pipeline.
 """
 
-from typing import List, Callable, Tuple, Any
+from typing import List, Callable, Tuple, Any, Optional
 from itingen.core.domain.events import Event
 
 
@@ -26,7 +26,7 @@ class TransitionRegistry:
         """
         self._patterns.append((from_kind, to_kind, handler))
 
-    def describe(self, prev_event: Event, curr_event: Event) -> str:
+    def describe(self, prev_event: Event, curr_event: Event) -> Optional[str]:
         """Find a matching handler and generate a transition description.
         
         Args:
@@ -34,13 +34,10 @@ class TransitionRegistry:
             curr_event: The current event.
             
         Returns:
-            The transition description string.
-            
-        Raises:
-            ValueError: If no handler is found for the given pair of event kinds.
+            The transition description string, or None if no handler matches.
         """
         for from_kind, to_kind, handler in self._patterns:
             if prev_event.kind == from_kind and curr_event.kind == to_kind:
                 return handler(prev_event, curr_event)
         
-        raise ValueError(f"No transition handler for {prev_event.kind} -> {curr_event.kind}")
+        return None

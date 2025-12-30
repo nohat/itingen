@@ -22,13 +22,12 @@ def test_registry_describe_simple_transition(registry):
     description = registry.describe(prev, curr)
     assert description == "Drive from Airport to Hotel"
 
-def test_registry_raises_on_unhandled_transition(registry):
-    """Test that registry raises ValueError for unhandled transitions."""
+def test_registry_returns_none_on_unhandled_transition(registry):
+    """Test that registry returns None for unhandled transitions."""
     prev = Event(kind="unknown")
     curr = Event(kind="something")
     
-    with pytest.raises(ValueError, match="No transition handler"):
-        registry.describe(prev, curr)
+    assert registry.describe(prev, curr) is None
 
 def test_registry_multiple_handlers(registry):
     """Test that multiple handlers can coexist."""

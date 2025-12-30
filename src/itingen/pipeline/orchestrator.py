@@ -9,6 +9,7 @@ from pathlib import Path
 
 from itingen.core.base import BaseProvider, BaseHydrator, BaseEmitter
 from itingen.core.domain.venues import Venue
+from itingen.pipeline.transitions import TransitionRegistry
 
 T = TypeVar("T")  # The domain model type (e.g., Event or Itinerary)
 
@@ -27,6 +28,7 @@ class PipelineOrchestrator(Generic[T]):
         provider: BaseProvider[T],
         hydrators: Optional[List[BaseHydrator[T]]] = None,
         emitters: Optional[List[BaseEmitter[T]]] = None,
+        transition_registry: Optional[TransitionRegistry] = None,
     ):
         """Initialize the orchestrator with components.
         
@@ -34,12 +36,23 @@ class PipelineOrchestrator(Generic[T]):
             provider: The data provider (Source)
             hydrators: List of hydrators to apply in order (Pipeline)
             emitters: List of emitters to generate output (Target)
+            transition_registry: Optional registry for event transitions
         """
         self.provider = provider
         self.hydrators = hydrators or []
         self.emitters = emitters or []
+        self.transition_registry = transition_registry
         self.venues: Dict[str, Venue] = {}
         self.config: Dict[str, Any] = {}
+    
+    def set_transition_registry(self, registry: TransitionRegistry) -> "PipelineOrchestrator[T]":
+        """Set the transition registry for the pipeline.
+        
+        Returns:
+            Self for method chaining
+        """
+        self.transition_registry = registry
+        return self
     
     def add_hydrator(self, hydrator: BaseHydrator[T]) -> "PipelineOrchestrator[T]":
         """Add a hydrator to the pipeline.

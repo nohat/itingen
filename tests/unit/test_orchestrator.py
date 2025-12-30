@@ -6,6 +6,7 @@ from typing import Any, Dict, List
 from itingen.core.base import BaseProvider, BaseHydrator, BaseEmitter
 from itingen.core.domain.events import Event
 from itingen.pipeline.orchestrator import PipelineOrchestrator
+from itingen.pipeline.transitions import TransitionRegistry
 
 
 class MockProvider(BaseProvider[Event]):
@@ -99,7 +100,23 @@ def sample_provider(sample_events):
     )
 
 
-def test_orchestrator_init(sample_provider):
+def test_orchestrator_with_transition_registry(sample_provider):
+    """Test orchestrator with a transition registry."""
+    registry = TransitionRegistry()
+    orchestrator = PipelineOrchestrator(sample_provider, transition_registry=registry)
+    assert orchestrator.transition_registry == registry
+
+
+def test_orchestrator_add_transition_registry(sample_provider):
+    """Test adding a transition registry via method."""
+    registry = TransitionRegistry()
+    orchestrator = PipelineOrchestrator(sample_provider)
+    result = orchestrator.set_transition_registry(registry)
+    
+    assert result == orchestrator
+    assert orchestrator.transition_registry == registry
+
+
     """Test orchestrator initialization."""
     orchestrator = PipelineOrchestrator(sample_provider)
     assert orchestrator.provider == sample_provider
