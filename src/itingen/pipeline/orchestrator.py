@@ -101,11 +101,8 @@ class PipelineOrchestrator(Generic[T]):
             try:
                 # Determine output path for this emitter
                 emitter_path = str(output_dir / f"output_{i}")
-                success = emitter.emit(current_data, emitter_path)
-                if success:
-                    results.append(emitter_path)
-                else:
-                    raise RuntimeError(f"Emitter {i} returned failure")
+                actual_path = emitter.emit(current_data, emitter_path)
+                results.append(actual_path)
             except Exception as e:
                 raise RuntimeError(f"Emitter {i} ({type(emitter).__name__}) failed: {e}") from e
         

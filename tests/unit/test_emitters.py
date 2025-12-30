@@ -26,9 +26,9 @@ def test_markdown_emitter(sample_itinerary, tmp_path):
     output_path = tmp_path / "itinerary.md"
     emitter = MarkdownEmitter()
     
-    success = emitter.emit(sample_itinerary, str(output_path))
+    result_path = emitter.emit(sample_itinerary, str(output_path))
     
-    assert success is True
+    assert result_path == str(output_path)
     assert output_path.exists()
     content = output_path.read_text()
     assert "# Trip Itinerary" in content
@@ -40,9 +40,9 @@ def test_pdf_emitter(sample_itinerary, tmp_path):
     output_path = tmp_path / "itinerary.pdf"
     emitter = PDFEmitter()
     
-    success = emitter.emit(sample_itinerary, str(output_path))
+    result_path = emitter.emit(sample_itinerary, str(output_path))
     
-    assert success is True
+    assert result_path == str(output_path)
     assert output_path.exists()
     # Basic check that file is not empty and has PDF header
     with open(output_path, "rb") as f:

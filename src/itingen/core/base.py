@@ -47,6 +47,10 @@ class BaseEmitter(ABC, Generic[T]):
     """
 
     @abstractmethod
-    def emit(self, itinerary: List[T], output_path: str) -> bool:
-        """Write the itinerary to the specified output format/path."""
+    def emit(self, itinerary: List[T], output_path: str) -> str:
+        """Write the itinerary to the specified output format/path.
+        
+        Returns:
+            The path to the generated artifact.
+        """
         raise NotImplementedError
