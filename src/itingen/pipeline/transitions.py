@@ -10,7 +10,11 @@ from itingen.core.domain.events import Event
 
 
 class TransitionRegistry:
-    """Registry for event transition handlers."""
+    """Registry for event transition handlers.
+    
+    AIDEV-DECISION: describe() returns None instead of raising ValueError for 
+    unmatched patterns to allow optional transition logic in the pipeline.
+    """
 
     def __init__(self):
         # List of (from_kind, to_kind, handler)
