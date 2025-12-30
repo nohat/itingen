@@ -83,7 +83,7 @@ def main():
     print("\n🚀 Starting pipeline execution...")
     try:
         result = orchestrator.execute(output_dir=Path("output"))
-        print(f"\n✅ Pipeline completed successfully!")
+        print("\n✅ Pipeline completed successfully!")
         print(f"   Processed {len(result)} events")
     except Exception as e:
         print(f"\n❌ Pipeline failed: {e}")
