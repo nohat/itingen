@@ -140,6 +140,10 @@ class TestReadExifMetadata:
             result = read_exif_metadata(str(img_path))
             assert result is None
 
+
+class TestWriteExifMetadata:
+    """Tests for writing EXIF metadata to JPEG images."""
+
     def test_write_exif_exception_handling(self, tmp_path: Path) -> None:
         """Return False if an unexpected exception occurs during writing."""
         img_path = tmp_path / "write_exception.jpg"
@@ -165,10 +169,6 @@ class TestReadExifMetadata:
             
             result = write_exif_metadata(img_path=str(img_path), meta={"test": "data"})
             assert result is False
-
-
-class TestWriteExifMetadata:
-    """Tests for writing EXIF metadata to JPEG images."""
 
     def test_write_exif_to_jpeg(self, tmp_path: Path) -> None:
         """Write EXIF metadata to JPEG and verify it can be read back."""
