@@ -10,13 +10,19 @@ from itingen.core.domain.base import StrictBaseModel
 
 class Event(StrictBaseModel):
     """Represents a single activity, appointment, or occurrence in a trip itinerary.
-    
+
     Events are the primary unit of work in the itinerary system. They capture
     all information about a specific activity, including when and where it occurs,
     who participates, and any dependencies or constraints.
-    
+
     The model uses `extra="allow"` to capture additional fields from Markdown
     sources, enabling extensibility without breaking changes.
+
+    AIDEV-DECISION: duration_seconds is the canonical duration representation.
+    - Manual events: Provider parses "duration: 1h30m" → duration_seconds
+    - API sources: MapsHydrator sets duration_seconds from Google Maps
+    - Renderers: Use format_duration(duration_seconds) for display
+    - Rationale: One source of truth, no fallback logic, consistent formatting
     """
     
     model_config = ConfigDict(extra="allow")
@@ -36,6 +42,9 @@ class Event(StrictBaseModel):
     # Timing information
     timezone: Optional[str] = Field(None, description="Timezone identifier (e.g., 'Pacific/Auckland')")
     time_utc: Optional[str] = Field(None, description="Event time in UTC (ISO 8601 format)")
+    time_local: Optional[str] = Field(None, description="Event time in local timezone")
+    no_later_than: Optional[str] = Field(None, description="Latest possible start time for this event")
+    duration: Optional[str] = Field(None, description="Duration of the event (e.g. '1h30m')")
     
     # Scheduling constraints
     coordination_point: Optional[bool] = Field(None, description="Marks events requiring traveler coordination")
@@ -46,6 +55,13 @@ class Event(StrictBaseModel):
     description: Optional[str] = Field(None, description="Detailed description of the event")
     travel_from: Optional[str] = Field(None, description="Starting location for travel events")
     travel_to: Optional[str] = Field(None, description="Destination for travel events")
+    
+    # Emotional annotations
+    emotional_triggers: Optional[str] = Field(None, description="Triggers or frustrations for this event")
+    emotional_high_point: Optional[str] = Field(None, description="The high point or silver lining for this event")
+    
+    # Transition logic
+    transition_from_prev: Optional[str] = Field(None, description="Description of the transition from the previous event")
     
     # Raw data from ingest might include other fields
     # we allow extra for now to capture all Markdown key-values

@@ -49,8 +49,8 @@ def test_pipeline_with_maps_hydrator(tmp_path):
         assert events[0].duration_seconds == 5400
         assert events[0].duration_text == "1 hour 30 mins"
         
-        # Verify output
+        # Verify output (duration is formatted as "1h 30m" from duration_seconds)
         output_file = output_dir / "output_0.md"
         assert output_file.exists()
         content = output_file.read_text()
-        assert "1 hour 30 mins" in content
+        assert "(1h 30m)" in content

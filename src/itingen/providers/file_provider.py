@@ -6,6 +6,7 @@ from typing import Any, Dict, List, Optional
 from itingen.core.base import BaseProvider
 from itingen.core.domain.events import Event
 from itingen.core.domain.venues import Venue
+from itingen.utils.duration import parse_duration
 
 class LocalFileProvider(BaseProvider[Event]):
     """Provider that loads trip data from the local filesystem."""
@@ -120,6 +121,13 @@ class LocalFileProvider(BaseProvider[Event]):
             elif key in {"coordination_point", "hard_stop", "inferred"}:
                 v = value.lower()
                 event_data[key] = v in {"true", "yes", "y", "1"}
+            elif key == "duration":
+                # Parse duration string (e.g., "1h30m") into duration_seconds
+                try:
+                    event_data["duration_seconds"] = parse_duration(value)
+                except ValueError as e:
+                    # Fail fast on malformed duration
+                    raise ValueError(f"Invalid duration in event '{header}': {e}") from e
             else:
                 event_data[key] = value
                 
