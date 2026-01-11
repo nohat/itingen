@@ -13,6 +13,9 @@ from itingen.pipeline.orchestrator import PipelineOrchestrator
 from itingen.providers import FileProvider
 from itingen.pipeline.sorting import ChronologicalSorter
 from itingen.pipeline.filtering import PersonFilter
+from itingen.pipeline.timing import WrapUpHydrator
+from itingen.pipeline.annotations import EmotionalAnnotationHydrator
+from itingen.pipeline.transitions_logic import TransitionHydrator
 from itingen.rendering.markdown import MarkdownEmitter
 from itingen.rendering.pdf.renderer import PDFEmitter
 
@@ -84,6 +87,15 @@ def _handle_generate(args: argparse.Namespace) -> int:
         orchestrator.add_hydrator(ChronologicalSorter())
         if args.person:
             orchestrator.add_hydrator(PersonFilter(person_slug=args.person))
+        
+        # Add Wrap-up timing logic
+        orchestrator.add_hydrator(WrapUpHydrator())
+        
+        # Add Emotional annotations
+        orchestrator.add_hydrator(EmotionalAnnotationHydrator())
+        
+        # Add Transition descriptions
+        orchestrator.add_hydrator(TransitionHydrator())
             
         # Add Emitters
         if args.format in ["markdown", "both"]:
