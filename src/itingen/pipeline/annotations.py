@@ -17,7 +17,7 @@ class EmotionalAnnotationHydrator(BaseHydrator[Event]):
         """Enrich events with emotional metadata."""
         for event in items:
             kind = (event.kind or "").strip().lower()
-            travel_mode = getattr(event, "travel_mode", "").strip().lower()
+            travel_mode = (getattr(event, "travel_mode", None) or "").strip().lower()
             heading = (event.event_heading or "").lower()
             
             # Stressy kinds from original script
