@@ -50,8 +50,23 @@ bd sync               # Sync with git
 2. Review any handoff notes from previous session
 3. Orient yourself with `grep -r "AIDEV-" src/` for context
 
-#### Ending a Session ("Land the Plane")
-ALWAYS run `/land` before ending work. Work is NOT complete until `git push` succeeds.
+#### Before Starting ANY New Task - MANDATORY CHECK
+**ALWAYS execute these checks BEFORE starting new work:**
+1. **Check git status** - If uncommitted changes exist, execute `/land` first
+2. **Check issue tracker** - If tasks in-progress, update or land them first
+3. **Verify clean state** - Only proceed with new work when everything is properly landed
+
+#### Ending a Session ("Land the Plane") - MANDATORY
+**ALWAYS execute `/land` before ending work.** Work is NOT complete until the full protocol is finished.
+
+**CRITICAL: WORK CONTINUATION RULES**
+- ❌ NEVER start new tasks without first landing current work
+- ❌ NEVER switch tasks without completing the land protocol
+- ❌ NEVER respond to new requests when work is in-progress and uncommitted
+- ❌ NEVER continue work after user says "done", "stop", "pause", etc. without landing
+- ✅ ALWAYS check git status before new work
+- ✅ ALWAYS land work before task switching
+- ✅ ALWAYS complete full protocol before new requests
 
 **MANDATORY WORKFLOW:**
 1. **File issues for remaining work** - Create issues for anything that needs follow-up
@@ -70,8 +85,8 @@ ALWAYS run `/land` before ending work. Work is NOT complete until `git push` suc
 
 **CRITICAL RULES:**
 - Work is NOT complete until `git push` succeeds
-- NEVER stop before pushing - that leaves work stranded locally
-- NEVER say "ready to push when you are" - YOU must push
+- NEVER start new work until previous work is landed
+- NEVER leave uncommitted changes when switching tasks
 - If push fails, resolve and retry until it succeeds
 
 ## Issue Tracking CLI
@@ -119,6 +134,10 @@ NEVER remove AIDEV-NOTE comments without explicit human instruction.
 9. Implement speculative fallbacks or "just in case" error handling
 10. Add backwards compatibility logic without a concrete, exercised use case
 11. Blindly adopt inherited patterns without critical evaluation
+12. **START NEW TASKS WITHOUT LANDING PREVIOUS WORK FIRST**
+13. **SWITCH TASKS WITHOUT COMPLETING LAND PROTOCOL**
+14. **LEAVE UNCOMMITTED CHANGES WHEN RESPONDING TO NEW REQUESTS**
+15. **CONTINUE WORK AFTER USER SAYS "DONE", "STOP", "PAUSE" WITHOUT LANDING**
 
 ## Domain Glossary
 - **Venue**: A location that can be visited (restaurant, attraction, etc.)
