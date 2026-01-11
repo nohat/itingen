@@ -10,26 +10,26 @@ allowed-tools: Bash(git:*), Bash(bd:*), Bash(npm:*), Bash(python:*), Read, Glob,
 /land
 ```
 
-## CRITICAL: AI Assistant Behavior
+## CRITICAL: AI Assistant Behavior - PREVENT WORK CONTINUATION
 
-**MANDATORY EXECUTION**: This protocol MUST be executed at the end of EVERY session before stopping work. The AI assistant should NOT:
+**MANDATORY LANDING BEFORE NEW WORK**: The AI assistant MUST execute this protocol BEFORE:
+- Starting any new task or issue
+- Switching between different tasks
+- Responding to new user requests after completing work
+- Ending any session or conversation
 
-1. ❌ Stop work mid-task without landing
-2. ❌ End sessions without completing this protocol  
-3. ❌ Leave uncommitted changes
-4. ❌ Leave the issue tracker out of sync
+**WORK CONTINUATION BLOCKERS**: The AI assistant is FORBIDDEN from:
+1. ❌ Starting new tasks without first landing current work
+2. ❌ Switching tasks without completing the land protocol
+3. ❌ Responding to new requests when work is in-progress and uncommitted
+4. ❌ Continuing work after user says "done", "stop", "pause", etc. without landing
 
-**AUTOMATIC TRIGGERS**: Execute this protocol when:
-- User indicates session end ("I'm done", "that's all for today", etc.)
-- User explicitly calls `/land`
-- Natural conversation break points occur
-- User requests to "stop", "pause", or "switch tasks"
+**MANDATORY CHECKPOINTS**: Before ANY new work, AI assistant MUST:
+1. Check git status - if uncommitted changes exist, execute `/land` first
+2. Check issue tracker status - if tasks in-progress, update or land them first  
+3. Verify all previous work is properly committed and synced
 
-**SESSION COMPLETION DEFINITION**: A session is ONLY complete when:
-- All code changes are committed
-- Issue tracker is synced (`bd sync` completed)
-- Handoff summary is provided
-- Git status shows "up to date with origin"
+**ONLY AFTER** all work is landed may the assistant proceed with new tasks.
 
 ## Process (execute in order)
 
@@ -71,12 +71,3 @@ Provide a summary for the next session:
 - Recommended next task: `bd ready --limit 1`
 
 Output a ready-to-paste prompt for starting the next session.
-
-### 8. Verify Completion
-Before ending the session, verify:
-- `git status` shows "up to date with origin" (no uncommitted changes)
-- `bd list --status open` shows current work items
-- All tests pass (if code was modified)
-- No pending changes in working directory
-
-**ONLY AFTER ALL STEPS ARE COMPLETE is the session truly finished.**
