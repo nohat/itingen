@@ -50,8 +50,29 @@ bd sync               # Sync with git
 2. Review any handoff notes from previous session
 3. Orient yourself with `grep -r "AIDEV-" src/` for context
 
-#### Ending a Session ("Land the Plane")
-ALWAYS run `/land` before ending work. Work is NOT complete until `git push` succeeds.
+#### Ending a Session ("Land the Plane") - MANDATORY
+**ALWAYS execute `/land` before ending work.** Work is NOT complete until the full protocol is finished.
+
+**CRITICAL: AI ASSISTANT BEHAVIOR**
+- ❌ NEVER stop work mid-task without landing
+- ❌ NEVER end sessions without completing the protocol  
+- ❌ NEVER leave uncommitted changes
+- ❌ NEVER leave the issue tracker out of sync
+- ✅ ALWAYS execute `/land` when user indicates session end
+- ✅ ALWAYS complete all 8 steps of the protocol
+- ✅ ALWAYS verify git status shows "up to date with origin"
+
+**AUTOMATIC TRIGGERS**: Execute `/land` protocol when:
+- User says "I'm done", "that's all for today", "stop", "pause", etc.
+- User explicitly calls `/land`
+- Natural conversation break points occur
+- Task switching is requested
+
+**SESSION COMPLETION DEFINITION**: A session is ONLY complete when:
+- All code changes are committed
+- Issue tracker is synced (`bd sync` completed)
+- Handoff summary is provided
+- Git status shows "up to date with origin"
 
 **MANDATORY WORKFLOW:**
 1. **File issues for remaining work** - Create issues for anything that needs follow-up
@@ -119,6 +140,10 @@ NEVER remove AIDEV-NOTE comments without explicit human instruction.
 9. Implement speculative fallbacks or "just in case" error handling
 10. Add backwards compatibility logic without a concrete, exercised use case
 11. Blindly adopt inherited patterns without critical evaluation
+12. **END SESSIONS WITHOUT EXECUTING `/land` PROTOCOL**
+13. **LEAVE UNCOMMITTED CHANGES IN WORKING DIRECTORY**
+14. **STOP WORK MID-TASK WITHOUT LANDING PROPERLY**
+15. **IGNORE USER REQUESTS TO STOP OR PAUSE**
 
 ## Domain Glossary
 - **Venue**: A location that can be visited (restaurant, attraction, etc.)
