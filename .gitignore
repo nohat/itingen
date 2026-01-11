@@ -33,6 +33,7 @@ Thumbs.db
 # Project specific
 *.log
 tmp/
+output/
 
 # Agent worktrees (ephemeral, except README)
 .ws/*
