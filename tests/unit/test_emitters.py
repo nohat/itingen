@@ -25,14 +25,15 @@ def sample_itinerary():
 def test_markdown_emitter(sample_itinerary, tmp_path):
     output_path = tmp_path / "itinerary.md"
     emitter = MarkdownEmitter()
-    
+
     result_path = emitter.emit(sample_itinerary, str(output_path))
-    
+
     assert result_path == str(output_path)
     assert output_path.exists()
     content = output_path.read_text()
     assert "# Trip Itinerary" in content
-    assert "## Flight to Tokyo" in content
+    # Events are bullet points, not H2 headers (dates are H2)
+    assert "Flight to Tokyo" in content
     assert "United Airlines UA837" in content
     assert "Take the Airport Limousine Bus" in content
 
