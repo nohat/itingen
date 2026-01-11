@@ -1,6 +1,7 @@
 from typing import List, Optional
 from pathlib import Path
 from fpdf import FPDF
+from fpdf.enums import XPos, YPos
 from itingen.core.base import BaseEmitter
 from itingen.core.domain.events import Event
 from itingen.rendering.pdf.themes import PDFTheme
@@ -29,7 +30,7 @@ class PDFEmitter(BaseEmitter[Event]):
         
         # Title
         pdf.set_font(self.theme.fonts["heading"], "B", 16)
-        pdf.cell(0, 10, "Trip Itinerary", ln=True, align="C")
+        pdf.cell(0, 10, "Trip Itinerary", new_x=XPos.LMARGIN, new_y=YPos.NEXT, align="C")
         pdf.ln(10)
         
         for event in itinerary:
