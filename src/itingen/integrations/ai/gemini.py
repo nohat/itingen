@@ -1,7 +1,6 @@
 from typing import Optional
 import os
 from google import genai
-from google.genai import types
 
 class GeminiClient:
     """Client for interacting with Google Gemini AI."""
@@ -24,16 +23,10 @@ class GeminiClient:
 
     def generate_image(self, prompt: str, aspect_ratio: str = "1:1") -> bytes:
         """Generate an image using Imagen via Gemini."""
-        # Note: In the new genai SDK, image generation might be via a different method
-        # or specific models. For now, we'll implement the pattern.
-        # This is a placeholder for the actual Imagen 3 call.
-        response = self.client.models.generate_image(
+        response = self.client.models.generate_images(
             model="imagen-3.0-generate-002",
             prompt=prompt,
-            config=types.GenerateImageConfig(
-                number_of_images=1,
-                aspect_ratio=aspect_ratio,
-                add_watermark=False
-            )
+            aspect_ratio=aspect_ratio,
+            number_of_images=1
         )
         return response.generated_images[0].image_bytes
