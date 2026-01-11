@@ -5,7 +5,7 @@ how to move from one event to the next, following the logic from the
 original NZ trip system.
 """
 
-from typing import List, Optional, Dict, Any
+from typing import List, Optional
 from itingen.core.base import BaseHydrator
 from itingen.core.domain.events import Event
 
@@ -34,7 +34,6 @@ class TransitionHydrator(BaseHydrator[Event]):
         kind = (ev.kind or "").strip().lower()
 
         prev_mode = getattr(prev_ev, "travel_mode", "").strip().lower()
-        mode = getattr(ev, "travel_mode", "").strip().lower()
 
         prev_loc = (prev_ev.location or prev_ev.travel_to or "").strip()
         loc = (ev.location or ev.travel_from or ev.travel_to or "").strip()

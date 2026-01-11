@@ -1,0 +1,44 @@
+{
+  "canonical_name": "Waiheke Island Resort",
+  "aliases": [
+    "Waiheke Resort",
+    "Waiheke Island Resort"
+  ],
+  "location": {
+    "region": "Waiheke Island",
+    "country": "New Zealand",
+    "coordinates": null
+  },
+  "venue_visual_description": "Waiheke Island Resort is nestled in a tranquil hillside location, offering expansive, stunning ocean views across Palm Beach, Mawhitipana Bay, and the wider Hauraki Gulf. The resort is situated on Waiheke Island, often referred to as the \"Jewel of the Hauraki Gulf,\" known for its subtropical micro-climate, pristine beaches, and vineyards. The elevated estate requires guests to navigate inclined pathways, steps, and stairways to access its various properties, a minor effort rewarded by the spectacular vistas. The architecture of the resort features a collection of chic apartments and studios, designed to be spacious and modern. While the resort has undergone significant refurbishment rather than a complete rebuild, the main building has been modernized to better support both corporate and casual guests. This includes an elevated, sun-drenched deck for outdoor dining, directly connected to the restaurant and bar, offering sweeping views of the Gulf. The design emphasizes a connection between indoor and outdoor spaces, with private balconies in many guest rooms providing sea views. The overall style leans towards a comfortable, contemporary aesthetic, integrating with the natural island environment. Visible infrastructure at the resort includes a spectacular panoramic swimming pool deck, complete with spa pools and an infrared sauna, all positioned to maximize the sea views. The main building houses a fully licensed restaurant and bar, which also boasts sweeping views of the Hauraki Gulf. For recreation, there is Waiheke's only 18-hole miniature golf course, situated above the main courtyard and featuring its own bar and BBQ entertainment area. Other facilities include self-service laundry, free parking, and various conference and event spaces. Given Waiheke Island's subtropical climate, the resort grounds are likely adorned with lush, green foliage. Guests would likely observe native New Zealand plants such as various ferns, perhaps some kānuka and mānuka bushes, and possibly statement palms or vibrant bird of paradise plants, contributing to a resort-like, verdant atmosphere. The island's natural beauty, with its rolling hills and coastal forests, forms a picturesque backdrop to the resort's manicured areas. The resort is conveniently located just a short distance from beautiful Palm Beach, approximately 750 meters away. It is also a 10-minute drive from the Waiheke Island Ferry Terminal in Matiatia Bay, which connects to central Auckland. Nearby settlements include Ostend, where the resort is located, and Oneroa, the main village on Waiheke, known for its cafes, restaurants, and art galleries. The island is also dotted with numerous vineyards, such as Stonyridge Vineyard and Te Motu Vineyard, offering additional attractions for visitors. The general vibe of Waiheke Island Resort is one of a relaxed, yet comprehensive, island escape. It caters to a diverse range of guests, from those seeking a romantic getaway or family holiday to corporate retreats and weddings. The emphasis is on tranquility, stunning natural beauty, and a blend of leisure and activity, all within a comfortable and welcoming environment. The resort aims to provide a memorable stay, allowing guests to immerse themselves in the unique charm of Waiheke Island.",
+  "primary_cues": [
+    "hillside villas above a turquoise bay",
+    "panoramic swimming pool",
+    "coastal terrace"
+  ],
+  "secondary_cues": [
+    "palm or coastal greenery",
+    "sunlit bay horizon"
+  ],
+  "camera_suggestions": [
+    "macro close-up",
+    "three-quarter view",
+    "front-on facade"
+  ],
+  "negative_cues": [
+    "no text",
+    "no logos",
+    "no signage",
+    "no airplane",
+    "no generic city hotel"
+  ],
+  "reference_image_urls": [],
+  "sources": [],
+  "venue_id": "waiheke-island",
+  "metadata": {
+    "created_at": "2025-12-15T22:23:20.994690+00:00",
+    "updated_at": "2025-12-15T22:31:01.326514+00:00",
+    "research_method": "builtin+gemini",
+    "research_version": "v3",
+    "notes": "Migrated from hardcoded builtin in nz_trip_event_narratives.py. Enhanced with cache data: Added description (3284 chars), Updated research_method: builtin+gemini"
+  }
+}

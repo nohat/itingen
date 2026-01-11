@@ -1,0 +1,44 @@
+{
+  "canonical_name": "Auckland Downtown Ferry Terminal",
+  "aliases": [
+    "Downtown Ferry Terminal",
+    "Auckland Ferry Terminal",
+    "Quay Ferry Terminal",
+    "Auckland Downtown Ferry Terminal"
+  ],
+  "location": {
+    "region": "Auckland",
+    "country": "New Zealand",
+    "coordinates": null
+  },
+  "venue_visual_description": "",
+  "primary_cues": [
+    "historic ferry terminal building with a clock tower",
+    "waterfront edge",
+    "brick/sandstone facade"
+  ],
+  "secondary_cues": [
+    "harbour waterline"
+  ],
+  "camera_suggestions": [
+    "macro close-up",
+    "three-quarter view",
+    "front-on facade"
+  ],
+  "negative_cues": [
+    "no text",
+    "no logos",
+    "no signage",
+    "no airplane"
+  ],
+  "reference_image_urls": [],
+  "sources": [],
+  "venue_id": "auckland-downtown",
+  "metadata": {
+    "created_at": "2025-12-15T22:23:20.994690+00:00",
+    "updated_at": "2025-12-15T22:23:20.994690+00:00",
+    "research_method": "builtin",
+    "research_version": "v3",
+    "notes": "Migrated from hardcoded builtin in nz_trip_event_narratives.py"
+  }
+}

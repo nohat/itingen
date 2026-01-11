@@ -4,8 +4,7 @@ AIDEV-NOTE: This hydrator looks ahead to the next event to determine when
 the current event should be wrapped up to ensure readiness for the next one.
 """
 
-import datetime
-from typing import List, Optional
+from typing import List
 from itingen.core.base import BaseHydrator
 from itingen.core.domain.events import Event
 

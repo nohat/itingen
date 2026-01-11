@@ -1,0 +1,49 @@
+{
+  "canonical_name": "Tantalus Estate Vineyard & Winery (Waiheke Island)",
+  "aliases": [
+    "Tantalus",
+    "Tantalus Estate",
+    "Tantalus Vineyard",
+    "Tantalus Estate, 70-72 Onetangi Rd"
+  ],
+  "location": {
+    "region": "Waiheke Island",
+    "country": "New Zealand",
+    "coordinates": null
+  },
+  "venue_visual_description": "Tantalus Estate Vineyard & Winery presents itself as a luxurious and sophisticated destination, seamlessly blending rustic beauty with refined elegance on Waiheke Island. The overall vibe is one of elevated indulgence, offering a welcoming and relaxed atmosphere amidst stunning natural scenery. Geographically, Tantalus Estate is nestled in the idyllic Onetangi Valley, a premier wine-growing region on Waiheke Island, which lies 18km east of Auckland in the Hauraki Gulf. The estate spans approximately 20 acres (or 8.3 hectares) of gentle, north-facing slopes, providing abundant sunshine and gentle sea breezes. The vineyards thrive in free-draining sandy soil over weathered clay and rock, with deposits of iron and manganese oxide, benefiting from Waiheke's Mediterranean-like microclimate. The property offers picturesque views of rolling vineyards, native bushland, and glimpses of the sea beyond. A significant wetland depression, feeding into the Okahuiti Creek and eventually the Hauraki Gulf, anchors the property, contributing to its unique ecological setting. The landscape is meticulously maintained and diverse. Expansive vineyards, featuring varietals like Cabernet Sauvignon, Cabernet Franc, Merlot, Syrah, Malbec, Viognier, Chardonnay, and Pinot Gris, stretch across the property. Beyond the grapevines, there are cultivated olive and macadamia groves, as well as beehives nestled in native bush. A strong commitment to biodiversity is evident in the 3,000 square meters of wildflowers that attract pollinators, and the restored wetlands. These wetlands are home to thousands of reintroduced native plants, including established trees, sedges, grasses, ferns, and shrubs, with specific examples like kanuka (Kunzea ericoides), harakeke (Phormium tenax), tāwhiri karo (Pittosporum cornifolium), nīkau (Rhopalostylis sapida), and kōwhai (Sophora microphylla). Thoughtfully landscaped gardens and grassed lawns provide additional aesthetic appeal and spaces for guests to enjoy. A raised boardwalk meanders through the wetland, allowing visitors to experience the native flora and fauna up close. The architecture of the main winery building is striking and contemporary, designed by Cheshire Architects. It features a two-level structure that harmoniously blends timber, glass, and stone, creating light-filled and beautifully textured spaces. The exterior combines volcanic stone with a hand-applied 'Fitzroy' oxide cement render, and notable details include a transformed bell tower and parapet. Inside, the design emphasizes a handmade, organic, and bespoke aesthetic. The main dining area and BrewHouse feature interior walls finished with hand-applied natural Rockcote Clay Décor plaster, infused with chopped wheat straw, while a private dining room boasts a deep blue version of the same plaster. A particularly notable visual element is the unique lighting installations, crafted by James Russ in collaboration with Cheshire Architects. These remarkable lights utilize uprooted grapevines from the estate, meticulously treated and shaped, then handwoven with over 4,500 miniature LEDs and exposed copper wire, complemented by brass elements and hand-blown glass spheres. Visible infrastructure includes the gravity-fed, solar-powered winery, a craft brewery, a fine-dining restaurant, a cellar door for wine tastings, a private wine library, and the Alibi Brewer's Lounge. The Alibi Brewer's Lounge, reminiscent of a speakeasy, is located in the cellar and features crypt-like rooms with vaulted brick ceilings, leather armchairs, a bespoke bar, and a fireplace. The estate also provides facilities for events and weddings, including various indoor spaces and outdoor areas like courtyards and terraces. For accessibility, there is a helicopter landing pad on-site. Tantalus Estate is located at 70-72 Onetangi Road, placing it in the heart of Waiheke's wine country. Neighboring vineyards include Stonyridge and Te Motu, and the Waiheke Museum is also situated nearby at 165 Onetangi Road. The estate exudes a general vibe of refined luxury, exceptional hospitality, and a deep connection to the land, offering a premium experience for discerning visitors seeking world-class cuisine, wine, and craft beer in a breathtaking setting.",
+  "primary_cues": [
+    "modern cellar door silhouette",
+    "vineyard rows on gentle hillside",
+    "wide veranda / terrace view",
+    "native bush edge"
+  ],
+  "secondary_cues": [
+    "Waiheke Island coastal light",
+    "clean contemporary winery architecture",
+    "stone or timber accents"
+  ],
+  "camera_suggestions": [
+    "macro close-up",
+    "three-quarter view",
+    "front-on facade"
+  ],
+  "negative_cues": [
+    "no text",
+    "no logos",
+    "no signage",
+    "no generic flat vineyard field",
+    "no airplane",
+    "no city skyline"
+  ],
+  "reference_image_urls": [],
+  "sources": [],
+  "venue_id": "tantalus-estate-waiheke",
+  "metadata": {
+    "created_at": "2025-12-15T22:23:20.994690+00:00",
+    "updated_at": "2025-12-15T22:31:01.325376+00:00",
+    "research_method": "builtin+gemini",
+    "research_version": "v3",
+    "notes": "Migrated from hardcoded builtin in nz_trip_event_narratives.py. Enhanced with cache data: Added description (4258 chars), Updated research_method: builtin+gemini"
+  }
+}

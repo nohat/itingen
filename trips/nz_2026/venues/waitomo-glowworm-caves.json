@@ -1,0 +1,28 @@
+{
+  "venue_id": "waitomo-glowworm-caves",
+  "canonical_name": "Waitomo Glowworm Caves",
+  "aliases": [],
+  "location": {},
+  "venue_visual_description": "",
+  "primary_cues": [],
+  "secondary_cues": [],
+  "camera_suggestions": [
+    "macro close-up",
+    "three-quarter view",
+    "front-on facade"
+  ],
+  "negative_cues": [
+    "no text",
+    "no logos",
+    "no signage"
+  ],
+  "reference_image_urls": [],
+  "sources": [],
+  "metadata": {
+    "created_at": "2025-12-15T22:49:21.822094+00:00",
+    "updated_at": "2025-12-15T22:49:21.822094+00:00",
+    "research_method": "skeleton",
+    "research_version": "v3",
+    "notes": "Auto-generated skeleton from event scan - needs manual curation"
+  }
+}

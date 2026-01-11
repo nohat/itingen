@@ -1,0 +1,42 @@
+{
+  "canonical_name": "Hotel Indigo Auckland",
+  "aliases": [
+    "Hotel Indigo",
+    "Indigo Auckland"
+  ],
+  "location": {
+    "region": "Auckland",
+    "country": "New Zealand",
+    "coordinates": null
+  },
+  "venue_visual_description": "",
+  "primary_cues": [
+    "modern hotel facade",
+    "clean geometric windows",
+    "luggage + hotel bed motif"
+  ],
+  "secondary_cues": [
+    "Auckland city light"
+  ],
+  "camera_suggestions": [
+    "macro close-up",
+    "three-quarter view",
+    "front-on facade"
+  ],
+  "negative_cues": [
+    "no text",
+    "no logos",
+    "no signage",
+    "no airplane"
+  ],
+  "reference_image_urls": [],
+  "sources": [],
+  "venue_id": "hotel-indigo-auckland",
+  "metadata": {
+    "created_at": "2025-12-15T22:23:20.994690+00:00",
+    "updated_at": "2025-12-15T22:23:20.994690+00:00",
+    "research_method": "builtin",
+    "research_version": "v3",
+    "notes": "Migrated from hardcoded builtin in nz_trip_event_narratives.py"
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "canonical_name": "Casita Miro (Waiheke Island)",
+  "aliases": [
+    "Casita Miro",
+    "Casita"
+  ],
+  "location": {
+    "region": "Waiheke Island",
+    "country": "New Zealand",
+    "coordinates": null
+  },
+  "venue_visual_description": "Casita Miro on Waiheke Island presents itself as a vibrant, Spanish and Mediterranean-inspired retreat, often described as a hidden treasure with an artistic flair and a relaxed, lively atmosphere. It is nestled on a hillside off Brown Road in Onetangi, scaling above Onetangi Beach, and offers spectacular panoramic views that sweep across its own extensive vineyards, the charming village, the sparkling sea, and the distant Hauraki Gulf. The property is part of the 4.2-hectare Miro Vineyard, situated within the renowned Onetangi wine-growing region. The approach to Casita Miro begins on a gravel driveway that transitions into a beautifully paved and tiled road as one nears the restaurant. Along this entrance, a magnificent mosaic art wall, an intricate creation by owner Barnett, immediately captures attention, setting a whimsical and artistic tone inspired by Barcelona's Gaudí. The architecture itself features warm terracotta tones and mosaic-tiled walls, evoking the feeling of stepping into a Catalonian daydream. The main restaurant boasts high ceilings and expansive glass windows that frame the lush vineyards and the distant Hauraki Gulf. There is also a glasshouse-style cellar door for wine tastings, and a \"Bond bar\" which also incorporates Barnett's mosaic artistry. Playful Miro-inspired drawings are displayed throughout the interior, adding to the unique aesthetic. Surrounding the main building, the 4.2-hectare Miro Vineyard is a dominant visual element, with grapevines, including Syrah, Bordeaux varietals, Pinot Gris, Chardonnay, Albarino, and Viognier, descending across the slopes. Terraces are often laced with these grapevines. The property also features organic kitchen gardens, providing fresh herbs and garnishes for the restaurant, and in the wider Waiheke landscape, olive groves can be observed. Outdoor dining areas are often shaded by sun umbrellas or sails, inviting guests to relax amidst the picturesque setting. Casita Miro is conveniently located near Onetangi Beach, which is considered the closest vineyard to this popular summer destination. Access is typically from Waiheke's scenic Seaview Road, leading onto Brown Road. Neighboring accommodations like Cypress Ridge Estate and The Loft at Cypress Ridge are situated nearby. Visible infrastructure includes clear signage at the road front directing visitors, ample parking, and the distinctive paved and tiled driveway. The overall vibe is one of a celebratory escape, where fine food, wine, art, and connection are cherished, creating a memorable Mediterranean experience on Waiheke Island.",
+  "primary_cues": [
+    "Spanish villa architecture",
+    "terracotta roof tiles",
+    "courtyard / terrace dining",
+    "vineyard slope nearby"
+  ],
+  "secondary_cues": [
+    "rustic wooden table",
+    "warm Mediterranean color palette"
+  ],
+  "camera_suggestions": [
+    "macro close-up",
+    "three-quarter view",
+    "front-on facade"
+  ],
+  "negative_cues": [
+    "no text",
+    "no logos",
+    "no signage",
+    "no generic tapas close-up only",
+    "no airplane",
+    "no city skyline"
+  ],
+  "reference_image_urls": [],
+  "sources": [],
+  "venue_id": "casita-miro-waiheke",
+  "metadata": {
+    "created_at": "2025-12-15T22:23:20.994690+00:00",
+    "updated_at": "2025-12-15T22:31:01.305539+00:00",
+    "research_method": "builtin+gemini",
+    "research_version": "v3",
+    "notes": "Migrated from hardcoded builtin in nz_trip_event_narratives.py. Enhanced with cache data: Added description (2594 chars), Updated research_method: builtin+gemini"
+  }
+}

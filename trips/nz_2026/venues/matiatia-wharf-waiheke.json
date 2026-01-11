@@ -1,0 +1,46 @@
+{
+  "canonical_name": "Matiatia Wharf Ferry Terminal (Waiheke Island)",
+  "aliases": [
+    "Matiatia Wharf",
+    "Matiatia Terminal",
+    "Matiatia Ferry Terminal",
+    "Waiheke Ferry Terminal"
+  ],
+  "location": {
+    "region": "Waiheke Island",
+    "country": "New Zealand",
+    "coordinates": null
+  },
+  "venue_visual_description": "The Matiatia Wharf Ferry Terminal on Waiheke Island serves as a bustling gateway, nestled within the picturesque Matiatia Bay on the island's western side. The geographic setting is defined by steep hills, rising up to 80 meters, that frame the bay and are covered",
+  "primary_cues": [
+    "sail-like white membrane canopies",
+    "pier and wharf pilings",
+    "deep blue bay waterline"
+  ],
+  "secondary_cues": [
+    "green hills above the terminal",
+    "ferry wake ripples"
+  ],
+  "camera_suggestions": [
+    "macro close-up",
+    "three-quarter view",
+    "front-on facade"
+  ],
+  "negative_cues": [
+    "no text",
+    "no logos",
+    "no signage",
+    "no airplane",
+    "no cruise ship"
+  ],
+  "reference_image_urls": [],
+  "sources": [],
+  "venue_id": "matiatia-wharf-waiheke",
+  "metadata": {
+    "created_at": "2025-12-15T22:23:20.994690+00:00",
+    "updated_at": "2025-12-15T22:31:01.323741+00:00",
+    "research_method": "builtin+gemini",
+    "research_version": "v3",
+    "notes": "Migrated from hardcoded builtin in nz_trip_event_narratives.py. Enhanced with cache data: Added description (264 chars), Updated research_method: builtin+gemini"
+  }
+}

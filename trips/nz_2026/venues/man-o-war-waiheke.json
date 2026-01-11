@@ -1,0 +1,46 @@
+{
+  "canonical_name": "Man O' War Vineyards (Waiheke Island)",
+  "aliases": [
+    "Man O' War",
+    "Man O War",
+    "ManOWar"
+  ],
+  "location": {
+    "region": "Waiheke Island",
+    "country": "New Zealand",
+    "coordinates": null
+  },
+  "venue_visual_description": "Man O' War Vineyards is nestled on the remote eastern tip of Waiheke Island, a destination renowned for its rugged beauty and dramatic coastal scenery. The estate itself is vast, spanning 4,500 acres of pristine coastal land, encompassing not only vineyards but also rolling hills, lush farmland, olive groves, orchards, and restored native forests. The journey to Man O' War is an experience in itself, involving a scenic drive through native bush and coastal cliffs, or a direct ferry ride into Man O' War Bay. The geographic setting is characterized by its stunning beachfront location on Man O' War Bay, with golden sands and turquoise waters. The vineyards are a patchwork quilt of 75 individual hillside blocks, spread across diverse microclimates and soil profiles, ranging from volcanic clay to steep coastal slopes. This varied terrain allows for the cultivation of a wide array of grape varieties, including Syrah, Chardonnay, Viognier, Bordeaux blends, Pinot Gris, Sauvignon Blanc, and Rosé. The bay itself is sheltered, making it a popular spot for boating, swimming, and picnicking, with views extending across the Hauraki Gulf. Nearby, the historic Stony Batter, a WWII coastal defense fortress, offers another point of interest. The architectural focal point is the beachfront Tasting Room, which is unique as the only one of its kind in New Zealand, allowing visitors to enjoy wine with their toes in the sand. The setting is casual yet stunning, featuring picnic tables often shaded by pohutukawa trees. There is also a picturesque white chapel, built in the style of colonial churches, which adds a graceful historic note and is used for private ceremonies and events. Visible infrastructure includes the vineyard trellises stretching across the hillsides, roads winding through the estate, and a wharf at the north end of the bay for ferry access. The estate also offers a Forest Flight zipline experience, with dual ziplines gliding over towering Kauri canopies and connecting boardwalks through native bush, providing amazing coastal views. The general vibe of Man O' War Vineyards is one of relaxed, rustic hospitality combined with world-class wines and dramatic natural beauty. It offers a sense of seclusion and tranquility compared to busier parts of Waiheke Island, inviting visitors to linger and enjoy the slower pace of island life. The atmosphere is down-to-earth and authentically island-style, making it ideal for those seeking adventure and a taste of untamed Waiheke.",
+  "primary_cues": [
+    "beachfront lawn by the sea",
+    "sparkling blue bay",
+    "low modern tasting room / deck",
+    "coastal headland in distance"
+  ],
+  "secondary_cues": [
+    "wind-swept coastal trees",
+    "sunlit sea horizon"
+  ],
+  "camera_suggestions": [
+    "macro close-up",
+    "three-quarter view",
+    "front-on facade"
+  ],
+  "negative_cues": [
+    "no text",
+    "no logos",
+    "no signage",
+    "no generic inland vineyard",
+    "no airplane"
+  ],
+  "reference_image_urls": [],
+  "sources": [],
+  "venue_id": "man-o-war-waiheke",
+  "metadata": {
+    "created_at": "2025-12-15T22:23:20.994690+00:00",
+    "updated_at": "2025-12-15T22:31:01.316292+00:00",
+    "research_method": "builtin+gemini",
+    "research_version": "v3",
+    "notes": "Migrated from hardcoded builtin in nz_trip_event_narratives.py. Enhanced with cache data: Added description (2502 chars), Updated research_method: builtin+gemini"
+  }
+}
