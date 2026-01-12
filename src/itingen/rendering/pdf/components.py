@@ -97,7 +97,9 @@ class EventComponent(PDFComponent):
         
         details = []
         if event.location:
-            details.append(f"Loc: {event.location}")
+            # Sanitize Unicode characters for PDF compatibility
+            location = event.location.replace("→", "->")
+            details.append(f"Loc: {location}")
         if event.who:
             details.append(f"With: {', '.join(event.who)}")
         

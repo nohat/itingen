@@ -160,7 +160,7 @@ class MarkdownEmitter(BaseEmitter[Event]):
                              try:
                                  hours = int(event.duration.split("h")[0])
                                  if hours >= 6:
-                                     last_sleep_location = f"on the plane ({event.travel_from} → {event.travel_to})"
+                                     last_sleep_location = f"on the plane ({event.travel_from} -> {event.travel_to})"
                              except ValueError:
                                  pass
 

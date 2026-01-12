@@ -77,7 +77,7 @@ class TimelineProcessor:
                         try:
                             hours = int(str(event.duration).split("h")[0])
                             if hours >= 6:
-                                current_sleep_loc = f"on the plane ({event.travel_from} → {event.travel_to})"
+                                current_sleep_loc = f"on the plane ({event.travel_from} -> {event.travel_to})"
                         except ValueError:
                             pass
             
