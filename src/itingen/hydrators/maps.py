@@ -10,8 +10,13 @@ class MapsHydrator(BaseHydrator[Event]):
     and ensure deterministic builds when keys are missing.
     """
 
-    def __init__(self, api_key: str, cache_dir: Optional[str] = None):
-        """Initialize with Google Maps API key and optional cache directory."""
+    def __init__(self, api_key: Optional[str] = None, cache_dir: Optional[str] = None):
+        """Initialize with Google Maps API key and optional cache directory.
+        
+        Args:
+            api_key: Google Maps API key (defaults to GOOGLE_MAPS_API_KEY env var)
+            cache_dir: Optional cache directory for route caching
+        """
         self.client = GoogleMapsClient(api_key=api_key, cache_dir=cache_dir)
 
     def hydrate(self, items: List[Event]) -> List[Event]:

@@ -4,34 +4,83 @@ A standalone system for generating optimized travel itineraries based on venues,
 
 ## Features
 
-[To be documented after initial development]
+- AI-powered banner image generation using Google Gemini Nano Banana Pro
+- Google Maps integration for route planning and duration calculation
+- PDF and Markdown output formats
+- Configurable caching strategies
+- Test-driven development with 88% coverage
 
 ## Installation
 
-[To be documented based on tech stack chosen]
+```bash
+# Install dependencies
+pip install -e .
+
+# For development with additional tools
+pip install -e ".[dev]"
+```
 
 ## Usage
 
-[To be documented with examples]
+### 1. Set up API Keys
+
+Create a `.env` file from the template:
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env` with your API keys:
+
+```bash
+# Google Gemini API Key (for AI image generation)
+# Get yours from: https://ai.google.dev/
+GEMINI_API_KEY=your_gemini_api_key_here
+
+# Google Maps API Key (for directions, distance, and duration)
+# Get yours from: https://console.cloud.google.com/apis/library
+GOOGLE_MAPS_API_KEY=your_google_maps_api_key_here
+```
+
+### 2. Generate Itinerary
+
+```bash
+# Generate both PDF and Markdown formats
+python -m src.itingen.cli generate --trip nz_2026
+
+# Generate with AI banner images (requires GEMINI_API_KEY)
+python -m src.itingen.cli generate --trip nz_2026 --pdf-banners
+
+# Generate for specific person
+python -m src.itingen.cli generate --trip nz_2026 --person david
+```
+
+Output will be saved to `output/trips/[trip_name]/`
 
 ## Development
 
 This project uses strict Test-Driven Development (TDD).
 
 ### Prerequisites
-- [To be determined]
+- Python 3.14+
+- Google Gemini API key (for AI features)
+- Google Maps API key (for route planning)
 
 ### Setup
 ```bash
 # Clone the repository
 git clone <repo-url>
-cd trip-itinerary-generator
+cd itingen
 
 # Install dependencies
-[INSTALL_COMMAND]
+pip install -e ".[dev]"
+
+# Set up API keys
+cp .env.example .env
+# Edit .env with your API keys
 
 # Run tests
-[TEST_COMMAND]
+python -m pytest tests/unit/
 ```
 
 ### TDD Workflow

@@ -35,7 +35,7 @@ class TestGeminiClient:
         """Raise error when no API key available."""
         mock_env.return_value = None
         
-        with pytest.raises(ValueError, match="GOOGLE_API_KEY not found"):
+        with pytest.raises(ValueError, match="GEMINI_API_KEY not found"):
             GeminiClient()
 
     @patch("itingen.integrations.ai.gemini.os.environ.get")
