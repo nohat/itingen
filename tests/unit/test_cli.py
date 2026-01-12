@@ -30,6 +30,42 @@ def test_cli_generate_basic(mock_provider_cls, mock_orchestrator_cls, capsys):
     mock_provider_cls.assert_called_once()
     mock_orchestrator.execute.assert_called_once()
 
+
+@patch("itingen.cli.DayBannerGenerator")
+@patch("itingen.cli.GeminiClient")
+@patch("itingen.cli.PDFEmitter")
+@patch("itingen.cli.PipelineOrchestrator")
+@patch("itingen.cli.FileProvider")
+def test_cli_generate_pdf_banners_wires_pdf_emitter(
+    mock_provider_cls,
+    mock_orchestrator_cls,
+    mock_pdf_emitter_cls,
+    mock_gemini_cls,
+    mock_banner_gen_cls,
+):
+    mock_orchestrator = mock_orchestrator_cls.return_value
+    mock_orchestrator.execute.return_value = []
+    mock_orchestrator.validate.return_value = []
+
+    mock_banner_gen = mock_banner_gen_cls.return_value
+    mock_pdf_emitter_cls.return_value = MagicMock()
+
+    result = main([
+        "generate",
+        "--trip",
+        "nz_2026",
+        "--format",
+        "pdf",
+        "--pdf-banners",
+    ])
+
+    assert result == 0
+    mock_gemini_cls.assert_called_once()
+    mock_banner_gen_cls.assert_called_once()
+    mock_pdf_emitter_cls.assert_called_once()
+    _, kwargs = mock_pdf_emitter_cls.call_args
+    assert kwargs.get("banner_generator") == mock_banner_gen
+
 @patch("itingen.cli.FileProvider")
 def test_cli_venues_list(mock_provider_cls, capsys):
     """Test the venues list command."""

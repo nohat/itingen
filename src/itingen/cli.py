@@ -18,6 +18,8 @@ from itingen.pipeline.annotations import EmotionalAnnotationHydrator
 from itingen.pipeline.transitions_logic import TransitionHydrator
 from itingen.rendering.markdown import MarkdownEmitter
 from itingen.rendering.pdf.renderer import PDFEmitter
+from itingen.integrations.ai.gemini import GeminiClient
+from itingen.rendering.pdf.banners import DayBannerGenerator
 
 
 def main(args: Optional[List[str]] = None) -> int:
@@ -42,6 +44,11 @@ def main(args: Optional[List[str]] = None) -> int:
         help="Output format (default: both)"
     )
     generate_parser.add_argument("--output-dir", type=Path, default=Path("output"), help="Directory to write output files")
+    generate_parser.add_argument(
+        "--pdf-banners",
+        action="store_true",
+        help="Enable AI-generated day banner images in the PDF (requires API key; may incur costs)",
+    )
 
     # Venues command
     venues_parser = subparsers.add_parser("venues", help="Manage trip venues")
@@ -101,7 +108,16 @@ def _handle_generate(args: argparse.Namespace) -> int:
         if args.format in ["markdown", "both"]:
             orchestrator.add_emitter(MarkdownEmitter())
         if args.format in ["pdf", "both"]:
-            orchestrator.add_emitter(PDFEmitter())
+            banner_generator = None
+            if getattr(args, "pdf_banners", False):
+                output_dir = args.output_dir / args.trip
+                if args.person:
+                    output_dir = output_dir / args.person
+                cache_dir = output_dir / ".ai_cache"
+                client = GeminiClient()
+                banner_generator = DayBannerGenerator(client=client, cache_dir=cache_dir)
+
+            orchestrator.add_emitter(PDFEmitter(banner_generator=banner_generator))
             
         # Validate and Execute
         issues = orchestrator.validate()
