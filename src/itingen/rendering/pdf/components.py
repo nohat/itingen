@@ -1,12 +1,15 @@
 """PDF rendering components for itinerary events.
 
 AIDEV-NOTE: These components handle the layout and styling of specific 
-itinerary elements (headings, details, descriptions) using the PDFTheme.
+itinerary elements using ReportLab's story-based rendering (not FPDF2).
 """
 
-from typing import Any, Tuple
+from typing import Any, List
 from pathlib import Path
-from fpdf import FPDF
+from xml.sax.saxutils import escape
+from reportlab.platypus import Paragraph, Spacer, Table, TableStyle, Image, PageBreak, KeepTogether
+from reportlab.lib.units import inch
+from reportlab.lib import colors
 from itingen.rendering.pdf.themes import PDFTheme
 from itingen.core.domain.events import Event
 from itingen.rendering.timeline import TimelineDay
@@ -15,44 +18,18 @@ from itingen.utils.duration import format_duration
 class PDFComponent:
     """Base class for PDF layout components."""
     
-    def render(self, pdf: FPDF, theme: PDFTheme, data: Any):
-        """Render the component to the PDF."""
+    def render(self, story: List[Any], styles: Any, theme: PDFTheme, data: Any):
+        """Render the component by appending flowables to the story."""
         raise NotImplementedError
-
-    def _hex_to_rgb(self, hex_color: str) -> Tuple[int, int, int]:
-        """Convert hex color string to RGB tuple."""
-        hex_color = hex_color.lstrip('#')
-        return tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4))
 
 
 class EventComponent(PDFComponent):
     """Renders a single event block with thumbnail support."""
 
-    def render(self, pdf: FPDF, theme: PDFTheme, event: Event):
-        """Render the event block with its heading, details, description, and thumbnail."""
+    def render(self, story: List[Any], styles: Any, theme: PDFTheme, event: Event):
+        """Render the event block by appending flowables to the story."""
         
-        # Layout constants
-        PAGE_WIDTH = pdf.epw
-        IMAGE_SIZE = 35  # mm (square)
-        TIME_WIDTH = 25  # mm
-        PADDING = 4
-        
-        # Calculate available width for content
-        # If image exists: PAGE_WIDTH - TIME_WIDTH - IMAGE_SIZE - PADDING*2
-        # If no image: PAGE_WIDTH - TIME_WIDTH - PADDING
-        
-        has_image = bool(event.image_path and Path(event.image_path).exists())
-        
-        content_width = PAGE_WIDTH - TIME_WIDTH - PADDING
-        if has_image:
-            content_width -= (IMAGE_SIZE + PADDING)
-            
-        start_y = pdf.get_y()
-        
-        # --- Time Column (Left) ---
-        pdf.set_font(theme.fonts["body"], "B", 10)
-        pdf.set_text_color(*self._hex_to_rgb(theme.colors["text"]))
-        
+        # Format time
         time_str = "TBD"
         if event.time_local:
             try:
@@ -60,109 +37,72 @@ class EventComponent(PDFComponent):
                     time_str = event.time_local.split(" ")[1]
                 else:
                     time_str = event.time_local
-                # Simple formatting: HH:MM:SS -> HH:MM
                 if time_str.count(":") == 2:
                     time_str = ":".join(time_str.split(":")[:2])
             except Exception:
                 pass
         
-        pdf.cell(TIME_WIDTH, 5, time_str, ln=0)
-        
-        # Save X position for content
-        content_x = pdf.get_x()
-        
-        # --- Image Column (Right) ---
-        # We render image first if it exists to reserve space, or calculate layout?
-        # Actually in FPDF layout flow, it's easier to place image absolutely or manage cursors.
-        # Let's render content then place image? Or render image then content?
-        # FPDF flow: we can set XY.
-        
-        if has_image:
-            # Draw image at right margin
-            image_x = pdf.w - pdf.r_margin - IMAGE_SIZE
-            pdf.image(event.image_path, x=image_x, y=start_y, w=IMAGE_SIZE, h=IMAGE_SIZE)
-        
-        # --- Content Column (Middle) ---
-        pdf.set_xy(content_x, start_y)
-        
-        # Heading
-        pdf.set_font(theme.fonts["heading"], "B", 12)
+        # Build event content
         heading = event.event_heading or "Untitled Event"
-        pdf.multi_cell(content_width, 6, heading)
         
-        # Details (Location, Who)
-        pdf.set_x(content_x)
-        pdf.set_font(theme.fonts["body"], "", 9)
-        pdf.set_text_color(*self._hex_to_rgb(theme.colors["text"]))
-        
+        # Build details
         details = []
         if event.location:
-            # Sanitize Unicode characters for PDF compatibility
-            location = event.location.replace("→", "->")
-            details.append(f"Loc: {location}")
+            # Keep Unicode characters - ReportLab handles them
+            details.append(f"<b>Location:</b> {escape(event.location)}")
         if event.who:
-            details.append(f"With: {', '.join(event.who)}")
+            details.append(f"<b>With:</b> {escape(', '.join(event.who))}")
+        
+        # Build table data: [time, content, image]
+        content_parts = [f"<b>{escape(heading)}</b>"]
         
         if details:
-            pdf.multi_cell(content_width, 5, " | ".join(details))
-            
-        # Duration
-        if getattr(event, "duration_seconds", None):
-            duration_str = format_duration(event.duration_seconds)
-            if duration_str:
-                pdf.set_xy(pdf.l_margin, pdf.get_y()) # Go to left margin (under time)
-                pdf.set_font(theme.fonts["body"], "I", 8)
-                pdf.cell(TIME_WIDTH, 5, duration_str, ln=0)
-                pdf.set_xy(content_x, pdf.get_y()) # Back to content column (same line)
-
-        # Description
+            content_parts.append("<br/>".join(details))
+        
         if event.description:
-            pdf.set_x(content_x)
-            pdf.ln(1)
-            pdf.set_font(theme.fonts["body"], "", 10)
-            pdf.multi_cell(content_width, 5, event.description)
-            
-        # Narrative (AI Generated)
+            content_parts.append(f"<br/>{escape(event.description)}")
+        
         if getattr(event, "narrative", None):
-            pdf.set_x(content_x)
-            pdf.ln(2)
-            pdf.set_font(theme.fonts["body"], "I", 9)
-            # Add a subtle border or background? For now just italics text
-            pdf.set_text_color(80, 80, 80) # Dark gray
-            pdf.multi_cell(content_width, 5, event.narrative)
-            pdf.set_text_color(*self._hex_to_rgb(theme.colors["text"])) # Reset
-            
-        # Notes
+            content_parts.append(f"<br/><i>{escape(event.narrative)}</i>")
+        
         if getattr(event, "notes", None):
-            pdf.set_x(content_x)
-            pdf.ln(2)
-            pdf.set_font(theme.fonts["body"], "B", 9)
-            pdf.set_text_color(200, 0, 0) # Dark red for important notes
-            pdf.multi_cell(content_width, 5, f"NOTE: {event.notes}")
-            pdf.set_text_color(*self._hex_to_rgb(theme.colors["text"])) # Reset
-
-        # Transition / Logistics
+            content_parts.append(f"<br/><font color='red'><b>NOTE:</b> {escape(event.notes)}</font>")
+        
         if event.travel_to or event.transition_from_prev:
-            pdf.set_x(content_x)
-            pdf.ln(2)
-            pdf.set_font(theme.fonts["body"], "", 9)
             trans_text = event.transition_from_prev or f"Travel to {event.travel_to}"
-            pdf.multi_cell(content_width, 5, f"Transit: {trans_text}")
-
-        # --- Footer / Spacing ---
-        # Ensure we clear the image height
-        current_y = pdf.get_y()
+            content_parts.append(f"<br/><i>Transit: {escape(trans_text)}</i>")
+        
+        content_html = "".join(content_parts)
+        
+        # Check for image
+        has_image = bool(event.image_path and Path(event.image_path).exists())
+        image_cell = ""
         if has_image:
-            image_bottom = start_y + IMAGE_SIZE
-            if current_y < image_bottom:
-                pdf.set_y(image_bottom)
+            try:
+                image_cell = Image(event.image_path, width=0.66*inch, height=0.66*inch)
+            except Exception:
+                image_cell = ""
         
-        pdf.ln(4)
+        # Create table layout: [time | content | image]
+        table_data = [[
+            Paragraph(f"<b>{escape(time_str)}</b>", styles["event_details"]),
+            Paragraph(content_html, styles["itinerary_body"]),
+            image_cell,
+        ]]
         
-        # Separator line
-        pdf.set_draw_color(230, 230, 230) # Light gray
-        pdf.line(pdf.l_margin, pdf.get_y(), pdf.w - pdf.r_margin, pdf.get_y())
-        pdf.ln(4)
+        col_widths = [0.8*inch, 5.2*inch, 0.8*inch] if has_image else [0.8*inch, 6.0*inch, 0]
+        
+        table = Table(table_data, colWidths=col_widths)
+        table.setStyle(TableStyle([
+            ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+            ('LEFTPADDING', (0, 0), (-1, -1), 6),
+            ('RIGHTPADDING', (0, 0), (-1, -1), 6),
+            ('TOPPADDING', (0, 0), (-1, -1), 6),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+            ('LINEBELOW', (0, 0), (-1, -1), 1, colors.HexColor("#E5E7EB")),
+        ]))
+        
+        story.append(KeepTogether([table, Spacer(1, 10)]))
 
 
 class DayComponent(PDFComponent):
@@ -171,58 +111,48 @@ class DayComponent(PDFComponent):
     def __init__(self):
         self.event_component = EventComponent()
 
-    def render(self, pdf: FPDF, theme: PDFTheme, day: TimelineDay):
-        """Render the day block."""
+    def render(self, story: List[Any], styles: Any, theme: PDFTheme, day: TimelineDay):
+        """Render the day block by appending flowables to the story."""
         
         # Start new page for each day
-        pdf.add_page()
+        story.append(PageBreak())
         
-        # --- Day Banner ---
-        # If banner image exists, render it at top
-        banner_height = 50 # mm ~ 16:9ish for page width
-        
+        # Day Banner (if exists)
         if day.banner_image_path and Path(day.banner_image_path).exists():
-            # Full width image
-            pdf.image(day.banner_image_path, x=0, y=0, w=pdf.w, h=banner_height)
-            pdf.set_y(banner_height + 5)
+            try:
+                # Full width banner image
+                banner_img = Image(day.banner_image_path, width=6.5*inch, height=3.65*inch)
+                story.append(banner_img)
+                story.append(Spacer(1, 0.2*inch))
+            except Exception:
+                story.append(Spacer(1, 0.3*inch))
         else:
-            # Just some space if no banner
-            pdf.ln(10)
-            
-        # --- Day Title ---
-        pdf.set_font(theme.fonts["heading"], "B", 18)
-        pdf.set_text_color(*self._hex_to_rgb(theme.colors["primary"]))
-        pdf.cell(0, 10, day.day_header, ln=True)
-        pdf.ln(5)
+            story.append(Spacer(1, 0.3*inch))
         
-        # --- Wake Up Info ---
+        # Day Title
+        story.append(Paragraph(escape(day.day_header), styles["day_header"]))
+        story.append(Spacer(1, 0.1*inch))
+        
+        # Wake Up Info
         if day.wake_up_location:
-            pdf.set_font(theme.fonts["body"], "", 10)
-            pdf.set_text_color(*self._hex_to_rgb(theme.colors["text"]))
-            pdf.cell(0, 6, f"Wake up: {day.wake_up_location}", ln=True)
+            story.append(Paragraph(f"<b>Wake up:</b> {escape(day.wake_up_location)}", styles["itinerary_body"]))
             
         if day.first_event_target_time and day.first_event_title:
-             pdf.set_font(theme.fonts["body"], "I", 9)
-             pdf.cell(0, 6, f"   (Be ready by {day.first_event_target_time} for {day.first_event_title})", ln=True)
-             
-        pdf.ln(5)
+            story.append(Paragraph(
+                f"<i>(Be ready by {escape(day.first_event_target_time)} for {escape(day.first_event_title)})</i>",
+                styles["itinerary_body"]
+            ))
         
-        # --- Events ---
+        story.append(Spacer(1, 0.15*inch))
+        
+        # Events
         for event in day.events:
-            # Check for page break
-            # Heuristic: if less than 40mm left, new page
-            if pdf.h - pdf.get_y() - pdf.b_margin < 40:
-                pdf.add_page()
-                
-            self.event_component.render(pdf, theme, event)
-            
-        # --- Sleep Info ---
+            self.event_component.render(story, styles, theme, event)
+        
+        # Sleep Info
         if day.sleep_location:
-            # Ensure space
-            if pdf.h - pdf.get_y() - pdf.b_margin < 20:
-                pdf.add_page()
-                
-            pdf.ln(5)
-            pdf.set_font(theme.fonts["body"], "B", 10)
-            pdf.set_text_color(*self._hex_to_rgb(theme.colors["primary"]))
-            pdf.cell(0, 10, f"Sleep at: {day.sleep_location}", ln=True, align="R")
+            story.append(Spacer(1, 0.15*inch))
+            story.append(Paragraph(
+                f"<b>Sleep at:</b> {escape(day.sleep_location)}",
+                styles["itinerary_body"]
+            ))

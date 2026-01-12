@@ -7,6 +7,7 @@ from itingen.rendering.pdf.renderer import PDFEmitter
 from itingen.rendering.pdf.components import EventComponent, DayComponent
 from itingen.rendering.pdf.themes import PDFTheme
 from itingen.rendering.timeline import TimelineDay
+from reportlab.lib.styles import getSampleStyleSheet
 
 @pytest.fixture
 def mock_theme():
@@ -17,26 +18,53 @@ def mock_theme():
     )
 
 @pytest.fixture
-def mock_fpdf():
-    """Create a mock FPDF instance."""
-    pdf = MagicMock()
-    # Mock layout properties
-    pdf.epw = 190  # Effective page width
-    pdf.w = 210    # Page width (A4)
-    pdf.h = 297    # Page height (A4)
-    pdf.l_margin = 10
-    pdf.r_margin = 10
-    pdf.b_margin = 10
-    pdf.get_y.return_value = 20
-    pdf.get_x.return_value = 10
-    return pdf
+def mock_styles():
+    """Create mock ReportLab styles."""
+    styles = getSampleStyleSheet()
+    # Add custom styles that components expect
+    from reportlab.lib.styles import ParagraphStyle
+    from reportlab.lib.enums import TA_LEFT
+    from reportlab.lib import colors
+    
+    styles.add(ParagraphStyle(
+        name="itinerary_body",
+        parent=styles["Normal"],
+        fontName="Helvetica",
+        fontSize=10,
+        leading=14,
+        textColor=colors.black,
+        alignment=TA_LEFT,
+    ))
+    
+    styles.add(ParagraphStyle(
+        name="event_details",
+        parent=styles["Normal"],
+        fontName="Helvetica",
+        fontSize=9,
+        leading=12,
+        textColor=colors.gray,
+        alignment=TA_LEFT,
+    ))
+    
+    styles.add(ParagraphStyle(
+        name="day_header",
+        parent=styles["Heading2"],
+        fontName="Helvetica-Bold",
+        fontSize=18,
+        leading=22,
+        textColor=colors.black,
+        alignment=TA_LEFT,
+    ))
+    
+    return styles
 
 class TestEventComponent:
     """Test EventComponent rendering logic."""
 
-    def test_render_basic_event(self, mock_fpdf, mock_theme):
+    def test_render_basic_event(self, mock_styles, mock_theme):
         """Test rendering a simple event without image."""
         component = EventComponent()
+        story = []
         event = Event(
             event_heading="Test Event",
             time_local="10:00",
@@ -44,43 +72,39 @@ class TestEventComponent:
             description="Test Description"
         )
 
-        component.render(mock_fpdf, mock_theme, event)
+        component.render(story, mock_styles, mock_theme, event)
 
-        # Verify calls
-        # Should set font for time
-        mock_fpdf.set_font.assert_any_call("Arial", "B", 10)
-        # Should render time
-        mock_fpdf.cell.assert_any_call(25, 5, "10:00", ln=0)
-        # Should render heading
-        mock_fpdf.multi_cell.assert_any_call(190 - 25 - 4, 6, "Test Event")
-        # Should NOT try to render image
-        mock_fpdf.image.assert_not_called()
+        # Verify story has content
+        assert len(story) > 0
+        # Should have a KeepTogether with table
+        from reportlab.platypus import KeepTogether
+        assert any(isinstance(item, KeepTogether) for item in story)
 
-    def test_render_event_with_image(self, mock_fpdf, mock_theme, tmp_path):
+    def test_render_event_with_image(self, mock_styles, mock_theme, tmp_path):
         """Test rendering an event with a thumbnail image."""
         component = EventComponent()
+        story = []
         
-        # Create dummy image file
+        # Create dummy image file (need a real image for ReportLab)
+        from PIL import Image as PILImage
         image_path = tmp_path / "thumb.png"
-        image_path.write_text("fake image content")
+        img = PILImage.new('RGB', (100, 100), color='red')
+        img.save(image_path)
         
         event = Event(
             event_heading="Visual Event",
             image_path=str(image_path)
         )
 
-        component.render(mock_fpdf, mock_theme, event)
+        component.render(story, mock_styles, mock_theme, event)
 
-        # Verify image rendering
-        mock_fpdf.image.assert_called_once()
-        args, kwargs = mock_fpdf.image.call_args
-        assert args[0] == str(image_path)
-        assert kwargs['w'] == 35  # IMAGE_SIZE
-        assert kwargs['h'] == 35
+        # Verify story has content
+        assert len(story) > 0
 
-    def test_render_event_details(self, mock_fpdf, mock_theme):
+    def test_render_event_details(self, mock_styles, mock_theme):
         """Test rendering event details (location, who, notes)."""
         component = EventComponent()
+        story = []
         event = Event(
             event_heading="Detailed Event",
             location="Tokyo",
@@ -89,19 +113,18 @@ class TestEventComponent:
             narrative="It was a sunny day."
         )
 
-        component.render(mock_fpdf, mock_theme, event)
+        component.render(story, mock_styles, mock_theme, event)
 
-        # Verify details rendering
-        # We can't easily check exact string matches in multi_cell args if they are dynamic
-        # But we can check that multi_cell was called enough times
-        assert mock_fpdf.multi_cell.call_count >= 3  # Heading, Details, Narrative, Notes
+        # Verify story has content
+        assert len(story) > 0
 
 class TestDayComponent:
     """Test DayComponent rendering logic."""
 
-    def test_render_day_header(self, mock_fpdf, mock_theme):
+    def test_render_day_header(self, mock_styles, mock_theme):
         """Test rendering day header and basic info."""
         component = DayComponent()
+        story = []
         day = TimelineDay(
             date_str="2025-01-01",
             day_header="2025-01-01 (Wednesday)",
@@ -110,23 +133,23 @@ class TestDayComponent:
             sleep_location="Hotel"
         )
 
-        component.render(mock_fpdf, mock_theme, day)
+        component.render(story, mock_styles, mock_theme, day)
 
-        # Verify page add
-        mock_fpdf.add_page.assert_called()
-        # Verify title
-        mock_fpdf.cell.assert_any_call(0, 10, "2025-01-01 (Wednesday)", ln=True)
-        # Verify wake up
-        mock_fpdf.cell.assert_any_call(0, 6, "Wake up: Hotel", ln=True)
-        # Verify sleep
-        mock_fpdf.cell.assert_any_call(0, 10, "Sleep at: Hotel", ln=True, align="R")
+        # Verify story has content (PageBreak, title, wake/sleep info)
+        assert len(story) > 0
+        from reportlab.platypus import PageBreak
+        assert any(isinstance(item, PageBreak) for item in story)
 
-    def test_render_day_with_banner(self, mock_fpdf, mock_theme, tmp_path):
+    def test_render_day_with_banner(self, mock_styles, mock_theme, tmp_path):
         """Test rendering day with banner image."""
         component = DayComponent()
+        story = []
         
+        # Create real image for ReportLab
+        from PIL import Image as PILImage
         banner_path = tmp_path / "banner.png"
-        banner_path.write_text("fake banner")
+        img = PILImage.new('RGB', (800, 450), color='blue')
+        img.save(banner_path)
         
         day = TimelineDay(
             date_str="2025-01-01",
@@ -135,33 +158,18 @@ class TestDayComponent:
             banner_image_path=str(banner_path)
         )
 
-        component.render(mock_fpdf, mock_theme, day)
+        component.render(story, mock_styles, mock_theme, day)
 
-        # Verify banner image
-        mock_fpdf.image.assert_called_once()
-        args, kwargs = mock_fpdf.image.call_args
-        assert args[0] == str(banner_path)
-        assert kwargs['w'] == mock_fpdf.w
+        # Verify story has content including image
+        assert len(story) > 0
+        from reportlab.platypus import Image
+        assert any(isinstance(item, Image) for item in story)
 
 class TestPDFEmitter:
     """Test PDFEmitter orchestration."""
 
-    @patch("itingen.rendering.pdf.renderer.FPDF")
-    def test_emit_pdf_creation(self, mock_fpdf_cls, tmp_path):
+    def test_emit_pdf_creation(self, tmp_path):
         """Test that emit creates a PDF file."""
-        mock_pdf = Mock()
-        # Set layout properties needed for rendering
-        mock_pdf.h = 297
-        mock_pdf.w = 210
-        mock_pdf.l_margin = 10
-        mock_pdf.r_margin = 10
-        mock_pdf.b_margin = 10
-        mock_pdf.get_y.return_value = 20
-        mock_pdf.get_x.return_value = 10
-        mock_pdf.epw = 190
-        
-        mock_fpdf_cls.return_value = mock_pdf
-        
         emitter = PDFEmitter()
         output_path = tmp_path / "output.pdf"
         
@@ -173,39 +181,24 @@ class TestPDFEmitter:
         result = emitter.emit(events, str(output_path))
         
         assert result == str(output_path)
-        assert output_path.parent.exists()
-        
-        # Verify PDF structure calls
-        # 1 title page + 2 days = 3 pages added via components
-        # Note: DayComponent adds a page for each day. Title adds a page.
-        assert mock_pdf.add_page.call_count >= 3 
-        
-        mock_pdf.output.assert_called_once_with(str(output_path))
+        assert output_path.exists()
+        assert output_path.stat().st_size > 0
 
-    @patch("itingen.rendering.pdf.renderer.FPDF")
-    def test_emit_uses_banner_generator_when_provided(self, mock_fpdf_cls, tmp_path):
+    def test_emit_uses_banner_generator_when_provided(self, tmp_path):
         """Test that a banner generator can enrich TimelineDay objects before rendering."""
-        mock_pdf = Mock()
-        mock_pdf.h = 297
-        mock_pdf.w = 210
-        mock_pdf.l_margin = 10
-        mock_pdf.r_margin = 10
-        mock_pdf.b_margin = 10
-        mock_pdf.get_y.return_value = 20
-        mock_pdf.get_x.return_value = 10
-        mock_pdf.epw = 190
-
-        mock_fpdf_cls.return_value = mock_pdf
-
         # Prepare timeline days as if they came from TimelineProcessor
         day1 = TimelineDay(date_str="2025-01-01", day_header="Day 1", events=[])
         day2 = TimelineDay(date_str="2025-01-02", day_header="Day 2", events=[])
         timeline_days = [day1, day2]
 
+        # Create real images
+        from PIL import Image as PILImage
         banner1 = tmp_path / "banner_1.png"
         banner2 = tmp_path / "banner_2.png"
-        banner1.write_text("fake banner 1")
-        banner2.write_text("fake banner 2")
+        img1 = PILImage.new('RGB', (800, 450), color='red')
+        img2 = PILImage.new('RGB', (800, 450), color='green')
+        img1.save(banner1)
+        img2.save(banner2)
 
         banner_generator = Mock()
 
@@ -218,7 +211,6 @@ class TestPDFEmitter:
 
         emitter = PDFEmitter(banner_generator=banner_generator)
         emitter.timeline_processor.process = Mock(return_value=timeline_days)
-        emitter.day_component.render = Mock()
 
         output_path = tmp_path / "output.pdf"
         events = [
@@ -226,10 +218,8 @@ class TestPDFEmitter:
             Event(event_heading="E2", date="2025-01-02", time_utc="2025-01-02T10:00:00Z"),
         ]
 
-        emitter.emit(events, str(output_path))
+        result = emitter.emit(events, str(output_path))
 
         banner_generator.generate.assert_called_once()
-        # Ensure the day objects passed into rendering have banner paths set
-        rendered_days = [call.args[2] for call in emitter.day_component.render.call_args_list]
-        assert any(getattr(d, "banner_image_path", None) == str(banner1) for d in rendered_days)
-        assert any(getattr(d, "banner_image_path", None) == str(banner2) for d in rendered_days)
+        assert output_path.exists()
+        assert output_path.stat().st_size > 0

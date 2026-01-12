@@ -1,10 +1,16 @@
-from typing import List, Optional, Tuple, Protocol
+from typing import List, Optional, Protocol
 from pathlib import Path
-from fpdf import FPDF
+from reportlab.lib.pagesizes import LETTER
+from reportlab.lib.units import inch
+from reportlab.platypus import BaseDocTemplate, Frame, PageTemplate, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.enums import TA_LEFT, TA_CENTER
+from reportlab.lib import colors
 from itingen.core.base import BaseEmitter
 from itingen.core.domain.events import Event
 from itingen.rendering.pdf.themes import PDFTheme
 from itingen.rendering.pdf.components import DayComponent
+from itingen.rendering.pdf.fonts import register_fonts, get_ui_font, get_ui_bold_font
 from itingen.rendering.timeline import TimelineProcessor, TimelineDay
 
 
@@ -14,8 +20,8 @@ class BannerGenerator(Protocol):
 class PDFEmitter(BaseEmitter[Event]):
     """Emitter that generates a PDF representation of the itinerary.
     
-    AIDEV-NOTE: Uses a theme and components for flexible styling.
-    Now supports daily aggregation, banners, and thumbnails via TimelineProcessor.
+    AIDEV-NOTE: Uses ReportLab (not FPDF2) with Unicode font support.
+    Supports daily aggregation, banners, and thumbnails via TimelineProcessor.
     """
 
     def __init__(
@@ -27,9 +33,12 @@ class PDFEmitter(BaseEmitter[Event]):
         self.day_component = DayComponent()
         self.timeline_processor = TimelineProcessor()
         self.banner_generator = banner_generator
+        
+        # Register Unicode fonts on initialization
+        register_fonts()
 
     def emit(self, itinerary: List[Event], output_path: str) -> str:
-        """Write the itinerary to a PDF file."""
+        """Write the itinerary to a PDF file using ReportLab."""
         path = Path(output_path)
         if not path.suffix:
             path = path.with_suffix(".pdf")
@@ -42,36 +51,119 @@ class PDFEmitter(BaseEmitter[Event]):
         if self.banner_generator is not None:
             timeline_days = self.banner_generator.generate(timeline_days)
         
-        # Initialize PDF
-        pdf = FPDF()
-        pdf.set_auto_page_break(auto=True, margin=15)
+        # Create ReportLab document
+        doc = BaseDocTemplate(
+            str(path),
+            pagesize=LETTER,
+            leftMargin=0.75 * inch,
+            rightMargin=0.75 * inch,
+            topMargin=0.72 * inch,
+            bottomMargin=0.70 * inch,
+            title="Trip Itinerary",
+        )
         
-        # Render title page
-        pdf.add_page()
-        pdf.set_font(self.theme.fonts["heading"], "B", 24)
-        pdf.set_text_color(*self._hex_to_rgb(self.theme.colors["primary"]))
+        frame = Frame(
+            doc.leftMargin,
+            doc.bottomMargin,
+            doc.width,
+            doc.height,
+            id="normal",
+        )
         
-        # Title vertical centering
-        pdf.set_y(pdf.h / 3)
-        pdf.cell(0, 10, "Trip Itinerary", ln=True, align="C")
+        doc.addPageTemplates([PageTemplate(id="main", frames=[frame])])
         
-        # Date range
+        # Build styles
+        styles = self._build_styles()
+        
+        # Build story (content)
+        story = []
+        
+        # Title page
+        story.append(Spacer(1, 2 * inch))
+        story.append(Paragraph("Trip Itinerary", styles["itinerary_title"]))
+        story.append(Spacer(1, 0.3 * inch))
+        
         if timeline_days:
             start_date = timeline_days[0].date_str
             end_date = timeline_days[-1].date_str
-            pdf.set_font(self.theme.fonts["body"], "", 14)
-            pdf.set_text_color(*self._hex_to_rgb(self.theme.colors["text"]))
-            pdf.ln(5)
-            pdf.cell(0, 10, f"{start_date} to {end_date}", ln=True, align="C")
-
+            story.append(Paragraph(f"{start_date} to {end_date}", styles["itinerary_subtitle"]))
+        
         # Render each day
         for day in timeline_days:
-            self.day_component.render(pdf, self.theme, day)
+            self.day_component.render(story, styles, self.theme, day)
         
-        pdf.output(str(path))
+        doc.build(story)
         return str(path)
 
-    def _hex_to_rgb(self, hex_color: str) -> Tuple[int, int, int]:
-        """Convert hex color string to RGB tuple."""
-        hex_color = hex_color.lstrip('#')
-        return tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4))
+    def _build_styles(self):
+        """Build ReportLab paragraph styles with Unicode fonts."""
+        styles = getSampleStyleSheet()
+        
+        ui_font = get_ui_font()
+        ui_bold = get_ui_bold_font()
+        
+        # Create custom styles with unique names
+        styles.add(ParagraphStyle(
+            name="itinerary_title",
+            parent=styles["Heading1"],
+            fontName=ui_bold,
+            fontSize=24,
+            leading=28,
+            textColor=colors.HexColor(self.theme.colors.get("primary", "#0F766E")),
+            alignment=TA_CENTER,
+            spaceAfter=12,
+        ))
+        
+        styles.add(ParagraphStyle(
+            name="itinerary_subtitle",
+            parent=styles["Normal"],
+            fontName=ui_font,
+            fontSize=14,
+            leading=18,
+            textColor=colors.HexColor(self.theme.colors.get("text", "#111827")),
+            alignment=TA_CENTER,
+            spaceAfter=20,
+        ))
+        
+        styles.add(ParagraphStyle(
+            name="day_header",
+            parent=styles["Heading2"],
+            fontName=ui_bold,
+            fontSize=18,
+            leading=22,
+            textColor=colors.HexColor(self.theme.colors.get("primary", "#0F766E")),
+            alignment=TA_LEFT,
+            spaceAfter=10,
+        ))
+        
+        styles.add(ParagraphStyle(
+            name="itinerary_body",
+            parent=styles["Normal"],
+            fontName=ui_font,
+            fontSize=10,
+            leading=14,
+            textColor=colors.HexColor(self.theme.colors.get("text", "#111827")),
+            alignment=TA_LEFT,
+        ))
+        
+        styles.add(ParagraphStyle(
+            name="event_heading",
+            parent=styles["Normal"],
+            fontName=ui_bold,
+            fontSize=12,
+            leading=15,
+            textColor=colors.HexColor(self.theme.colors.get("text", "#111827")),
+            alignment=TA_LEFT,
+        ))
+        
+        styles.add(ParagraphStyle(
+            name="event_details",
+            parent=styles["Normal"],
+            fontName=ui_font,
+            fontSize=9,
+            leading=12,
+            textColor=colors.HexColor("#6B7280"),
+            alignment=TA_LEFT,
+        ))
+        
+        return styles

@@ -8,10 +8,11 @@ This system generates optimized travel itineraries based on venues, constraints,
 
 ### Before ANY Code Changes
 1. **ALWAYS** check for existing anchor comments: `grep -r "AIDEV-" src/`
-2. **ALWAYS** run tests before AND after changes: `[TEST_COMMAND]`
-3. **ALWAYS** commit working code before starting new features
-4. **NEVER** modify tests to make them pass - fix the implementation instead
-5. **NEVER** delete AIDEV-NOTE comments without explicit human approval
+2. **ALWAYS** verify implementation matches specifications (ARCHITECTURE.md, requirements.txt, pyproject.toml)
+3. **ALWAYS** run tests before AND after changes: `[TEST_COMMAND]`
+4. **ALWAYS** commit working code before starting new features
+5. **NEVER** modify tests to make them pass - fix the implementation instead
+6. **NEVER** delete AIDEV-NOTE comments without explicit human approval
 
 ### Git Workflow
 - Branch naming: `feat/description`, `fix/description`, `refactor/description`
@@ -138,6 +139,8 @@ NEVER remove AIDEV-NOTE comments without explicit human instruction.
 13. **SWITCH TASKS WITHOUT COMPLETING LAND PROTOCOL**
 14. **LEAVE UNCOMMITTED CHANGES WHEN RESPONDING TO NEW REQUESTS**
 15. **CONTINUE WORK AFTER USER SAYS "DONE", "STOP", "PAUSE" WITHOUT LANDING**
+16. **IMPLEMENT WITH LIBRARIES NOT SPECIFIED IN requirements.txt/pyproject.toml**
+17. **DEVIATE FROM ARCHITECTURE.md WITHOUT EXPLICIT APPROVAL**
 
 ## Domain Glossary
 - **Venue**: A location that can be visited (restaurant, attraction, etc.)
