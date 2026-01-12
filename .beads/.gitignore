@@ -28,6 +28,12 @@ beads.left.meta.json
 beads.right.jsonl
 beads.right.meta.json
 
+# Additional merge/sync artifacts
+redirect
+last-touched
+.sync.lock
+sync_base.jsonl
+
 # Keep JSONL exports and config (source of truth for git)
 !issues.jsonl
 !interactions.jsonl
