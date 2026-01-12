@@ -70,4 +70,4 @@ Provide a summary for the next session:
 - What's blocked and why
 - Recommended next task: `bd ready --limit 1`
 
-Output a ready-to-paste prompt for starting the next session.
+IMPORTANT: ALWAYS Output a ready-to-paste prompt within triple backticks (```) for starting the next session.
