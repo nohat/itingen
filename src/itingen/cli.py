@@ -22,6 +22,8 @@ from itingen.integrations.ai.gemini import GeminiClient
 from itingen.hydrators.ai.banner import BannerImageHydrator
 from itingen.hydrators.ai.cache import AiCache
 
+DayBannerGenerator = BannerImageHydrator
+
 
 def main(args: Optional[List[str]] = None) -> int:
     """Main entry point for the itingen CLI."""
@@ -123,7 +125,7 @@ def _handle_generate(args: argparse.Namespace) -> int:
                 cache_dir = output_dir / ".ai_cache"
                 client = GeminiClient()
                 ai_cache = AiCache(cache_dir)
-                banner_generator = BannerImageHydrator(
+                banner_generator = DayBannerGenerator(
                     client=client, 
                     cache=ai_cache,
                     cache_policy="stable_date",  # Stable during development

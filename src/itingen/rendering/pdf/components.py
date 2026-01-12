@@ -13,7 +13,6 @@ from reportlab.lib import colors
 from itingen.rendering.pdf.themes import PDFTheme
 from itingen.core.domain.events import Event
 from itingen.rendering.timeline import TimelineDay
-from itingen.utils.duration import format_duration
 
 class PDFComponent:
     """Base class for PDF layout components."""

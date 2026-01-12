@@ -6,7 +6,6 @@ from typing import List, Optional
 from dataclasses import replace
 
 from itingen.core.base import BaseHydrator
-from itingen.core.domain.events import Event
 from itingen.integrations.ai.gemini import GeminiClient
 from itingen.integrations.ai.image_prompts import format_banner_prompt
 from itingen.hydrators.ai.cache import AiCache

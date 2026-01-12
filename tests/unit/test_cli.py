@@ -105,3 +105,8 @@ def test_cli_invalid_command():
     """Test that an invalid command returns non-zero."""
     with pytest.raises(SystemExit):
         main(["invalid-command"])
+
+def test_cli_exports_day_banner_generator_symbol():
+    from itingen import cli
+
+    assert hasattr(cli, "DayBannerGenerator")

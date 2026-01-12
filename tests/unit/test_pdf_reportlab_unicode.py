@@ -4,11 +4,8 @@ AIDEV-NOTE: These tests verify that the PDF renderer uses ReportLab (not FPDF2)
 and properly handles Unicode characters like → (arrow) and Māori macrons.
 """
 
-import pytest
-from pathlib import Path
 from itingen.core.domain.events import Event
 from itingen.rendering.pdf.renderer import PDFEmitter
-from itingen.rendering.timeline import TimelineDay
 
 
 class TestReportLabUnicodeSupport:
@@ -32,8 +29,8 @@ class TestReportLabUnicodeSupport:
         output_path = tmp_path / "unicode_test.pdf"
         
         # This should NOT raise an error about unsupported characters
-        result = emitter.emit(events, str(output_path))
-        
+        emitter.emit(events, str(output_path))
+         
         assert output_path.exists()
         assert output_path.stat().st_size > 0
         
@@ -59,8 +56,8 @@ class TestReportLabUnicodeSupport:
         ]
         
         output_path = tmp_path / "arrow_test.pdf"
-        result = emitter.emit(events, str(output_path))
-        
+        emitter.emit(events, str(output_path))
+         
         assert output_path.exists()
         assert output_path.stat().st_size > 0
 
@@ -79,8 +76,8 @@ class TestReportLabUnicodeSupport:
         ]
         
         output_path = tmp_path / "maori_test.pdf"
-        result = emitter.emit(events, str(output_path))
-        
+        emitter.emit(events, str(output_path))
+         
         assert output_path.exists()
         assert output_path.stat().st_size > 0
 
@@ -106,8 +103,8 @@ class TestReportLabUnicodeSupport:
         ]
         
         output_path = tmp_path / "multi_unicode_test.pdf"
-        result = emitter.emit(events, str(output_path))
-        
+        emitter.emit(events, str(output_path))
+         
         assert output_path.exists()
         assert output_path.stat().st_size > 0
 
@@ -141,7 +138,7 @@ class TestReportLabUnicodeSupport:
         ]
         
         output_path = tmp_path / "nz_trip_test.pdf"
-        result = emitter.emit(events, str(output_path))
-        
+        emitter.emit(events, str(output_path))
+         
         assert output_path.exists()
         assert output_path.stat().st_size > 0

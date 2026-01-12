@@ -1,7 +1,7 @@
 """Unit tests for PDF emitter and components."""
 
 import pytest
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import Mock
 from itingen.core.domain.events import Event
 from itingen.rendering.pdf.renderer import PDFEmitter
 from itingen.rendering.pdf.components import EventComponent, DayComponent
@@ -218,7 +218,7 @@ class TestPDFEmitter:
             Event(event_heading="E2", date="2025-01-02", time_utc="2025-01-02T10:00:00Z"),
         ]
 
-        result = emitter.emit(events, str(output_path))
+        emitter.emit(events, str(output_path))
 
         banner_generator.generate.assert_called_once()
         assert output_path.exists()
