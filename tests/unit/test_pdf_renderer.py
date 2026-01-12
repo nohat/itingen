@@ -182,3 +182,55 @@ class TestPDFEmitter:
         assert mock_pdf.add_page.call_count >= 3 
         
         mock_pdf.output.assert_called_once_with(str(output_path))
+
+    @patch("itingen.rendering.pdf.renderer.FPDF")
+    def test_emit_uses_banner_generator_when_provided(self, mock_fpdf_cls, tmp_path):
+        """Test that a banner generator can enrich TimelineDay objects before rendering."""
+        mock_pdf = Mock()
+        mock_pdf.h = 297
+        mock_pdf.w = 210
+        mock_pdf.l_margin = 10
+        mock_pdf.r_margin = 10
+        mock_pdf.b_margin = 10
+        mock_pdf.get_y.return_value = 20
+        mock_pdf.get_x.return_value = 10
+        mock_pdf.epw = 190
+
+        mock_fpdf_cls.return_value = mock_pdf
+
+        # Prepare timeline days as if they came from TimelineProcessor
+        day1 = TimelineDay(date_str="2025-01-01", day_header="Day 1", events=[])
+        day2 = TimelineDay(date_str="2025-01-02", day_header="Day 2", events=[])
+        timeline_days = [day1, day2]
+
+        banner1 = tmp_path / "banner_1.png"
+        banner2 = tmp_path / "banner_2.png"
+        banner1.write_text("fake banner 1")
+        banner2.write_text("fake banner 2")
+
+        banner_generator = Mock()
+
+        def _generate(days):
+            days[0].banner_image_path = str(banner1)
+            days[1].banner_image_path = str(banner2)
+            return days
+
+        banner_generator.generate.side_effect = _generate
+
+        emitter = PDFEmitter(banner_generator=banner_generator)
+        emitter.timeline_processor.process = Mock(return_value=timeline_days)
+        emitter.day_component.render = Mock()
+
+        output_path = tmp_path / "output.pdf"
+        events = [
+            Event(event_heading="E1", date="2025-01-01", time_utc="2025-01-01T10:00:00Z"),
+            Event(event_heading="E2", date="2025-01-02", time_utc="2025-01-02T10:00:00Z"),
+        ]
+
+        emitter.emit(events, str(output_path))
+
+        banner_generator.generate.assert_called_once()
+        # Ensure the day objects passed into rendering have banner paths set
+        rendered_days = [call.args[2] for call in emitter.day_component.render.call_args_list]
+        assert any(getattr(d, "banner_image_path", None) == str(banner1) for d in rendered_days)
+        assert any(getattr(d, "banner_image_path", None) == str(banner2) for d in rendered_days)

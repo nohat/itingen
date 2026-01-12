@@ -1,11 +1,15 @@
-from typing import List, Optional, Tuple
+from typing import List, Optional, Tuple, Protocol
 from pathlib import Path
 from fpdf import FPDF
 from itingen.core.base import BaseEmitter
 from itingen.core.domain.events import Event
 from itingen.rendering.pdf.themes import PDFTheme
 from itingen.rendering.pdf.components import DayComponent
-from itingen.rendering.timeline import TimelineProcessor
+from itingen.rendering.timeline import TimelineProcessor, TimelineDay
+
+
+class BannerGenerator(Protocol):
+    def generate(self, days: List[TimelineDay]) -> List[TimelineDay]: ...
 
 class PDFEmitter(BaseEmitter[Event]):
     """Emitter that generates a PDF representation of the itinerary.
@@ -14,10 +18,15 @@ class PDFEmitter(BaseEmitter[Event]):
     Now supports daily aggregation, banners, and thumbnails via TimelineProcessor.
     """
 
-    def __init__(self, theme: Optional[PDFTheme] = None):
+    def __init__(
+        self,
+        theme: Optional[PDFTheme] = None,
+        banner_generator: Optional[BannerGenerator] = None,
+    ):
         self.theme = theme or PDFTheme()
         self.day_component = DayComponent()
         self.timeline_processor = TimelineProcessor()
+        self.banner_generator = banner_generator
 
     def emit(self, itinerary: List[Event], output_path: str) -> str:
         """Write the itinerary to a PDF file."""
@@ -29,6 +38,9 @@ class PDFEmitter(BaseEmitter[Event]):
         
         # Process events into timeline days
         timeline_days = self.timeline_processor.process(itinerary)
+
+        if self.banner_generator is not None:
+            timeline_days = self.banner_generator.generate(timeline_days)
         
         # Initialize PDF
         pdf = FPDF()
