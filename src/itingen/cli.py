@@ -19,7 +19,8 @@ from itingen.pipeline.transitions_logic import TransitionHydrator
 from itingen.rendering.markdown import MarkdownEmitter
 from itingen.rendering.pdf.renderer import PDFEmitter
 from itingen.integrations.ai.gemini import GeminiClient
-from itingen.rendering.pdf.banners import DayBannerGenerator
+from itingen.hydrators.ai.banner import BannerImageHydrator
+from itingen.hydrators.ai.cache import AiCache
 
 
 def main(args: Optional[List[str]] = None) -> int:
@@ -48,6 +49,12 @@ def main(args: Optional[List[str]] = None) -> int:
         "--pdf-banners",
         action="store_true",
         help="Enable AI-generated day banner images in the PDF (requires API key; may incur costs)",
+    )
+    generate_parser.add_argument(
+        "--banner-model",
+        choices=["gemini-3-pro-image-preview", "gemini-2.5-flash-image"],
+        default="gemini-2.5-flash-image",
+        help="Model for banner generation (default: gemini-2.5-flash-image for free tier)",
     )
 
     # Venues command
@@ -115,7 +122,13 @@ def _handle_generate(args: argparse.Namespace) -> int:
                     output_dir = output_dir / args.person
                 cache_dir = output_dir / ".ai_cache"
                 client = GeminiClient()
-                banner_generator = DayBannerGenerator(client=client, cache_dir=cache_dir)
+                ai_cache = AiCache(cache_dir)
+                banner_generator = BannerImageHydrator(
+                    client=client, 
+                    cache=ai_cache,
+                    cache_policy="stable_date",  # Stable during development
+                    model=getattr(args, "banner_model", "gemini-2.5-flash-image")
+                )
 
             orchestrator.add_emitter(PDFEmitter(banner_generator=banner_generator))
             
