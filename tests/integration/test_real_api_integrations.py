@@ -31,6 +31,17 @@ from itingen.core.domain.events import Event
 GOOGLE_MAPS_API_KEY = os.environ.get("GOOGLE_MAPS_API_KEY")
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
 
+RUN_REAL_API_TESTS = os.environ.get("RUN_REAL_API_TESTS") == "1"
+REAL_API_ENABLED = RUN_REAL_API_TESTS and bool(GOOGLE_MAPS_API_KEY and GEMINI_API_KEY)
+
+pytestmark = pytest.mark.skipif(
+    not REAL_API_ENABLED,
+    reason=(
+        "Real API integration tests disabled. Set RUN_REAL_API_TESTS=1 and provide "
+        "GOOGLE_MAPS_API_KEY and GEMINI_API_KEY (or GOOGLE_API_KEY)."
+    ),
+)
+
 def requires_api_keys(func):
     """Decorator to skip tests if API keys are missing."""
     return pytest.mark.skipif(
