@@ -1,42 +1,33 @@
 # Trip Itinerary
 
-## Flight to Destination
-- **Kind**: flight
-- **Location**: SFO
-- **Time (UTC)**: 2024-01-01T08:00:00Z
-- **Who**: alice, bob
+## 2024-01-01 (Monday)
 
-Morning flight to the start of our adventure.
+- **Wake up – SFO.**
 
----
+- **TBD – Flight to Destination (with alice, bob).** Morning flight to the start of our adventure.
+  - With: alice, bob
 
-## Check-in at Hotel
-- **Kind**: lodging
-- **Location**: Central Hotel
-- **Time (UTC)**: 2024-01-01T15:00:00Z
-- **Who**: alice, bob
+- **TBD – Check-in at Hotel (with alice, bob).** Drop off bags and freshen up.
+  - With: alice, bob
+  - Transition logistics: Move from SFO to Central Hotel.
 
-Drop off bags and freshen up.
+- **Go to sleep at your current location.**
 
 ---
 
-## Morning Coffee
-- **Kind**: activity
-- **Location**: Local Cafe
-- **Time (UTC)**: 2024-01-02T09:00:00Z
-- **Who**: alice
+## 2024-01-02 (Tuesday)
 
-Alice's solo morning coffee.
+- **Wake up – Local Cafe.**
 
----
+- **TBD – Morning Coffee (with alice).** Alice's solo morning coffee.
+  - With: alice
+  - Transition logistics: Move from Central Hotel to Local Cafe.
 
-## Sightseeing Tour
-- **Kind**: activity
-- **Location**: City Square
-- **Time (UTC)**: 2024-01-02T11:00:00Z
-- **Who**: alice, bob
+- **TBD – Sightseeing Tour (with alice, bob).** Guided tour of the historic city center.
+  - With: alice, bob
+  - Transition logistics: Move from Local Cafe to City Square.
 
-Guided tour of the historic city center.
+- **Go to sleep at your current location.**
 
 ---
 

@@ -1,0 +1,7 @@
+trip_name: "Tokyo City Break"
+timezone: "Asia/Tokyo"
+people:
+  - name: "Yuki"
+    slug: "yuki"
+  - name: "Maria"
+    slug: "maria"
