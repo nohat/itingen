@@ -1,0 +1,39 @@
+{
+  "comment": "Disclaimer: This is AI-generated.",
+  "commentTypes": ["logic", "syntax", "style", "info"],
+  "strictness": 2,
+  "statusCheck": true,
+  "triggerOnUpdates": true,
+  "shouldUpdateDescription": false,
+  "fixWithAI": false,
+  "ignoreKeywords": "greptile-ignore\nwip\ndo not review",
+  "ignorePatterns": "greptile.json\n**/__pycache__/\n**/*.pyc\n**/*.pyo\n.pytest_cache/\n.mypy_cache/\n.ruff_cache/\nhtmlcov/\n.coverage\n.dist/\nbuild/\ndist/\n.venv/\nvenv/\n.env\n.envrc\n.DS_Store\ntrips/**\n",
+  "customContext": {
+    "rules": [
+      {
+        "scope": ["src/**/*.py", "tests/**/*.py"],
+        "rule": "Do not delete AIDEV-NOTE/AIDEV-DECISION/AIDEV-TODO/AIDEV-QUESTION anchor comments."
+      },
+      {
+        "scope": ["src/**/*.py", "tests/**/*.py"],
+        "rule": "Follow strict TDD: add/adjust tests first; do not modify tests just to make them pass."
+      },
+      {
+        "scope": ["src/**/*.py"],
+        "rule": "Prefer minimal, explicit changes; avoid speculative fallbacks and backward-compat logic without a concrete use case."
+      }
+    ],
+    "files": [
+      {
+        "scope": ["src/**/*.py", "tests/**/*.py"],
+        "path": "docs/ARCHITECTURE.md",
+        "description": "Project architecture and module responsibilities"
+      },
+      {
+        "scope": ["src/**/*.py", "tests/**/*.py"],
+        "path": "AGENTS.md",
+        "description": "Workflow rules (TDD, landing protocol, commit conventions)"
+      }
+    ]
+  }
+}
