@@ -1,6 +1,11 @@
 from typing import Optional, Literal
 import os
 import base64
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass  # python-dotenv not installed, fallback to environment variables only
 from google import genai
 from google.genai import types
 
