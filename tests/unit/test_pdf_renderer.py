@@ -1,11 +1,10 @@
 """Unit tests for PDF emitter and components."""
 
 import pytest
-from pathlib import Path
 from unittest.mock import Mock, patch, MagicMock
 from itingen.core.domain.events import Event
 from itingen.rendering.pdf.renderer import PDFEmitter
-from itingen.rendering.pdf.components import EventComponent, DayComponent, PDFComponent
+from itingen.rendering.pdf.components import EventComponent, DayComponent
 from itingen.rendering.pdf.themes import PDFTheme
 from itingen.rendering.timeline import TimelineDay
 

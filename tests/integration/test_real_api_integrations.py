@@ -81,7 +81,7 @@ class TestGoogleMapsIntegration:
         duration_hours = result["duration_seconds"] / 3600
         assert 6 < duration_hours < 12, f"Unexpected duration: {duration_hours} hours"
 
-        print(f"\n✅ Maps API: Auckland Airport → Wellington")
+        print("\n✅ Maps API: Auckland Airport → Wellington")
         print(f"   Duration: {result['duration_text']}")
         print(f"   Distance: {result['distance_text']}")
 
@@ -142,7 +142,7 @@ class TestGoogleMapsIntegration:
         assert hasattr(enriched, "distance_text")
         assert enriched.duration_seconds > 0
 
-        print(f"\n✅ MapsHydrator enriched event:")
+        print("\n✅ MapsHydrator enriched event:")
         print(f"   Route: {event.travel_from} → {event.travel_to}")
         print(f"   Duration: {enriched.duration_text}")
         print(f"   Distance: {enriched.distance_text}")
@@ -165,11 +165,11 @@ class TestWeatherSparkIntegration:
         # This is expected behavior for the integration
         if result is not None:
             assert isinstance(result, dict)
-            print(f"\n✅ WeatherSpark: Auckland weather for Dec 31")
+            print("\n✅ WeatherSpark: Auckland weather for Dec 31")
             print(f"   Data keys: {list(result.keys())}")
         else:
-            print(f"\n⚠️ WeatherSpark: No data returned (scraping may have failed)")
-            print(f"   This is expected - WeatherSpark scraping is fragile")
+            print("\n⚠️ WeatherSpark: No data returned (scraping may have failed)")
+            print("   This is expected - WeatherSpark scraping is fragile")
 
     def test_weather_hydrator_enriches_events(self):
         """Test WeatherHydrator enriches events with weather data."""
@@ -188,12 +188,10 @@ class TestWeatherSparkIntegration:
         result = hydrator.hydrate([event])
 
         assert len(result) == 1
-        enriched = result[0]
-
         # Check if weather data was added (may vary by implementation)
-        print(f"\n✅ WeatherHydrator processed event:")
+        print("\n✅ WeatherHydrator processed event:")
         print(f"   Location: {event.location}")
-        print(f"   Weather enrichment attempted")
+        print("   Weather enrichment attempted")
 
 
 class TestGeminiIntegration:
@@ -210,7 +208,7 @@ class TestGeminiIntegration:
         assert isinstance(result, str)
         assert len(result) > 20  # Should be a reasonable response
 
-        print(f"\n✅ Gemini text generation:")
+        print("\n✅ Gemini text generation:")
         print(f"   Prompt: {prompt}")
         print(f"   Response: {result}")
 
@@ -247,8 +245,8 @@ class TestGeminiIntegration:
         output_path = temp_cache_dir / "test_thumbnail_gemini.png"
         output_path.write_bytes(image_bytes)
 
-        print(f"\n✅ Gemini thumbnail generation (1:1):")
-        print(f"   Model: gemini-2.5-flash-image")
+        print("\n✅ Gemini thumbnail generation (1:1):")
+        print("   Model: gemini-2.5-flash-image")
         print(f"   Size: {len(image_bytes)} bytes")
         print(f"   Saved to: {output_path}")
 
@@ -293,8 +291,8 @@ class TestGeminiIntegration:
         output_path = temp_cache_dir / "test_banner_imagen.png"
         output_path.write_bytes(image_bytes)
 
-        print(f"\n✅ Imagen banner generation (16:9):")
-        print(f"   Model: imagen-4.0-ultra-generate-001")
+        print("\n✅ Imagen banner generation (16:9):")
+        print("   Model: imagen-4.0-ultra-generate-001")
         print(f"   Size: {len(image_bytes)} bytes")
         print(f"   Saved to: {output_path}")
 
@@ -319,7 +317,7 @@ class TestGeminiIntegration:
         cached = cache.get_text(payload)
         assert cached == response
 
-        print(f"\n✅ AI text caching:")
+        print("\n✅ AI text caching:")
         print(f"   Cache directory: {temp_cache_dir}")
         print(f"   Cached response: {cached}")
 
@@ -347,7 +345,7 @@ class TestGeminiIntegration:
         assert cached is not None
         assert cached.exists()
 
-        print(f"\n✅ AI image caching:")
+        print("\n✅ AI image caching:")
         print(f"   Cache directory: {temp_cache_dir}")
         print(f"   Cached image: {cached}")
 
@@ -381,7 +379,7 @@ class TestNarrativeHydrator:
         assert enriched.narrative is not None
         assert len(enriched.narrative) > 20
 
-        print(f"\n✅ Narrative generation:")
+        print("\n✅ Narrative generation:")
         print(f"   Event: {event.event_heading}")
         print(f"   Narrative: {enriched.narrative[:100]}...")
 
@@ -390,7 +388,7 @@ class TestNarrativeHydrator:
         enriched2 = result2[0]
         assert enriched2.narrative == enriched.narrative
 
-        print(f"   ✅ Cache hit on second call")
+        print("   ✅ Cache hit on second call")
 
 
 class TestImageHydrator:
@@ -429,9 +427,9 @@ class TestImageHydrator:
         assert Path(enriched.image_path).exists()
         assert Path(enriched.image_path).stat().st_size > 0
 
-        print(f"\n✅ Thumbnail image generation (Gemini):")
+        print("\n✅ Thumbnail image generation (Gemini):")
         print(f"   Event: {event.event_heading}")
-        print(f"   Model: gemini-2.5-flash-image")
+        print("   Model: gemini-2.5-flash-image")
         print(f"   Image: {enriched.image_path}")
         print(f"   Size: {Path(enriched.image_path).stat().st_size} bytes")
 
@@ -439,7 +437,7 @@ class TestImageHydrator:
         result2 = hydrator.hydrate([event])
         enriched2 = result2[0]
         assert enriched2.image_path == enriched.image_path
-        print(f"   ✅ Cache hit on second call")
+        print("   ✅ Cache hit on second call")
 
 
 class TestEndToEndIntegration:
@@ -448,7 +446,6 @@ class TestEndToEndIntegration:
     def test_full_pipeline_with_all_integrations(self, temp_cache_dir):
         """Test a complete event enrichment pipeline with all integrations."""
         # Create clients
-        maps_client = GoogleMapsClient(api_key=GOOGLE_MAPS_API_KEY)
         gemini_client = GeminiClient(api_key=GEMINI_API_KEY)
         ai_cache = AiCache(cache_dir=temp_cache_dir)
 
@@ -472,7 +469,7 @@ class TestEndToEndIntegration:
         )
 
         # Apply hydrators in sequence
-        print(f"\n✅ Full pipeline test:")
+        print("\n✅ Full pipeline test:")
         print(f"   Starting event: {event.event_heading}")
 
         # Step 1: Maps enrichment
@@ -492,8 +489,8 @@ class TestEndToEndIntegration:
         assert enriched.duration_seconds > 0
         assert len(enriched.narrative) > 20
 
-        print(f"\n✅ Full pipeline successful!")
-        print(f"   Event fully enriched with Maps + AI")
+        print("\n✅ Full pipeline successful!")
+        print("   Event fully enriched with Maps + AI")
 
 
 if __name__ == "__main__":

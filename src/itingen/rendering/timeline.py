@@ -1,4 +1,4 @@
-from typing import List, Dict, Optional, Any
+from typing import List, Dict, Optional
 import datetime
 from dataclasses import dataclass
 from itingen.core.domain.events import Event

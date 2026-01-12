@@ -104,7 +104,6 @@ class TestGoogleMapsClient:
             
             # Verify cache was written
             mock_file.assert_called_once()
-            handle = mock_file()
             # Check that json.dump was called with correct data
             # We can't easily check the exact call without more complex mocking
             # but the fact that the file was opened for writing is sufficient

@@ -1,7 +1,6 @@
 import pytest
 from unittest.mock import patch, MagicMock
 from itingen.integrations.ai.gemini import GeminiClient
-from google.genai import types
 
 
 class TestGeminiClient:
