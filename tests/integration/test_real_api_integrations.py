@@ -27,10 +27,16 @@ from itingen.hydrators.weather import WeatherHydrator
 from itingen.core.domain.events import Event
 
 
-# API Keys from scaffold project
-GOOGLE_MAPS_API_KEY = "AIzaSyAzCtCw4SrodPOFZyP1lnFwKZS1-HerfVU"
-GEMINI_API_KEY = "AIzaSyDzeYX0fbpLql0EUxDHwlnTabdaQX4XcZo"
+# API Keys from environment
+GOOGLE_MAPS_API_KEY = os.environ.get("GOOGLE_MAPS_API_KEY")
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
 
+def requires_api_keys(func):
+    """Decorator to skip tests if API keys are missing."""
+    return pytest.mark.skipif(
+        not GOOGLE_MAPS_API_KEY or not GEMINI_API_KEY,
+        reason="API keys not found in environment"
+    )(func)
 
 @pytest.fixture
 def temp_cache_dir():

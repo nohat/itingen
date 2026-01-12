@@ -41,17 +41,17 @@ def test_narrative_hydrator_enriches_events(mock_gemini_client, mock_cache, samp
     mock_gemini_client.generate_text.assert_not_called()
 
 def test_image_hydrator_enriches_events(mock_gemini_client, mock_cache, sample_events):
-    mock_gemini_client.generate_image.return_value = b"fake-image-bytes"
+    mock_gemini_client.generate_image_with_gemini.return_value = b"fake-image-bytes"
     
     hydrator = ImageHydrator(client=mock_gemini_client, cache=mock_cache)
     hydrated_events = hydrator.hydrate(sample_events)
     
-    assert "image_path" in hydrated_events[0].model_extra
-    assert hydrated_events[0].image_path.endswith(".jpg")
-    mock_gemini_client.generate_image.assert_called_once()
+    assert hydrated_events[0].image_path is not None
+    assert str(hydrated_events[0].image_path).endswith(".jpg")  # AiCache uses .jpg extension by default
+    mock_gemini_client.generate_image_with_gemini.assert_called_once()
     
     # Test caching
-    mock_gemini_client.generate_image.reset_mock()
+    mock_gemini_client.generate_image_with_gemini.reset_mock()
     hydrated_events_cached = hydrator.hydrate(sample_events)
-    assert hydrated_events_cached[0].image_path.endswith(".jpg")
-    mock_gemini_client.generate_image.assert_not_called()
+    assert hydrated_events_cached[0].image_path == hydrated_events[0].image_path
+    mock_gemini_client.generate_image_with_gemini.assert_not_called()

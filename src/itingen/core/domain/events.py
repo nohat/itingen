@@ -60,6 +60,10 @@ class Event(StrictBaseModel):
     emotional_triggers: Optional[str] = Field(None, description="Triggers or frustrations for this event")
     emotional_high_point: Optional[str] = Field(None, description="The high point or silver lining for this event")
     
+    # AI Enrichment
+    narrative: Optional[str] = Field(None, description="AI-generated narrative/story for the event")
+    image_path: Optional[str] = Field(None, description="Path to local image file (thumbnail)")
+    
     # Transition logic
     transition_from_prev: Optional[str] = Field(None, description="Description of the transition from the previous event")
     

@@ -1,20 +1,23 @@
-from typing import List, Optional
+from typing import List, Optional, Tuple
 from pathlib import Path
 from fpdf import FPDF
 from itingen.core.base import BaseEmitter
 from itingen.core.domain.events import Event
 from itingen.rendering.pdf.themes import PDFTheme
-from itingen.rendering.pdf.components import EventComponent
+from itingen.rendering.pdf.components import DayComponent
+from itingen.rendering.timeline import TimelineProcessor
 
 class PDFEmitter(BaseEmitter[Event]):
     """Emitter that generates a PDF representation of the itinerary.
     
     AIDEV-NOTE: Uses a theme and components for flexible styling.
+    Now supports daily aggregation, banners, and thumbnails via TimelineProcessor.
     """
 
     def __init__(self, theme: Optional[PDFTheme] = None):
         self.theme = theme or PDFTheme()
-        self.event_component = EventComponent()
+        self.day_component = DayComponent()
+        self.timeline_processor = TimelineProcessor()
 
     def emit(self, itinerary: List[Event], output_path: str) -> str:
         """Write the itinerary to a PDF file."""
@@ -24,16 +27,39 @@ class PDFEmitter(BaseEmitter[Event]):
         
         path.parent.mkdir(parents=True, exist_ok=True)
         
+        # Process events into timeline days
+        timeline_days = self.timeline_processor.process(itinerary)
+        
+        # Initialize PDF
         pdf = FPDF()
+        pdf.set_auto_page_break(auto=True, margin=15)
+        
+        # Render title page
         pdf.add_page()
+        pdf.set_font(self.theme.fonts["heading"], "B", 24)
+        pdf.set_text_color(*self._hex_to_rgb(self.theme.colors["primary"]))
         
-        # Title
-        pdf.set_font(self.theme.fonts["heading"], "B", 16)
+        # Title vertical centering
+        pdf.set_y(pdf.h / 3)
         pdf.cell(0, 10, "Trip Itinerary", ln=True, align="C")
-        pdf.ln(10)
         
-        for event in itinerary:
-            self.event_component.render(pdf, self.theme, event)
+        # Date range
+        if timeline_days:
+            start_date = timeline_days[0].date_str
+            end_date = timeline_days[-1].date_str
+            pdf.set_font(self.theme.fonts["body"], "", 14)
+            pdf.set_text_color(*self._hex_to_rgb(self.theme.colors["text"]))
+            pdf.ln(5)
+            pdf.cell(0, 10, f"{start_date} to {end_date}", ln=True, align="C")
+
+        # Render each day
+        for day in timeline_days:
+            self.day_component.render(pdf, self.theme, day)
         
         pdf.output(str(path))
         return str(path)
+
+    def _hex_to_rgb(self, hex_color: str) -> Tuple[int, int, int]:
+        """Convert hex color string to RGB tuple."""
+        hex_color = hex_color.lstrip('#')
+        return tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4))

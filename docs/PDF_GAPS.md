@@ -31,7 +31,7 @@ Image generation is now working correctly (Gemini thumbnails + Imagen banners), 
 
 ### 1. PDF Renderer Implementation
 **Issue**: [itingen-4ds](https://github.com/anthropics/itingen/issues/4ds)
-**Status**: Not started
+**Status**: ✅ Completed
 **Description**: Current markdown renderer is basic. Need proper PDF generation with:
 - Day banner images as headers (16:9 panoramic)
 - Event thumbnail images inline (1:1 square)
