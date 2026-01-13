@@ -1,6 +1,6 @@
 ---
 description: Land the plane - session end protocol (capture work, commit, sync tracker)
-allowed-tools: Bash(git:*), Bash(bd:*), Bash(npm:*), Bash(python:*), Read, Glob, Grep
+allowed-tools: Bash(git:*), Bash(bd:*), Bash(gh:*), Bash(npm:*), Bash(python:*), Read, Glob, Grep
 ---
 
 # Land the Plane - Session End Protocol
@@ -63,7 +63,18 @@ If code was modified this session:
 - Run `bd sync` to ensure all issues are persisted
 - Verify with `bd list --status open`
 
-### 7. Generate Handoff
+### 7. Push to Remote
+- Rebase on latest remote: `git pull --rebase`
+- Push your branch: `git push`
+- Verify: `git status` (must show up to date with origin)
+
+### 8. Create Pull Request (PR) to master
+- If on `master`, do NOT create a PR
+- If a PR already exists for this branch, do NOT create a duplicate
+- Otherwise create a PR targeting `master`:
+  - `gh pr create --base master --fill`
+
+### 9. Generate Handoff
 Provide a summary for the next session:
 - What was accomplished
 - What's in progress (with issue IDs)
