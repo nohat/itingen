@@ -51,10 +51,8 @@ class GeminiClient:
         AIDEV-NOTE: Fixed banner aspect ratio issue by adding image_config=types.ImageConfig() to match scaffold POC.
         Previously only appended aspect ratio to prompt text, but Gemini models need structured ImageConfig for proper enforcement.
         """
-        # Add aspect ratio and size to prompt (imageConfig not yet supported for Gemini)
-        enhanced_prompt = f"{prompt} {aspect_ratio} aspect ratio."
-        if image_size != "1K":
-            enhanced_prompt += f" {image_size} resolution."
+        # Add aspect ratio and size to prompt (imageConfig not yet supported for generate_content)
+        enhanced_prompt = f"{prompt}\n\nIMPORTANT: Generate the image with a {aspect_ratio} aspect ratio."
 
         # Use generate_content with IMAGE modality for Gemini models
         config = types.GenerateContentConfig(

@@ -4,58 +4,53 @@ A standalone system for generating optimized travel itineraries based on venues,
 
 ## Features
 
-- AI-powered banner image generation using Google Gemini Nano Banana Pro
-- Google Maps integration for route planning and duration calculation
-- PDF and Markdown output formats
-- Configurable caching strategies
-- Test-driven development with 88% coverage
+- **AI-Powered Itineraries**: Generate detailed trip itineraries with AI-enriched narratives and emotional context.
+- **Visual Storytelling**: Automatic generation of 1:1 event thumbnails and 16:9 day banners using Google Gemini and Imagen.
+- **Multi-Format Export**: Export itineraries to Markdown and professionally styled PDFs.
+- **Venue Management**: Integrated system for managing and researching trip venues.
 
 ## Installation
 
 ```bash
-# Install dependencies
-pip install -e .
+# Clone the repository
+git clone <repo-url>
+cd itingen
 
-# For development with additional tools
-pip install -e ".[dev]"
+# Create and activate a virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
+pip install -e .
 ```
 
 ## Usage
 
-### 1. Set up API Keys
-
-Create a `.env` file from the template:
-
 ```bash
-cp .env.example .env
+# Generate an itinerary for the NZ 2026 trip
+itingen generate --trip nz_2026 --pdf-banners
+
+# List venues for a trip
+itingen venues list --trip nz_2026
 ```
 
-Edit `.env` with your API keys:
+## Environment Setup
+
+The AI features require a Google API key with access to Gemini and Imagen.
+
+1.  Obtain an API key from the [Google AI Studio](https://aistudio.google.com/).
+2.  Set the `GOOGLE_API_KEY` environment variable:
 
 ```bash
-# Google Gemini API Key (for AI image generation)
-# Get yours from: https://ai.google.dev/
-GEMINI_API_KEY=your_gemini_api_key_here
-
-# Google Maps API Key (for directions, distance, and duration)
-# Get yours from: https://console.cloud.google.com/apis/library
-GOOGLE_MAPS_API_KEY=your_google_maps_api_key_here
+export GOOGLE_API_KEY='your-api-key-here'
 ```
 
-### 2. Generate Itinerary
+Alternatively, you can create a `.env` file in the project root:
 
-```bash
-# Generate both PDF and Markdown formats
-python -m src.itingen.cli generate --trip nz_2026
-
-# Generate with AI banner images (requires GEMINI_API_KEY)
-python -m src.itingen.cli generate --trip nz_2026 --pdf-banners
-
-# Generate for specific person
-python -m src.itingen.cli generate --trip nz_2026 --person david
+```text
+GOOGLE_API_KEY=your-api-key-here
 ```
-
-Output will be saved to `output/trips/[trip_name]/`
 
 ## Development
 
