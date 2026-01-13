@@ -104,7 +104,12 @@ class MarkdownEmitter(BaseEmitter[Event]):
                     if dur_str:
                         f.write(f" {dur_str}")
                     f.write("\n")
-                    
+
+                    # Image reference (if available and file exists), rendered as standalone element
+                    image_path = getattr(event, "image_path", None)
+                    if image_path and Path(image_path).exists():
+                        f.write(f"![{heading}]({image_path})\n\n")
+
                     # Detail bullets
                     if event.who:
                         f.write(f"  - With: {', '.join(event.who)}\n")
