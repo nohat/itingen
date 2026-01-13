@@ -42,21 +42,27 @@ class GeminiClient:
         Args:
             prompt: Image generation prompt
             model: Gemini image model (e.g., "gemini-2.5-flash-image")
-            aspect_ratio: Image aspect ratio (1:1, 16:9, 9:16, 4:3, 3:4) - currently added to prompt
-            image_size: Image size ("1K" = 1024x1024, "2K" = 2048x2048) - currently added to prompt
+            aspect_ratio: Image aspect ratio (1:1, 16:9, 9:16, 4:3, 3:4) - now properly enforced via ImageConfig
+            image_size: Image size ("1K" = 1024x1024, "2K" = 2048x2048)
 
         Returns:
             Image bytes (PNG format)
 
-        Note: aspect_ratio and image_size are currently added to the prompt text since
-        imageConfig is not yet supported by the Gemini API with IMAGE response modality.
+        AIDEV-NOTE: Fixed banner aspect ratio issue by adding image_config=types.ImageConfig() to match scaffold POC.
+        Previously only appended aspect ratio to prompt text, but Gemini models need structured ImageConfig for proper enforcement.
         """
-        # Add aspect ratio and size to prompt (imageConfig not yet supported)
+        # Add aspect ratio and size to prompt (imageConfig not yet supported for Gemini)
         enhanced_prompt = f"{prompt} {aspect_ratio} aspect ratio."
+        if image_size != "1K":
+            enhanced_prompt += f" {image_size} resolution."
 
         # Use generate_content with IMAGE modality for Gemini models
         config = types.GenerateContentConfig(
-            response_modalities=["IMAGE"]
+            response_modalities=["IMAGE"],
+            image_config=types.ImageConfig(
+                aspect_ratio=aspect_ratio,
+                image_size=image_size,
+            )
         )
 
         response = self.client.models.generate_content(

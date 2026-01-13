@@ -89,6 +89,41 @@ class TestGeminiClient:
 
     @patch("itingen.integrations.ai.gemini.os.environ.get")
     @patch("itingen.integrations.ai.gemini.genai.Client")
+    def test_generate_image_with_gemini_includes_aspect_ratio_in_prompt(self, mock_genai, mock_env):
+        """Gemini models use generate_content with aspect ratio specified in prompt text."""
+        mock_env.return_value = "env-key"
+        mock_client = MagicMock()
+        mock_genai.return_value = mock_client
+
+        # Mock response structure for generate_content (Gemini path)
+        mock_response = MagicMock()
+        mock_part = MagicMock()
+        mock_part.inline_data.data = b"fake-16-9-image"
+        mock_response.parts = [mock_part]
+        mock_client.models.generate_content.return_value = mock_response
+
+        client = GeminiClient()
+        result = client.generate_image_with_gemini(
+            "Test prompt",
+            aspect_ratio="16:9",
+            image_size="2K"
+        )
+
+        assert result == b"fake-16-9-image"
+
+        # Verify it called generate_content with enhanced prompt AND ImageConfig
+        mock_client.models.generate_content.assert_called_once()
+        args, kwargs = mock_client.models.generate_content.call_args
+        assert kwargs["model"] == "gemini-2.5-flash-image"
+        assert "Test prompt" in kwargs["contents"]
+        assert "16:9 aspect ratio" in kwargs["contents"]
+        assert "2K resolution" in kwargs["contents"]
+        assert "IMAGE" in kwargs["config"].response_modalities
+        assert kwargs["config"].image_config.aspect_ratio == "16:9"
+        assert kwargs["config"].image_config.image_size == "2K"
+
+    @patch("itingen.integrations.ai.gemini.os.environ.get")
+    @patch("itingen.integrations.ai.gemini.genai.Client")
     def test_generate_image_with_imagen_success(self, mock_genai, mock_env):
         """Generate banner image using Imagen model."""
         mock_env.return_value = "env-key"
