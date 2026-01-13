@@ -4,15 +4,53 @@ A standalone system for generating optimized travel itineraries based on venues,
 
 ## Features
 
-[To be documented after initial development]
+- **AI-Powered Itineraries**: Generate detailed trip itineraries with AI-enriched narratives and emotional context.
+- **Visual Storytelling**: Automatic generation of 1:1 event thumbnails and 16:9 day banners using Google Gemini and Imagen.
+- **Multi-Format Export**: Export itineraries to Markdown and professionally styled PDFs.
+- **Venue Management**: Integrated system for managing and researching trip venues.
 
 ## Installation
 
-[To be documented based on tech stack chosen]
+```bash
+# Clone the repository
+git clone <repo-url>
+cd itingen
+
+# Create and activate a virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
+pip install -e .
+```
 
 ## Usage
 
-[To be documented with examples]
+```bash
+# Generate an itinerary for the NZ 2026 trip
+itingen generate --trip nz_2026 --pdf-banners
+
+# List venues for a trip
+itingen venues list --trip nz_2026
+```
+
+## Environment Setup
+
+The AI features require a Google API key with access to Gemini and Imagen.
+
+1.  Obtain an API key from the [Google AI Studio](https://aistudio.google.com/).
+2.  Set the `GOOGLE_API_KEY` environment variable:
+
+```bash
+export GOOGLE_API_KEY='your-api-key-here'
+```
+
+Alternatively, you can create a `.env` file in the project root:
+
+```text
+GOOGLE_API_KEY=your-api-key-here
+```
 
 ## Development
 

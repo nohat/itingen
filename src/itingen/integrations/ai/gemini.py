@@ -46,8 +46,8 @@ class GeminiClient:
         Note: aspect_ratio and image_size are currently added to the prompt text since
         imageConfig is not yet supported by the Gemini API with IMAGE response modality.
         """
-        # Add aspect ratio and size to prompt (imageConfig not yet supported)
-        enhanced_prompt = f"{prompt} {aspect_ratio} aspect ratio."
+        # Add aspect ratio and size to prompt (imageConfig not yet supported for generate_content)
+        enhanced_prompt = f"{prompt}\n\nIMPORTANT: Generate the image with a {aspect_ratio} aspect ratio."
 
         # Use generate_content with IMAGE modality for Gemini models
         config = types.GenerateContentConfig(
