@@ -52,13 +52,13 @@ Add `AIDEV-NOTE:` comments when code is:
 ## Cascade Agent Workflow
 
 Cascade agents are expected to:
-1. **Create a Git worktree** before starting work:
+1. **Create a Git worktree** using `bd` before starting work:
    ```bash
-   git worktree add .ws/<agent-id> -b agent/<agent-id>
-   cd .ws/<agent-id>
+   bd worktree create <agent-id> --branch agent/<agent-id>
+   cd .git/beads-worktrees/<agent-id>
    ```
-2. **Work exclusively in the worktree** - never in the repository root
-3. **Use parallel execution** - multiple agents can work simultaneously
-4. **Clean up after completion** - remove worktree and branch
+2. **Work exclusively in the worktree** - never in the repository root if other agents are active.
+3. **Use parallel execution** - multiple agents can work simultaneously via separate worktrees.
+4. **Clean up after completion** - remove worktree and branch.
 
 See [docs/agent-workspaces.md](agent-workspaces.md) for complete operating procedures.

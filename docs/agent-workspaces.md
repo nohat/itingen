@@ -21,29 +21,30 @@ Repository Root (not for agent work)
 
 ### Invariants
 
-1. **Isolation**: Agents never share worktrees or branches
-2. **Coordination via Git**: All interaction happens through pull requests/reviews
-3. **Ephemerality**: Worktrees are temporary, branches persist for review
-4. **No direct modifications**: Agents never work directly in the repository root
+1. **Isolation**: Agents never share worktrees or branches.
+2. **Coordination via Git**: All interaction happens through pull requests/reviews.
+3. **Ephemerality**: Worktrees are temporary, branches persist for review.
+4. **No direct modifications to master**: Agents never work directly in `master`.
+5. **Standard Location**: Worktrees are managed by `bd` and located in `.git/beads-worktrees/` by default.
 
-## Why Git Worktrees
+## Why bd worktree
 
-Git worktrees provide:
-- **Filesystem isolation**: Each agent has its own working directory
-- **Branch isolation**: Work is automatically separated by branch
-- **Shared object store**: Efficient disk usage while maintaining isolation
-- **Native Git**: No custom tooling required
+`bd worktree` provides:
+- **Filesystem isolation**: Each agent has its own working directory.
+- **Branch isolation**: Work is automatically separated by branch.
+- **Beads Integration**: Automatically sets up the beads redirect so the issue database is shared.
+- **Native Git**: Wraps native git worktree commands with project-specific logic.
 
 ## Required Agent Bootstrap Procedure
 
 **Every Cascade agent MUST execute these steps before starting work:**
 
 ```bash
-# 1. Create worktree with dedicated branch
-git worktree add .ws/<agent-id> -b agent/<agent-id>
+# 1. Create worktree with dedicated branch using bd
+bd worktree create <agent-id> --branch agent/<agent-id>
 
 # 2. Enter the worktree
-cd .ws/<agent-id>
+cd .git/beads-worktrees/<agent-id>
 
 # 3. Verify isolation
 git branch  # Should show agent/<agent-id>
@@ -75,15 +76,16 @@ git diff main..HEAD
 
 ```bash
 # From repository root (or any location)
+git checkout master
 git merge agent/<agent-id>
-git push origin agent/<agent-id>  # For PR creation
+git push origin master
 ```
 
 ### Cleanup After Merge/Discard
 
 ```bash
-# Remove worktree
-git worktree remove .ws/<agent-id>
+# Remove worktree using bd
+bd worktree remove <agent-id>
 
 # Delete branch after merge
 git branch -d agent/<agent-id>
@@ -104,11 +106,11 @@ git worktree prune
 
 ### DO NOT
 
-- Work directly in repository root
-- Share worktrees between agents
-- Commit to main branch directly
-- Leave abandoned worktrees
-- Modify files outside your worktree
+- Work directly in `master` branch.
+- Share worktrees between agents.
+- Commit to `master` branch directly.
+- Leave abandoned worktrees.
+- Modify files outside your worktree.
 
 ## Troubleshooting
 
