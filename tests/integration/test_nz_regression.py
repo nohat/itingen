@@ -1,14 +1,18 @@
 from pathlib import Path
 from itingen.cli import main
 import re
+import os
 
 def test_nz_trip_regression_david():
     """
     Regression test for NZ trip output (David's itinerary).
     Compares the output of itingen with the original scaffold output.
     """
-    # Define paths
-    scaffold_output_path = Path("/Users/nohat/scaffold/scaffold-data/tasks/new_zealand_trip/new_zealand_trip_daily_itinerary_david.md")
+    # Define paths - use fixture by default, allow env var override for local comparisons
+    scaffold_output_path = Path(os.getenv(
+        "ITINGEN_NZ_BASELINE_PATH", 
+        Path(__file__).parent.parent / "fixtures" / "regression" / "nz_baseline_david.md"
+    ))
     output_dir = Path("output/regression_test")
     itingen_output_path = output_dir / "nz_2026" / "david" / "output_0.md"
 
