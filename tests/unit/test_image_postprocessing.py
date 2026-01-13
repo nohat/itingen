@@ -1,4 +1,3 @@
-import pytest
 from PIL import Image
 import io
 from itingen.utils.image_postprocessing import (

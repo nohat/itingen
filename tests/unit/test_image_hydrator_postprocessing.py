@@ -1,5 +1,4 @@
-import pytest
-from unittest.mock import Mock, MagicMock
+from unittest.mock import Mock
 from PIL import Image
 import io
 from itingen.hydrators.ai.images import ImageHydrator
@@ -35,7 +34,7 @@ class TestImageHydratorPostProcessing:
             kind="activity"
         )
         
-        result = hydrator.hydrate([event])
+        hydrator.hydrate([event])
         
         assert mock_cache.set_image.called
         cached_bytes = mock_cache.set_image.call_args[0][1]
@@ -63,7 +62,7 @@ class TestImageHydratorPostProcessing:
             location="Test Location"
         )
         
-        result = hydrator.hydrate([event])
+        hydrator.hydrate([event])
         
         cached_bytes = mock_cache.set_image.call_args[0][1]
         cached_img = Image.open(io.BytesIO(cached_bytes))
@@ -107,7 +106,7 @@ class TestBannerHydratorPostProcessing:
             events=[]
         )
         
-        result = hydrator.hydrate([day])
+        hydrator.hydrate([day])
         
         assert mock_cache.set_image.called
         cached_bytes = mock_cache.set_image.call_args[0][1]
@@ -145,7 +144,7 @@ class TestBannerHydratorPostProcessing:
             events=[]
         )
         
-        result = hydrator.hydrate([day])
+        hydrator.hydrate([day])
         
         cached_bytes = mock_cache.set_image.call_args[0][1]
         cached_img = Image.open(io.BytesIO(cached_bytes))
