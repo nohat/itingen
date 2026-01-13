@@ -13,6 +13,9 @@ class TimelineDay:
     first_event_title: Optional[str] = None
     sleep_location: Optional[str] = None
     banner_image_path: Optional[str] = None  # Future proofing for day banners
+    weather_high: Optional[float] = None
+    weather_low: Optional[float] = None
+    weather_conditions: Optional[str] = None
 
 class TimelineProcessor:
     """Process raw events into a structured timeline with days and markers."""
@@ -99,6 +102,19 @@ class TimelineProcessor:
             # The display string for "Go to sleep at..."
             display_sleep_loc = last_sleep_location or "your current location"
 
+            # Aggregate weather data (take first available from events)
+            weather_high = None
+            weather_low = None
+            weather_conditions = None
+            for event in day_events:
+                # WeatherHydrator uses event.weather_temp_high/low/conditions
+                # We check for these fields on the Event model
+                if getattr(event, "weather_temp_high", None) is not None:
+                    weather_high = event.weather_temp_high
+                    weather_low = getattr(event, "weather_temp_low", None)
+                    weather_conditions = getattr(event, "weather_conditions", None)
+                    break
+
             timeline_days.append(TimelineDay(
                 date_str=date_str,
                 day_header=day_header,
@@ -106,7 +122,10 @@ class TimelineProcessor:
                 wake_up_location=wake_loc,
                 first_event_target_time=target_time,
                 first_event_title=first_title,
-                sleep_location=display_sleep_loc
+                sleep_location=display_sleep_loc,
+                weather_high=weather_high,
+                weather_low=weather_low,
+                weather_conditions=weather_conditions
             ))
 
         return timeline_days
