@@ -128,8 +128,36 @@ class DayComponent(PDFComponent):
         else:
             story.append(Spacer(1, 0.3*inch))
         
-        # Day Title
-        story.append(Paragraph(escape(day.day_header), styles["day_header"]))
+        # Day Title and Weather
+        title_para = Paragraph(escape(day.day_header), styles["day_header"])
+        
+        if day.weather_high is not None:
+            # Weather summary box
+            weather_text = f"<b>{int(day.weather_low)}°F - {int(day.weather_high)}°F</b>"
+            if day.weather_conditions:
+                weather_text += f"<br/>{escape(day.weather_conditions)}"
+            
+            weather_para = Paragraph(weather_text, styles["event_details"])
+            
+            # Use a table to layout Title and Weather box
+            weather_table = Table(
+                [[title_para, weather_para]],
+                colWidths=[5.0*inch, 1.5*inch],
+                style=TableStyle([
+                    ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+                    ('ALIGN', (1, 0), (1, 0), 'RIGHT'),
+                    ('BACKGROUND', (1, 0), (1, 0), colors.HexColor("#F3F4F6")),
+                    ('ROUNDEDCORNERS', [8, 8, 8, 8]),
+                    ('LEFTPADDING', (1, 0), (1, 0), 8),
+                    ('RIGHTPADDING', (1, 0), (1, 0), 8),
+                    ('TOPPADDING', (1, 0), (1, 0), 6),
+                    ('BOTTOMPADDING', (1, 0), (1, 0), 6),
+                ])
+            )
+            story.append(weather_table)
+        else:
+            story.append(title_para)
+            
         story.append(Spacer(1, 0.1*inch))
         
         # Wake Up Info

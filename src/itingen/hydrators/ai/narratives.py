@@ -2,22 +2,17 @@ from typing import List, Optional
 from itingen.core.base import BaseHydrator
 from itingen.core.domain.events import Event
 from itingen.integrations.ai.gemini import GeminiClient
+from itingen.integrations.ai.narrative_prompts import NARRATIVE_STYLE_TEMPLATE, NARRATIVE_PROMPT_TEMPLATE
 from itingen.hydrators.ai.cache import AiCache
 
 class NarrativeHydrator(BaseHydrator[Event]):
     """Hydrator that generates AI narratives for events."""
 
-    def __init__(self, client: GeminiClient, cache: Optional[AiCache] = None, prompt_template: Optional[str] = None):
+    def __init__(self, client: GeminiClient, cache: Optional[AiCache] = None, prompt_template: Optional[str] = None, style_template: Optional[str] = None):
         self.client = client
         self.cache = cache
-        self.prompt_template = prompt_template or (
-            "Describe the following travel event in a friendly, engaging narrative tone:\n"
-            "Event: {heading}\n"
-            "Kind: {kind}\n"
-            "Location: {location}\n"
-            "Description: {description}\n"
-            "Participants: {who}\n"
-        )
+        self.style_template = style_template or NARRATIVE_STYLE_TEMPLATE
+        self.prompt_template = prompt_template or NARRATIVE_PROMPT_TEMPLATE
 
     def hydrate(self, items: List[Event]) -> List[Event]:
         for event in items:
@@ -40,6 +35,7 @@ class NarrativeHydrator(BaseHydrator[Event]):
 
             if not narrative:
                 prompt = self.prompt_template.format(
+                    style_guidance=self.style_template,
                     heading=event.event_heading,
                     kind=event.kind or "N/A",
                     location=event.location or "N/A",

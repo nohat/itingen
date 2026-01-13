@@ -165,6 +165,26 @@ class TestDayComponent:
         from reportlab.platypus import Image
         assert any(isinstance(item, Image) for item in story)
 
+    def test_render_day_with_weather(self, mock_styles, mock_theme):
+        """Test rendering day with weather summary box."""
+        component = DayComponent()
+        story = []
+        day = TimelineDay(
+            date_str="2025-01-01",
+            day_header="Day 1",
+            events=[],
+            weather_high=75.0,
+            weather_low=60.0,
+            weather_conditions="Partly Cloudy"
+        )
+
+        component.render(story, mock_styles, mock_theme, day)
+
+        # Verify story contains a Table (for weather box)
+        assert len(story) > 0
+        from reportlab.platypus import Table
+        assert any(isinstance(item, Table) for item in story)
+
 class TestPDFEmitter:
     """Test PDFEmitter orchestration."""
 
