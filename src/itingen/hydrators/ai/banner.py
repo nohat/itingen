@@ -55,7 +55,7 @@ class BannerImageHydrator(BaseHydrator[TimelineDay]):
         self.model = model or os.environ.get("BANNER_MODEL", "gemini-3-pro-image-preview")
         self.force_refresh = force_refresh
 
-    def hydrate(self, days: List[TimelineDay]) -> List[TimelineDay]:
+    def hydrate(self, days: List[TimelineDay], context=None) -> List[TimelineDay]:
         """Generate banner images for timeline days.
 
         Args:

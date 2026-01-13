@@ -19,7 +19,7 @@ class MapsHydrator(BaseHydrator[Event]):
         """
         self.client = GoogleMapsClient(api_key=api_key, cache_dir=cache_dir)
 
-    def hydrate(self, items: List[Event]) -> List[Event]:
+    def hydrate(self, items: List[Event], context=None) -> List[Event]:
         """Enrich drive events with duration and distance from Google Maps."""
         new_items = []
         for event in items:

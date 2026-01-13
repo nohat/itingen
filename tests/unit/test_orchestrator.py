@@ -34,7 +34,7 @@ class MockHydrator(BaseHydrator[Event]):
         self.prefix = prefix
         self.call_count = 0
     
-    def hydrate(self, items: List[Event]) -> List[Event]:
+    def hydrate(self, items: List[Event], context=None) -> List[Event]:
         self.call_count += 1
         for item in items:
             if item.description:
@@ -262,3 +262,61 @@ def test_orchestrator_execute_multiple_emitters(sample_provider):
     assert len(emitter1.outputs) == 1
     assert len(emitter2.outputs) == 1
     assert emitter1.outputs != emitter2.outputs  # Different output paths
+
+
+def test_pipeline_context_creation():
+    """Test that PipelineContext can be created with venues and config."""
+    from itingen.pipeline.orchestrator import PipelineContext
+    from itingen.core.domain.venues import Venue
+
+    venues = {"venue1": Venue(venue_id="venue1", canonical_name="Test Venue")}
+    config = {"theme": "dark", "max_images": 5}
+
+    context = PipelineContext(venues=venues, config=config)
+
+    assert context.venues == venues
+    assert context.config == config
+
+
+class ContextCapturingHydrator(BaseHydrator[Event]):
+    """Mock hydrator that captures the context parameter."""
+    
+    def __init__(self):
+        self.captured_context = None
+        self.call_count = 0
+    
+    def hydrate(self, items: List[Event], context=None) -> List[Event]:
+        self.call_count += 1
+        self.captured_context = context
+        return items
+
+
+def test_orchestrator_passes_context_to_hydrators(sample_provider):
+    """Test that PipelineContext is passed to hydrators during execution."""
+    from itingen.core.domain.venues import Venue
+    
+    # Create a hydrator that captures the context
+    capturing_hydrator = ContextCapturingHydrator()
+    
+    # Create venues and config that should be in the context
+    venues = {"test-venue": Venue(venue_id="test-venue", canonical_name="Test Venue")}
+    config = {"test_config": "test_value"}
+    
+    # Set up provider to return our test data
+    sample_provider._venues = venues
+    sample_provider._config = config
+    
+    orchestrator = PipelineOrchestrator(
+        sample_provider,
+        hydrators=[capturing_hydrator],
+        emitters=[MockEmitter()]  # Add emitter so orchestrator can execute
+    )
+    
+    # Execute the pipeline
+    orchestrator.execute()
+    
+    # Verify the hydrator was called and received the context
+    assert capturing_hydrator.call_count == 1
+    assert capturing_hydrator.captured_context is not None
+    assert capturing_hydrator.captured_context.venues == venues
+    assert capturing_hydrator.captured_context.config == config

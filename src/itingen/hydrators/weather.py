@@ -14,7 +14,7 @@ class WeatherHydrator(BaseHydrator[Event]):
         """Initialize with optional cache directory."""
         self.client = WeatherSparkClient(cache_dir=cache_dir)
 
-    def hydrate(self, items: List[Event]) -> List[Event]:
+    def hydrate(self, items: List[Event], context=None) -> List[Event]:
         """Enrich events with weather data based on location and date."""
         new_items = []
         for event in items:

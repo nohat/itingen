@@ -14,7 +14,7 @@ class NarrativeHydrator(BaseHydrator[Event]):
         self.style_template = style_template or NARRATIVE_STYLE_TEMPLATE
         self.prompt_template = prompt_template or NARRATIVE_PROMPT_TEMPLATE
 
-    def hydrate(self, items: List[Event]) -> List[Event]:
+    def hydrate(self, items: List[Event], context=None) -> List[Event]:
         new_items = []
         for event in items:
             if not event.event_heading:

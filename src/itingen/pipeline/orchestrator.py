@@ -6,8 +6,9 @@ through a sequence of Hydrators to Emitters. It implements the SPE lifecycle.
 
 from typing import List, Generic, TypeVar, Optional, Dict, Any
 from pathlib import Path
+from dataclasses import dataclass
 
-from itingen.core.base import BaseProvider, BaseHydrator, BaseEmitter
+from itingen.core.base import BaseProvider, BaseHydrator, BaseEmitter, PipelineContext
 from itingen.core.domain.venues import Venue
 from itingen.pipeline.transitions import TransitionRegistry
 
@@ -96,9 +97,10 @@ class PipelineOrchestrator(Generic[T]):
         
         # Pipeline Stage: Apply hydrators in sequence
         current_data = events
+        context = PipelineContext(venues=self.venues, config=self.config)
         for i, hydrator in enumerate(self.hydrators):
             try:
-                current_data = hydrator.hydrate(current_data)
+                current_data = hydrator.hydrate(current_data, context)
             except Exception as e:
                 raise RuntimeError(f"Hydrator {i} ({type(hydrator).__name__}) failed: {e}") from e
         
