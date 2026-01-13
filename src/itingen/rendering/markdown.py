@@ -104,8 +104,13 @@ class MarkdownEmitter(BaseEmitter[Event]):
                     if dur_str:
                         f.write(f" {dur_str}")
                     f.write("\n")
-                    
+
                     # Detail bullets
+                    # Image reference (if available)
+                    image_path = getattr(event, "image_path", None)
+                    if image_path:
+                        f.write(f"  - ![{heading}]({image_path})\n")
+
                     if event.who:
                         f.write(f"  - With: {', '.join(event.who)}\n")
                     
