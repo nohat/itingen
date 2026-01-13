@@ -37,7 +37,7 @@ Before starting any new task, switching tasks, running `bd ready`, or editing co
 
 Hard gates:
 - If `git status` is not clean, STOP and run `/land`.
-- Feature branches must NEVER include `.beads/issues.jsonl` changes.
+- `.beads/issues.jsonl` should NEVER appear in `git status` (skip-worktree flag must be set).
 - Never use `git add -A` or `git add .`.
 - Always run `grep -r "AIDEV-" src/` before editing related code.
 
@@ -60,23 +60,25 @@ This system generates optimized travel itineraries based on venues, constraints,
 
 ### Beads (bd) + Git Integration - CRITICAL
 
-The `bd` daemon runs continuously and commits issue state to the sync branch (`master`) via a worktree.
-Feature branches must NEVER include `.beads/issues.jsonl` changes.
+This repo uses **sync-branch mode** where the `bd` daemon commits issue state to a dedicated `beads-sync` branch via a worktree.
+The `.beads/issues.jsonl` file is hidden from git status using `--skip-worktree` flags.
 
-#### How BD Sync Works
+#### How Sync-Branch Mode Works
 
-1. **Daemon auto-syncs**: Creates "bd daemon sync" commits on `master` automatically.
-2. **Uses a worktree**: `.git/beads-worktrees/master/` is a separate checkout.
-3. **JSONL is managed by bd**: Never manually commit `.beads/issues.jsonl`.
+1. **Sync branch**: Issue state is tracked in the `beads-sync` branch (configured in `.beads/config.yaml`).
+2. **Worktree isolation**: `.git/beads-worktrees/beads-sync/` is a separate checkout for daemon commits.
+3. **Skip-worktree flags**: `.beads/issues.jsonl` has `git update-index --skip-worktree` set on all branches.
+4. **Daemon auto-syncs**: Creates "bd daemon sync" commits on `beads-sync` automatically.
+5. **Config is tracked**: `.beads/config.yaml` IS tracked in git and can be committed to feature branches.
 
 #### Critical Rules
 
-- ❌ **NEVER** `git add .beads/issues.jsonl` in feature branches.
-- ❌ **NEVER** `git add -A` or `git add .`.
-- ❌ **NEVER** rebase when `.beads/issues.jsonl` shows as modified.
-- ✅ **ALWAYS** stage specific paths (for example): `git add src/ tests/ docs/`.
-- ✅ **ALWAYS** restore beads before committing when needed: `git restore .beads/issues.jsonl`.
-- ✅ **ALWAYS** let `bd sync` handle issue state separately.
+- ❌ **NEVER** `git add .beads/issues.jsonl` - it should be invisible to git status.
+- ❌ **NEVER** `git add -A` or `git add .` - always stage specific paths.
+- ❌ **NEVER** `git update-index --no-skip-worktree .beads/issues.jsonl` - this breaks sync-branch mode.
+- ✅ **ALWAYS** stage specific paths: `git add src/ tests/ docs/`.
+- ✅ **OK to commit** `.beads/config.yaml` if you change sync-branch settings.
+- ✅ **ALWAYS** let `bd sync` handle issue state - it syncs to `beads-sync` branch automatically.
 
 #### Correct Feature Branch Workflow
 
@@ -85,27 +87,45 @@ Feature branches must NEVER include `.beads/issues.jsonl` changes.
 git checkout -b feat/my-feature origin/master
 bd update <issue-id> --status in_progress
 
-# Commit ONLY code (never .beads/)
+# Verify .beads/issues.jsonl is NOT in git status (skip-worktree working)
+git status  # Should show clean or only code changes
+
+# Commit ONLY code (stage specific paths)
 git add src/ tests/ docs/
 git commit -m "✨ feat: my feature"
 
 # End session
 bd close <issue-id>
-bd sync                         # Commits to master via worktree - NOT your branch
+bd sync                         # Commits to beads-sync via worktree - NOT your branch
 git push origin feat/my-feature # Push feature branch only
 ```
 
-#### Recovery from Beads/Git Mess
+#### Recovery: If .beads/issues.jsonl Appears in Git Status
 
-If your feature branch has spurious beads commits or daemon sync commits:
+If `.beads/issues.jsonl` shows as modified in `git status`, the skip-worktree flag is missing:
 
 ```bash
-git checkout origin/master
-git checkout -B feat/my-feature-clean
-git checkout feat/my-feature -- src/ tests/ docs/  # Only code files
-git commit -m "✨ feat: my feature"
-git push -f origin feat/my-feature-clean
-git branch -D feat/my-feature
+# Fix: Set skip-worktree flag
+git update-index --skip-worktree .beads/issues.jsonl
+git status  # Should now be clean
+
+# If still showing changes, restore to HEAD first
+git update-index --no-skip-worktree .beads/issues.jsonl
+git restore .beads/issues.jsonl
+git update-index --skip-worktree .beads/issues.jsonl
+```
+
+#### Recovery: Fix All Local Branches
+
+If you need to set skip-worktree on all local branches:
+
+```bash
+# Visit each branch and set the flag
+for branch in $(git branch --format='%(refname:short)' | grep -v '^beads-sync$'); do
+  git checkout -f "$branch"
+  git update-index --skip-worktree .beads/issues.jsonl
+done
+git checkout -  # Return to previous branch
 ```
 
 ### Anchors (AIDEV-*)
@@ -218,9 +238,9 @@ git status  # MUST show "up to date with origin"
 15. Continue work after user says "done", "stop", or "pause" without landing.
 16. Implement with libraries not specified in `requirements.txt`/`pyproject.toml`.
 17. Deviate from `docs/ARCHITECTURE.md` without explicit approval.
-18. Commit `.beads/issues.jsonl` in feature branches.
-19. Use `git add -A` or `git add .`.
-20. Rebase when `.beads/issues.jsonl` is modified.
+18. Remove skip-worktree flag from `.beads/issues.jsonl` (breaks sync-branch mode).
+19. Use `git add -A` or `git add .` (risks staging unintended files).
+20. Commit `.beads/issues.jsonl` to feature branches (should be invisible to git).
 
 ## Domain Glossary
 
