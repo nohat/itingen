@@ -165,6 +165,62 @@ class TestDayComponent:
         from reportlab.platypus import Image
         assert any(isinstance(item, Image) for item in story)
 
+    def test_render_day_with_weather(self, mock_styles, mock_theme):
+        """Test rendering day with weather summary box."""
+        component = DayComponent()
+        story = []
+        day = TimelineDay(
+            date_str="2025-01-01",
+            day_header="Day 1",
+            events=[],
+            weather_high=75.0,
+            weather_low=60.0,
+            weather_conditions="Partly Cloudy"
+        )
+
+        component.render(story, mock_styles, mock_theme, day)
+
+        # Verify story contains a Table (for weather box)
+        assert len(story) > 0
+        from reportlab.platypus import Table
+        assert any(isinstance(item, Table) for item in story)
+
+    def test_render_day_with_partial_weather_high_only(self, mock_styles, mock_theme):
+        """Test rendering day does not error or show weather box if only high is present."""
+        component = DayComponent()
+        story = []
+        day = TimelineDay(
+            date_str="2025-01-01",
+            day_header="Day 1",
+            events=[],
+            weather_high=75.0,
+            weather_low=None,
+            weather_conditions="Partly Cloudy",
+        )
+
+        component.render(story, mock_styles, mock_theme, day)
+
+        from reportlab.platypus import Table
+        assert not any(isinstance(item, Table) for item in story)
+
+    def test_render_day_with_partial_weather_low_only(self, mock_styles, mock_theme):
+        """Test rendering day does not show weather box if only low is present."""
+        component = DayComponent()
+        story = []
+        day = TimelineDay(
+            date_str="2025-01-01",
+            day_header="Day 1",
+            events=[],
+            weather_high=None,
+            weather_low=60.0,
+            weather_conditions="Partly Cloudy",
+        )
+
+        component.render(story, mock_styles, mock_theme, day)
+
+        from reportlab.platypus import Table
+        assert not any(isinstance(item, Table) for item in story)
+
 class TestPDFEmitter:
     """Test PDFEmitter orchestration."""
 
