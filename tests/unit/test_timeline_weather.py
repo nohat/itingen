@@ -1,6 +1,5 @@
 """Unit tests for weather aggregation in TimelineProcessor."""
 
-import pytest
 from itingen.core.domain.events import Event
 from itingen.rendering.timeline import TimelineProcessor
 

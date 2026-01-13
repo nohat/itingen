@@ -131,7 +131,7 @@ class DayComponent(PDFComponent):
         # Day Title and Weather
         title_para = Paragraph(escape(day.day_header), styles["day_header"])
         
-        if day.weather_high is not None:
+        if day.weather_high is not None and day.weather_low is not None:
             # Weather summary box
             weather_text = f"<b>{int(day.weather_low)}°F - {int(day.weather_high)}°F</b>"
             if day.weather_conditions:
