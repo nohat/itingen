@@ -30,11 +30,12 @@ class TransitionHydrator(BaseHydrator[Event]):
                         updates["transition_from_prev"] = transition
             
             if updates:
-                new_items.append(ev.model_copy(update=updates))
+                new_ev = ev.model_copy(update=updates)
             else:
-                new_items.append(ev)
+                new_ev = ev
                 
-            prev_ev = ev
+            new_items.append(new_ev)
+            prev_ev = new_ev  # Use the newly created event as the previous event for the next iteration
 
         return new_items
 
