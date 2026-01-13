@@ -39,6 +39,12 @@ def test_markdown_emitter(sample_itinerary, tmp_path):
 
 def test_markdown_emitter_with_images(tmp_path):
     """Test that markdown emitter includes image references when image_path is present."""
+    # Create actual image file so existence check passes
+    image_dir = tmp_path / "cache" / "images"
+    image_dir.mkdir(parents=True)
+    image_file = image_dir / "temple_thumbnail.png"
+    image_file.write_bytes(b"fake image content")
+
     itinerary = [
         Event(
             event_heading="Visit Temple",
@@ -46,7 +52,7 @@ def test_markdown_emitter_with_images(tmp_path):
             location="Senso-ji Temple",
             time_utc="2025-01-01T09:00:00Z",
             description="Ancient Buddhist temple",
-            image_path="cache/images/temple_thumbnail.png"
+            image_path=str(image_file)
         ),
         Event(
             event_heading="Lunch Break",
@@ -62,15 +68,50 @@ def test_markdown_emitter_with_images(tmp_path):
 
     result_path = emitter.emit(itinerary, str(output_path))
 
+    assert result_path == str(output_path)
     assert output_path.exists()
     content = output_path.read_text()
 
     # Check that image reference is included for events with image_path
-    assert "![Visit Temple](cache/images/temple_thumbnail.png)" in content
+    assert f"![Visit Temple]({image_file})" in content
 
     # Check that events without image_path don't have image references
     assert "Lunch Break" in content
     assert "![Lunch Break]" not in content
+
+def test_markdown_emitter_skips_nonexistent_images(tmp_path):
+    """Test that markdown emitter skips images when image_path points to non-existent file."""
+    itinerary = [
+        Event(
+            event_heading="Visit Museum",
+            kind="activity",
+            location="National Museum",
+            time_utc="2025-01-01T10:00:00Z",
+            description="Art exhibition",
+            image_path="cache/images/nonexistent.png"  # File doesn't exist
+        ),
+        Event(
+            event_heading="Dinner",
+            kind="meal",
+            location="Restaurant",
+            time_utc="2025-01-01T18:00:00Z",
+        )
+    ]
+
+    output_path = tmp_path / "itinerary_no_images.md"
+    emitter = MarkdownEmitter()
+
+    result_path = emitter.emit(itinerary, str(output_path))
+
+    assert result_path == str(output_path)
+    assert output_path.exists()
+    content = output_path.read_text()
+
+    # Check that non-existent image is NOT rendered
+    assert "![Visit Museum](cache/images/nonexistent.png)" not in content
+    # But the event itself should still be present
+    assert "Visit Museum" in content
+    assert "Art exhibition" in content
 
 def test_pdf_emitter(sample_itinerary, tmp_path):
     output_path = tmp_path / "itinerary.pdf"
