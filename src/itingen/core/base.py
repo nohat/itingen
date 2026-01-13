@@ -52,7 +52,7 @@ class BaseHydrator(ABC, Generic[T]):
         Args:
             items: The list of domain objects to enrich (e.g., events or itinerary items).
             context: Optional pipeline context containing shared data such as
-                venues and trip-level configuration.
+                venues and trip-level configuration. This may be ``None``.
 
         Returns:
             The list of enriched items.
