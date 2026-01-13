@@ -34,4 +34,4 @@ description: Land the plane - session end protocol (capture work, commit, sync t
 ### 7. Handoff
 - Summarize progress and next steps.
 
-Refer to @/Users/nohat/play/itingen/.claude/commands/land.md for detailed requirements.
+Refer to @/.claude/commands/land.md for detailed requirements.

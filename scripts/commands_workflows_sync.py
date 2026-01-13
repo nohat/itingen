@@ -36,6 +36,8 @@ def render_workflow(name: str, description: str | None, command_abs_path: Path) 
     desc = description or f"Workflow wrapper for /{name}"
     title = title_from_name(name)
 
+    command_rel_path = Path(".claude") / "commands" / f"{name}.md"
+
     return (
         "---\n"
         f"description: {desc}\n"
@@ -45,7 +47,7 @@ def render_workflow(name: str, description: str | None, command_abs_path: Path) 
         "## Usage\n"
         f"`/{name}`\n\n"
         "## Instructions\n"
-        f"Follow the instructions in @/{command_abs_path} exactly.\n"
+        f"Follow the instructions in @/{command_rel_path.as_posix()} exactly.\n"
     )
 
 
