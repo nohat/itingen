@@ -47,7 +47,16 @@ class BaseHydrator(ABC, Generic[T]):
 
     @abstractmethod
     def hydrate(self, items: List[T], context: Optional[PipelineContext] = None) -> List[T]:
-        """Enrich the given items with additional data."""
+        """Enrich the given items with additional data.
+
+        Args:
+            items: The list of domain objects to enrich (e.g., events or itinerary items).
+            context: Optional pipeline context containing shared data such as
+                venues and trip-level configuration.
+
+        Returns:
+            The list of enriched items.
+        """
         raise NotImplementedError
 
 class BaseEmitter(ABC, Generic[T]):

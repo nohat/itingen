@@ -266,7 +266,7 @@ def test_orchestrator_execute_multiple_emitters(sample_provider):
 
 def test_pipeline_context_creation():
     """Test that PipelineContext can be created with venues and config."""
-    from itingen.pipeline.orchestrator import PipelineContext
+    from itingen.core.base import PipelineContext
     from itingen.core.domain.venues import Venue
 
     venues = {"venue1": Venue(venue_id="venue1", canonical_name="Test Venue")}

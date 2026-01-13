@@ -4,9 +4,11 @@ AIDEV-NOTE: This hydrator filters events based on the participants list ('who').
 If an event has an empty 'who' list, it is considered generic and shown to everyone.
 """
 
-from typing import List, Optional
+from typing import List, Optional, TypeVar
 from itingen.core.base import BaseHydrator
 from itingen.core.domain.events import Event
+
+T = TypeVar("T")
 
 
 class PersonFilter(BaseHydrator[Event]):

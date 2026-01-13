@@ -6,7 +6,6 @@ through a sequence of Hydrators to Emitters. It implements the SPE lifecycle.
 
 from typing import List, Generic, TypeVar, Optional, Dict, Any
 from pathlib import Path
-from dataclasses import dataclass
 
 from itingen.core.base import BaseProvider, BaseHydrator, BaseEmitter, PipelineContext
 from itingen.core.domain.venues import Venue
