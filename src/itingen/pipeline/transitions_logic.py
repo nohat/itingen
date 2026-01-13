@@ -5,15 +5,16 @@ how to move from one event to the next, following the logic from the
 original NZ trip system.
 """
 
-from typing import List, Optional
+from typing import List, Optional, TypeVar
 from itingen.core.base import BaseHydrator
 from itingen.core.domain.events import Event
 
+T = TypeVar('T')
 
 class TransitionHydrator(BaseHydrator[Event]):
     """Enriches events with descriptive transition logistics from the previous event."""
 
-    def hydrate(self, items: List[Event]) -> List[Event]:
+    def hydrate(self, items: List[Event], context=None) -> List[Event]:
         """Add transition descriptions to events based on their predecessor."""
         if not items:
             return []

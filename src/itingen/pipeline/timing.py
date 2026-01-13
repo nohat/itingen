@@ -4,15 +4,16 @@ AIDEV-NOTE: This hydrator looks ahead to the next event to determine when
 the current event should be wrapped up to ensure readiness for the next one.
 """
 
-from typing import List
+from typing import List, TypeVar
 from itingen.core.base import BaseHydrator
 from itingen.core.domain.events import Event
 
+T = TypeVar('T')
 
 class WrapUpHydrator(BaseHydrator[Event]):
     """Calculates wrap_up_time for events based on the next event's start time."""
 
-    def hydrate(self, items: List[Event]) -> List[Event]:
+    def hydrate(self, items: List[T], context=None) -> List[T]:
         """Add wrap_up_time and be_ready text to events."""
         if not items:
             return []

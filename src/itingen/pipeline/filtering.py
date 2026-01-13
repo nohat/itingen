@@ -20,7 +20,7 @@ class PersonFilter(BaseHydrator[Event]):
         """
         self.person_slug = person_slug
 
-    def hydrate(self, items: List[Event]) -> List[Event]:
+    def hydrate(self, items: List[T], context=None) -> List[T]:
         """Filter the given items.
         
         An event is kept if:
