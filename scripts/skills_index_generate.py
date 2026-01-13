@@ -15,7 +15,7 @@ def extract_frontmatter(content):
     return metadata
 
 def generate_index():
-    project_root = Path(__name__).parent.parent.absolute()
+    project_root = Path(__file__).resolve().parent.parent
     skills_dir = project_root / ".claude" / "skills"
     rules_dir = project_root / ".windsurf" / "rules"
     
@@ -34,11 +34,13 @@ def generate_index():
                 # Split description into max 4 bullets
                 bullets = [b.strip() for b in description.split('.') if b.strip()]
                 bullets = bullets[:4]
+
+                skill_rel_path = skill_path.relative_to(project_root).as_posix()
                 
                 skills.append({
                     'name': name,
                     'bullets': bullets,
-                    'path': f"@/{skill_path.absolute()}"
+                    'path': f"@/{skill_rel_path}"
                 })
     
     index_content = "# Skills Index (Generated)\n\n"
