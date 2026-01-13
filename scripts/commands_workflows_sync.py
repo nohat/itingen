@@ -32,7 +32,7 @@ def is_generated_workflow(path: Path) -> bool:
     return AUTO_MARKER in content
 
 
-def render_workflow(name: str, description: str | None, command_abs_path: Path) -> str:
+def render_workflow(name: str, description: str | None, command_rel_path: str) -> str:
     desc = description or f"Workflow wrapper for /{name}"
     title = title_from_name(name)
 
@@ -45,7 +45,7 @@ def render_workflow(name: str, description: str | None, command_abs_path: Path) 
         "## Usage\n"
         f"`/{name}`\n\n"
         "## Instructions\n"
-        f"Follow the instructions in @/{command_abs_path} exactly.\n"
+        f"Follow the instructions in @/{command_rel_path} exactly.\n"
     )
 
 
@@ -73,16 +73,18 @@ def main() -> int:
         workflow_path = workflows_dir / f"{name}.md"
 
         description = extract_frontmatter_description(command_path.read_text())
+        # Use relative path from project root
+        command_rel_path = command_path.relative_to(project_root)
 
         if workflow_path.exists():
             if args.force and is_generated_workflow(workflow_path):
-                workflow_path.write_text(render_workflow(name, description, command_path))
+                workflow_path.write_text(render_workflow(name, description, str(command_rel_path)))
                 overwritten += 1
             else:
                 skipped += 1
             continue
 
-        workflow_path.write_text(render_workflow(name, description, command_path))
+        workflow_path.write_text(render_workflow(name, description, str(command_rel_path)))
         created += 1
 
     print(

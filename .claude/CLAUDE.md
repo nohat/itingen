@@ -33,7 +33,7 @@ If the answer to any is "no" or "maybe", do not implement the fallback.
 
 Before starting any new task, switching tasks, running `bd ready`, or editing code, follow:
 
-**Canonical:** @/Users/nohat/play/itingen/.claude/skills/session-preflight/SKILL.md
+**Canonical:** @/.claude/skills/session-preflight/SKILL.md
 
 Hard gates:
 - If `git status` is not clean, STOP and run `/land`.
@@ -120,14 +120,14 @@ git branch -D feat/my-feature
 
 ### Test-Driven Development (TDD) - MANDATORY
 
-**Canonical:** @/Users/nohat/play/itingen/.claude/skills/tdd/SKILL.md
+**Canonical:** @/.claude/skills/tdd/SKILL.md
 
 ## How Work Proceeds Here (Workflow)
 
 ### Start-of-Session / Handoff
 
 - Prefer `/start` for a full guided start.
-- **Canonical skill:** @/Users/nohat/play/itingen/.claude/skills/handoff-start/SKILL.md
+- **Canonical skill:** @/.claude/skills/handoff-start/SKILL.md
 
 ### Issue Tracking (Beads)
 
@@ -153,7 +153,7 @@ Always execute these checks before starting new work:
 
 Always run `/land` before ending work. Work is not complete until the full protocol is finished.
 
-**Canonical:** @/Users/nohat/play/itingen/.claude/commands/land.md
+**Canonical:** @/.claude/commands/land.md
 
 #### Work Continuation Rules
 
@@ -173,12 +173,12 @@ git status  # MUST show "up to date with origin"
 
 ## Slash Commands (preferred)
 
-- `/start`: @/Users/nohat/play/itingen/.claude/commands/start.md
-- `/plan`: @/Users/nohat/play/itingen/.claude/commands/plan.md
-- `/test`: @/Users/nohat/play/itingen/.claude/commands/test.md
-- `/review`: @/Users/nohat/play/itingen/.claude/commands/review.md
-- `/commit`: @/Users/nohat/play/itingen/.claude/commands/commit.md
-- `/land`: @/Users/nohat/play/itingen/.claude/commands/land.md
+- `/start`: @/.claude/commands/start.md
+- `/plan`: @/.claude/commands/plan.md
+- `/test`: @/.claude/commands/test.md
+- `/review`: @/.claude/commands/review.md
+- `/commit`: @/.claude/commands/commit.md
+- `/land`: @/.claude/commands/land.md
 
 ## What AI Must NEVER Do
 
@@ -261,7 +261,7 @@ Use `bd` for all task tracking instead of markdown TODO lists.
 
 ## Canonical References
 
-- Skills router: `@/Users/nohat/play/itingen/.windsurf/rules/skills-router.md`
-- Skills index (generated): `@/Users/nohat/play/itingen/.windsurf/rules/skills-index.generated.md`
-- Workflow router: `@/Users/nohat/play/itingen/.windsurf/rules/workflow-router.md`
-- Architecture: `@/Users/nohat/play/itingen/docs/ARCHITECTURE.md`
+- Skills router: `@/.windsurf/rules/skills-router.md`
+- Skills index (generated): `@/.windsurf/rules/skills-index.generated.md`
+- Workflow router: `@/.windsurf/rules/workflow-router.md`
+- Architecture: `@/docs/ARCHITECTURE.md`

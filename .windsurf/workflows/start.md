@@ -10,4 +10,4 @@ description: Start-of-session protocol (preflight + select next work)
 `/start`
 
 ## Instructions
-Follow the instructions in @//Users/nohat/play/itingen/.claude/commands/start.md exactly.
+Follow the instructions in @/.claude/commands/start.md exactly.

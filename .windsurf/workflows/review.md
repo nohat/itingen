@@ -10,4 +10,4 @@ description: Review code for bugs, tests, style, and security
 `/review`
 
 ## Instructions
-Follow the instructions in @//Users/nohat/play/itingen/.claude/commands/review.md exactly.
+Follow the instructions in @/.claude/commands/review.md exactly.

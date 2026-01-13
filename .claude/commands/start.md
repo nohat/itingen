@@ -15,7 +15,7 @@ argument-hint: "[--issue <id>]"
 
 1. Run session preflight.
 
-**Canonical:** @/Users/nohat/play/itingen/.claude/skills/session-preflight/SKILL.md
+**Canonical:** @/.claude/skills/session-preflight/SKILL.md
 
 2. Select next work.
 

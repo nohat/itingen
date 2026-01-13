@@ -19,4 +19,4 @@ When this workflow is triggered, follow the session end protocol defined in `.cl
 6. **Sync Tracker:** Run `bd sync`.
 7. **Handoff:** Summarize progress and next steps.
 
-Refer to @/Users/nohat/play/itingen/.claude/commands/land.md for detailed requirements.
+Refer to @/.claude/commands/land.md for detailed requirements.
