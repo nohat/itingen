@@ -13,7 +13,7 @@ class StrictBaseModel(BaseModel):
         if not self.model_extra:
             return self
             
-        known_fields = set(self.model_fields.keys())
+        known_fields = set(self.__class__.model_fields.keys())
         for extra_field in self.model_extra.keys():
             # Find close matches among known fields
             matches = difflib.get_close_matches(extra_field, known_fields, n=1, cutoff=0.85)
