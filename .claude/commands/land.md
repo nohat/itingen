@@ -33,6 +33,11 @@ allowed-tools: Bash(git:*), Bash(bd:*), Bash(npm:*), Bash(python:*), Read, Glob,
 
 ## Process (execute in order)
 
+### 0. Branch Verification
+- Ensure you are on a feature branch (not `master`).
+- If you are on `master`, switch to a new branch BEFORE committing: `git checkout -b <type>/<description>`.
+- Use `git branch` to verify.
+
 ### 1. Capture Discovered Work
 - Review any TODOs, FIXMEs, or issues discovered during this session
 - File them as Beads issues: `bd create "description" -p <priority> -t <type>`
@@ -56,8 +61,10 @@ If code was modified this session:
 - If either fails, file P0 issue and note in handoff
 
 ### 5. Git Checkpoint
-- Stage and commit working code with descriptive message
-- Do NOT commit failing tests (except intentional TDD red phase)
+- Stage and commit working code with descriptive message.
+- **NEVER** commit directly to `master`. Ensure the current branch is a feature branch.
+- Push the branch to remote: `git push origin <branch_name>`.
+- Do NOT commit failing tests (except intentional TDD red phase).
 
 ### 6. Sync Issue Tracker
 - Run `bd sync` to ensure all issues are persisted

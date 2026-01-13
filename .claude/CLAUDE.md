@@ -14,12 +14,20 @@ This system generates optimized travel itineraries based on venues, constraints,
 5. **NEVER** modify tests to make them pass - fix the implementation instead
 6. **NEVER** delete AIDEV-NOTE comments without explicit human approval
 
-### Git Workflow
-- Branch naming: `feat/description`, `fix/description`, `refactor/description`
-- Commit format: `<emoji> <type>(<scope>): <description>`
-- Commit emojis: ✨ feat | 🐛 fix | 📝 docs | ♻️ refactor | ✅ test | 🔧 chore
-- ALWAYS commit after each successful test cycle
-- NEVER commit failing tests (except intentionally in TDD red phase)
+### Git Workflow & Branching
+- **Main Branch**: `master` is the source of truth. **NEVER** commit directly to `master`.
+- **Feature Branches**: Every task MUST start with a new feature branch.
+  - Format: `feat/description`, `fix/description`, `refactor/description`.
+  - Example: `git checkout -b feat/pdf-export`.
+- **Worktrees**: Use `bd worktree create <name>` for parallel development or isolation.
+  - **Preferred Workflow**: `bd worktree create feat-branch-name --branch feat/branch-name`.
+  - Avoid working directly in the repository root if multiple tasks are active.
+  - See `docs/agent-workspaces.md` for the standard on isolated worktrees.
+- **Commit format**: `<emoji> <type>(<scope>): <description>`
+- **Commit emojis**: ✨ feat | 🐛 fix | 📝 docs | ♻️ refactor | ✅ test | 🔧 chore
+- **Atomic Commits**: Each commit should represent one logical change.
+- **Verification**: ALWAYS run tests before committing.
+- **Syncing**: ALWAYS run `bd sync` and `git push` after committing to ensure remote and tracker are updated.
 
 ### Test-Driven Development (TDD) - MANDATORY
 This project uses strict TDD. The cycle is:
