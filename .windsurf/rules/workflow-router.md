@@ -4,11 +4,12 @@ This rule routes Windsurf slash commands to their canonical definitions in `.cla
 
 ## Available Workflows
 
+- **/start**: Start-of-session protocol. See `.windsurf/workflows/start.md`.
 - **/land**: Session end protocol. See `.windsurf/workflows/land.md`.
 - **/commit**: Git commit protocol. See `.windsurf/workflows/commit.md`.
 - **/plan**: Work planning protocol. See `.windsurf/workflows/plan.md`.
-- **/test**: Testing protocol. See `.claude/commands/test.md`.
-- **/review**: Code review protocol. See `.claude/commands/review.md`.
+- **/test**: Testing protocol. See `.windsurf/workflows/test.md`.
+- **/review**: Code review protocol. See `.windsurf/workflows/review.md`.
 
 ## Instructions
 
