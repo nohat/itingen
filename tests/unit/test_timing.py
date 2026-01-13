@@ -265,8 +265,8 @@ class TestWrapUpHydrator:
         
         assert result[0].be_ready == "Be ready by 10:00 for this."
 
-    def test_hydrate_modifies_events_in_place(self, hydrator):
-        """Verifies events are modified in place."""
+    def test_hydrate_returns_new_objects(self, hydrator):
+        """Verifies events are NOT modified in place (immutability)."""
         events = [
             Event(kind="drive", time_local="09:00", location="Hotel"),
             Event(kind="flight", time_local="11:00", location="Airport")
@@ -276,6 +276,7 @@ class TestWrapUpHydrator:
         result = hydrator.hydrate(events)
         result_ids = [id(ev) for ev in result]
         
-        # Should be the same objects (modified in place)
-        assert original_ids == result_ids
+        # Should be different objects
+        assert original_ids != result_ids
         assert result[0].be_ready == "Be ready by 09:00 for this."
+        assert getattr(events[0], 'be_ready', None) is None

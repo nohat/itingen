@@ -18,15 +18,25 @@ class TransitionHydrator(BaseHydrator[Event]):
         if not items:
             return []
 
+        new_items = []
         prev_ev: Optional[Event] = None
         for ev in items:
+            updates = {}
             if prev_ev is not None:
                 # Only calculate if not already set (e.g. from source)
                 if not ev.transition_from_prev:
-                    ev.transition_from_prev = self._describe_transition(prev_ev, ev)
+                    transition = self._describe_transition(prev_ev, ev)
+                    if transition:
+                        updates["transition_from_prev"] = transition
+            
+            if updates:
+                new_items.append(ev.model_copy(update=updates))
+            else:
+                new_items.append(ev)
+                
             prev_ev = ev
 
-        return items
+        return new_items
 
     def _describe_transition(self, prev_ev: Event, ev: Event) -> Optional[str]:
         """Logic extracted from the original NZ trip system's describe_transition_logistics."""

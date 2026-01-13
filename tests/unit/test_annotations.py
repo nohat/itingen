@@ -329,14 +329,15 @@ class TestEmotionalAnnotationHydrator:
         assert "unclear instructions" in triggers
         assert "immersed moment when the activity is underway" in high_point
 
-    def test_hydrate_modifies_events_in_place(self, hydrator):
-        """Verifies events are modified in place."""
+    def test_hydrate_returns_new_objects(self, hydrator):
+        """Verifies events are NOT modified in place (immutability)."""
         events = [Event(kind="drive", location="City")]
         
         original_ids = [id(ev) for ev in events]
         result = hydrator.hydrate(events)
         result_ids = [id(ev) for ev in result]
         
-        # Should be the same objects (modified in place)
-        assert original_ids == result_ids
+        # Should be different objects
+        assert original_ids != result_ids
         assert result[0].emotional_triggers is not None
+        assert events[0].emotional_triggers is None

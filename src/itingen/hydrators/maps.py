@@ -21,9 +21,11 @@ class MapsHydrator(BaseHydrator[Event]):
 
     def hydrate(self, items: List[Event]) -> List[Event]:
         """Enrich drive events with duration and distance from Google Maps."""
+        new_items = []
         for event in items:
             # Only hydrate drive events that don't have locked duration
             if event.kind != "drive" or getattr(event, "lock_duration", False):
+                new_items.append(event)
                 continue
             
             origin = event.travel_from
@@ -32,6 +34,7 @@ class MapsHydrator(BaseHydrator[Event]):
             if not origin or not destination:
                 # If travel fields are missing, try to use location
                 # This is a bit brittle, but matches expected behavior for drives
+                new_items.append(event)
                 continue
 
             try:
@@ -42,15 +45,19 @@ class MapsHydrator(BaseHydrator[Event]):
                 )
                 
                 if result:
-                    # Update event with maps data
-                    # We use setattr since these might be extra fields allowed by ConfigDict
-                    event.duration_seconds = result.get("duration_seconds")
-                    event.duration_text = result.get("duration_text")
-                    event.distance_text = result.get("distance_text")
+                    updates = {
+                        "duration_seconds": result.get("duration_seconds"),
+                        "duration_text": result.get("duration_text"),
+                        "distance_text": result.get("distance_text"),
+                    }
                     
                     # Also update description if travel_to is used
                     if event.travel_to and not event.description:
-                        event.description = f"Drive from {origin} to {destination}"
+                        updates["description"] = f"Drive from {origin} to {destination}"
+                    
+                    new_items.append(event.model_copy(update=updates))
+                else:
+                    new_items.append(event)
                         
             except Exception:
                 # Fail-fast is preferred, but for external APIs we might want 
@@ -58,4 +65,4 @@ class MapsHydrator(BaseHydrator[Event]):
                 # For now, we'll let exceptions bubble up as per PipelineOrchestrator's design.
                 raise
                 
-        return items
+        return new_items

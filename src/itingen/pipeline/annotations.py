@@ -15,6 +15,7 @@ class EmotionalAnnotationHydrator(BaseHydrator[Event]):
 
     def hydrate(self, items: List[Event]) -> List[Event]:
         """Enrich events with emotional metadata."""
+        new_items = []
         for event in items:
             kind = (event.kind or "").strip().lower()
             travel_mode = (getattr(event, "travel_mode", None) or "").strip().lower()
@@ -40,10 +41,15 @@ class EmotionalAnnotationHydrator(BaseHydrator[Event]):
 
             if is_stressy:
                 triggers, high_point = self._get_annotations(kind, travel_mode, heading)
-                event.emotional_triggers = triggers
-                event.emotional_high_point = high_point
+                updates = {
+                    "emotional_triggers": triggers,
+                    "emotional_high_point": high_point
+                }
+                new_items.append(event.model_copy(update=updates))
+            else:
+                new_items.append(event)
 
-        return items
+        return new_items
 
     def _get_annotations(self, kind: str, travel_mode: str, heading: str) -> Tuple[str, str]:
         """Logic extracted from the original NZ trip system."""

@@ -16,8 +16,10 @@ class WeatherHydrator(BaseHydrator[Event]):
 
     def hydrate(self, items: List[Event]) -> List[Event]:
         """Enrich events with weather data based on location and date."""
+        new_items = []
         for event in items:
             if not event.location or not event.time_utc:
+                new_items.append(event)
                 continue
             
             # Extract date from time_utc (ISO 8601)
@@ -27,13 +29,18 @@ class WeatherHydrator(BaseHydrator[Event]):
                 
                 if weather_data:
                     # Enrich event with weather fields
-                    event.weather_temp_high = weather_data.get("high_temp_f")
-                    event.weather_temp_low = weather_data.get("low_temp_f")
-                    event.weather_conditions = weather_data.get("conditions")
+                    updates = {
+                        "weather_temp_high": weather_data.get("high_temp_f"),
+                        "weather_temp_low": weather_data.get("low_temp_f"),
+                        "weather_conditions": weather_data.get("conditions")
+                    }
+                    new_items.append(event.model_copy(update=updates))
+                else:
+                    new_items.append(event)
             except Exception:
                 # We follow the fail-fast principle for data integrity, 
                 # but might allow weather to be missing if the provider is down.
                 # For now, let it bubble up as per SPE orchestrator pattern.
                 raise
                 
-        return items
+        return new_items

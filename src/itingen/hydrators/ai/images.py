@@ -30,9 +30,11 @@ class ImageHydrator(BaseHydrator[Event]):
         self.model = model
 
     def hydrate(self, items: List[Event]) -> List[Event]:
+        new_items = []
         for event in items:
             # Only generate images for events with a location
             if not event.location:
+                new_items.append(event)
                 continue
 
             # Create cache payload
@@ -77,7 +79,9 @@ class ImageHydrator(BaseHydrator[Event]):
                     image_path = self.cache.get_image_path(payload)
 
             if image_path:
-                event.image_path = str(image_path)
+                new_items.append(event.model_copy(update={"image_path": str(image_path)}))
+            else:
+                new_items.append(event)
 
-        return items
+        return new_items
 

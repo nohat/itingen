@@ -103,7 +103,6 @@ class BannerImageHydrator(BaseHydrator[TimelineDay]):
                         "cache_key": cache_key
                     }
                     # For testing purposes, we'll compute the expected path
-                    from itingen.utils.fingerprint import compute_fingerprint
                     fp = compute_fingerprint(cache_payload)
                     image_path = self.cache.image_cache / f"{fp}.jpg"
             

@@ -17,15 +17,18 @@ class WrapUpHydrator(BaseHydrator[Event]):
         if not items:
             return []
 
+        new_items = []
         # Assuming items are already sorted chronologically
         for i, curr_ev in enumerate(items):
+            updates = {}
+            
             # 1. Be ready logic (for current event)
             target_time = curr_ev.time_local or curr_ev.no_later_than
             if target_time:
                 time_part = target_time
                 if " " in target_time:
                     time_part = target_time.split(" ")[1]
-                curr_ev.be_ready = f"Be ready by {time_part} for this."
+                updates["be_ready"] = f"Be ready by {time_part} for this."
 
             # 2. Wrap-up logic (look ahead)
             if i < len(items) - 1:
@@ -35,7 +38,12 @@ class WrapUpHydrator(BaseHydrator[Event]):
                     time_part = next_t
                     if " " in next_t:
                         time_part = next_t.split(" ")[1]
-                    curr_ev.wrap_up_time = time_part
-                    curr_ev.next_event_title = next_ev.event_heading or next_ev.description or "your next event"
+                    updates["wrap_up_time"] = time_part
+                    updates["next_event_title"] = next_ev.event_heading or next_ev.description or "your next event"
 
-        return items
+            if updates:
+                new_items.append(curr_ev.model_copy(update=updates))
+            else:
+                new_items.append(curr_ev)
+                
+        return new_items
