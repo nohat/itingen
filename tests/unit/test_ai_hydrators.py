@@ -1,5 +1,7 @@
 import pytest
 from unittest.mock import patch
+from PIL import Image
+import io
 from itingen.core.domain.events import Event
 from itingen.hydrators.ai.narratives import NarrativeHydrator
 from itingen.hydrators.ai.images import ImageHydrator
@@ -41,7 +43,13 @@ def test_narrative_hydrator_enriches_events(mock_gemini_client, mock_cache, samp
     mock_gemini_client.generate_text.assert_not_called()
 
 def test_image_hydrator_enriches_events(mock_gemini_client, mock_cache, sample_events):
-    mock_gemini_client.generate_image_with_gemini.return_value = b"fake-image-bytes"
+    # Create valid image bytes for post-processing
+    img = Image.new('RGB', (100, 100), color='blue')
+    img_bytes = io.BytesIO()
+    img.save(img_bytes, format='PNG')
+    img_bytes.seek(0)
+    
+    mock_gemini_client.generate_image_with_gemini.return_value = img_bytes.getvalue()
     
     hydrator = ImageHydrator(client=mock_gemini_client, cache=mock_cache)
     hydrated_events = hydrator.hydrate(sample_events)

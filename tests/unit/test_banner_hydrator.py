@@ -4,8 +4,10 @@ import os
 import tempfile
 from unittest.mock import Mock, patch
 from pathlib import Path
+import io
 
 import pytest
+from PIL import Image
 
 from itingen.hydrators.ai.banner import BannerImageHydrator, BannerCachePolicy
 from itingen.hydrators.ai.cache import AiCache
@@ -17,8 +19,14 @@ from itingen.core.domain.events import Event
 @pytest.fixture
 def mock_gemini_client():
     """Create a mock GeminiClient."""
+    # Create valid image bytes for post-processing
+    img = Image.new('RGB', (1600, 900), color='blue')
+    img_bytes = io.BytesIO()
+    img.save(img_bytes, format='PNG')
+    img_bytes.seek(0)
+    
     client = Mock(spec=GeminiClient)
-    client.generate_image_with_gemini.return_value = b"fake_image_bytes"
+    client.generate_image_with_gemini.return_value = img_bytes.getvalue()
     return client
 
 
