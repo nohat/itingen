@@ -191,3 +191,17 @@ class TestFullPostProcessing:
         processed = Image.open(io.BytesIO(processed_bytes))
         assert processed.size[0] >= 140
         assert processed.size[1] >= 140
+
+    def test_postprocess_with_resizing(self):
+        """Should apply resizing in pipeline."""
+        img = Image.new('RGB', (2000, 2000), color='blue')
+        
+        processed_bytes = postprocess_image(
+            img,
+            max_dimension=500,
+            prefer_png=True
+        )
+        
+        processed = Image.open(io.BytesIO(processed_bytes))
+        assert processed.size[0] <= 500
+        assert processed.size[1] <= 500

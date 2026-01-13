@@ -129,6 +129,34 @@ def resample_to_aspect_ratio(
     return cropped
 
 
+def resize_to_limit(
+    img: Image.Image,
+    max_dimension: int,
+    resample_filter: Image.Resampling = Image.Resampling.LANCZOS
+) -> Image.Image:
+    """Resize image so its longest side does not exceed max_dimension.
+    
+    Args:
+        img: PIL Image to resize
+        max_dimension: Maximum allowed size for the longest dimension
+        resample_filter: PIL resampling filter (default: LANCZOS)
+    
+    Returns:
+        Resized PIL Image (or original if already smaller)
+    """
+    width, height = img.size
+    longest_side = max(width, height)
+    
+    if longest_side <= max_dimension:
+        return img
+        
+    scale_factor = max_dimension / longest_side
+    new_width = int(width * scale_factor)
+    new_height = int(height * scale_factor)
+    
+    return img.resize((new_width, new_height), resample_filter)
+
+
 def optimize_image_format(
     img: Image.Image,
     prefer_png: bool = True,
@@ -166,14 +194,16 @@ def postprocess_image(
     target_aspect: Optional[Tuple[int, int]] = None,
     max_trim_percent: float = 0.22,
     prefer_png: bool = True,
-    jpeg_quality: int = 85
+    jpeg_quality: int = 85,
+    max_dimension: Optional[int] = None
 ) -> bytes:
     """Complete post-processing pipeline for full-bleed aesthetic.
     
     Applies:
     1. Border detection and cropping
     2. Aspect ratio resampling (if target_aspect provided)
-    3. Format optimization
+    3. Resizing (if max_dimension provided)
+    4. Format optimization
     
     Args:
         image_input: PIL Image or bytes
@@ -181,6 +211,7 @@ def postprocess_image(
         max_trim_percent: Maximum trim percentage (default: 0.22)
         prefer_png: Prefer PNG format (default: True)
         jpeg_quality: JPEG quality if not using PNG (default: 85)
+        max_dimension: Optional maximum dimension for resizing
     
     Returns:
         Optimized image as bytes
@@ -194,5 +225,8 @@ def postprocess_image(
     
     if target_aspect:
         img = resample_to_aspect_ratio(img, target_aspect=target_aspect)
+        
+    if max_dimension:
+        img = resize_to_limit(img, max_dimension=max_dimension)
     
     return optimize_image_format(img, prefer_png=prefer_png, jpeg_quality=jpeg_quality)
