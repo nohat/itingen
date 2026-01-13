@@ -10,4 +10,4 @@ description: Run tests with optional file pattern or full suite
 `/test`
 
 ## Instructions
-Follow the instructions in @//Users/nohat/play/itingen/.claude/commands/test.md exactly.
+Follow the instructions in @/.claude/commands/test.md exactly.
