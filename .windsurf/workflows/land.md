@@ -17,6 +17,7 @@ When this workflow is triggered, follow the session end protocol defined in `.cl
 4. **Quality Gate:** Run tests and linters.
 5. **Git Checkpoint:** Commit changes.
 6. **Sync Tracker:** Run `bd sync`.
-7. **Handoff:** Summarize progress and next steps.
+7. **Push & PR:** Rebase/push and create PR to `master`.
+8. **Handoff:** Summarize progress and next steps.
 
 Refer to @/Users/nohat/play/itingen/.claude/commands/land.md for detailed requirements.
