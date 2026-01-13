@@ -1,195 +1,60 @@
 # Trip Itinerary Generator - Claude Code Context
 
+## STOP: Session Preflight (MANDATORY)
+
+Before starting any new task, switching tasks, running `bd ready`, or editing code, follow:
+
+**Canonical:** @/Users/nohat/play/itingen/.claude/skills/session-preflight/SKILL.md
+
+Hard gates:
+- If `git status` is not clean, STOP and run `/land`.
+- Never commit `.beads/issues.jsonl` on a feature branch.
+- Never use `git add -A` or `git add .`.
+- Always run `grep -r "AIDEV-" src/` before editing related code.
+
+**Test command:** `pytest`
+
 ## Project Overview
 A standalone, generic trip itinerary generation system extracted from scaffold project.
 This system generates optimized travel itineraries based on venues, constraints, and preferences.
 
-## CRITICAL WORKFLOW RULES
+## How Work Proceeds Here
 
-### Before ANY Code Changes
-1. **ALWAYS** check for existing anchor comments: `grep -r "AIDEV-" src/`
-2. **ALWAYS** verify implementation matches specifications (ARCHITECTURE.md, requirements.txt, pyproject.toml)
-3. **ALWAYS** run tests before AND after changes: `[TEST_COMMAND]`
-4. **ALWAYS** commit working code before starting new features
-5. **NEVER** modify tests to make them pass - fix the implementation instead
-6. **NEVER** delete AIDEV-NOTE comments without explicit human approval
+### TDD (MANDATORY)
 
-### Git Workflow
-- Branch naming: `feat/description`, `fix/description`, `refactor/description`
-- Commit format: `<emoji> <type>(<scope>): <description>`
-- Commit emojis: ✨ feat | 🐛 fix | 📝 docs | ♻️ refactor | ✅ test | 🔧 chore
-- ALWAYS commit after each successful test cycle
-- NEVER commit failing tests (except intentionally in TDD red phase)
+**Canonical:** @/Users/nohat/play/itingen/.claude/skills/tdd/SKILL.md
 
-### Test-Driven Development (TDD) - MANDATORY
-This project uses strict TDD. The cycle is:
-1. **RED**: Write a failing test for the next small piece of functionality
-2. **GREEN**: Write MINIMAL code to make the test pass
-3. **REFACTOR**: Clean up while keeping tests green
-4. **COMMIT**: Commit after each successful cycle
+### Start-of-Session / Handoff
 
-IMPORTANT: Do not write implementation before tests exist for it.
+**Canonical:** @/Users/nohat/play/itingen/.claude/skills/handoff-start/SKILL.md
 
-## Issue Tracking & Agent Instructions
+### Slash Commands (preferred)
 
-This project uses **bd** (beads) for issue tracking. Run `bd onboard` to get started.
+- `/plan`: @/Users/nohat/play/itingen/.claude/commands/plan.md
+- `/test`: @/Users/nohat/play/itingen/.claude/commands/test.md
+- `/commit`: @/Users/nohat/play/itingen/.claude/commands/commit.md
+- `/land`: @/Users/nohat/play/itingen/.claude/commands/land.md
 
-### Quick Reference
+## Non-Negotiables
 
-```bash
-bd ready              # Find available work
-bd show <id>          # View issue details
-bd update <id> --status in_progress  # Claim work
-bd close <id>         # Complete work
-bd sync               # Sync with git
-```
+### Git & Beads
 
-### Session Protocol
+- Feature branches must NEVER include `.beads/issues.jsonl` changes.
+- Do not use `git add -A` or `git add .`.
+- If `.beads/issues.jsonl` appears modified on a feature branch: `git restore .beads/issues.jsonl`.
 
-#### Starting a Session
-1. Run `bd ready` to see unblocked work
-2. Review any handoff notes from previous session
-3. Orient yourself with `grep -r "AIDEV-" src/` for context
+### Anchors
 
-#### Before Starting ANY New Task - MANDATORY CHECK
-**ALWAYS execute these checks BEFORE starting new work:**
-1. **Check git status** - If uncommitted changes exist, execute `/land` first
-2. **Check issue tracker** - If tasks in-progress, update or land them first
-3. **Verify clean state** - Only proceed with new work when everything is properly landed
+- Always scan anchors before editing: `grep -r "AIDEV-" src/`.
+- Never delete `AIDEV-NOTE` without explicit human approval.
 
-#### Ending a Session ("Land the Plane") - MANDATORY
-**ALWAYS execute `/land` before ending work.** Work is NOT complete until the full protocol is finished.
+### Specs
 
-**CRITICAL: WORK CONTINUATION RULES**
-- ❌ NEVER start new tasks without first landing current work
-- ❌ NEVER switch tasks without completing the land protocol
-- ❌ NEVER respond to new requests when work is in-progress and uncommitted
-- ❌ NEVER continue work after user says "done", "stop", "pause", etc. without landing
-- ✅ ALWAYS check git status before new work
-- ✅ ALWAYS land work before task switching
-- ✅ ALWAYS complete full protocol before new requests
+- Match implementation to `docs/ARCHITECTURE.md`, `requirements.txt`, and `pyproject.toml`.
 
-**MANDATORY WORKFLOW:**
-1. **File issues for remaining work** - Create issues for anything that needs follow-up
-2. **Run quality gates** (if code changed) - Tests, linters, builds
-3. **Update issue status** - Close finished work, update in-progress items
-4. **PUSH TO REMOTE** - This is MANDATORY:
-   ```bash
-   git pull --rebase
-   bd sync
-   git push
-   git status  # MUST show "up to date with origin"
-   ```
-5. **Clean up** - Clear stashes, prune remote branches
-6. **Verify** - All changes committed AND pushed
-7. **Hand off** - Provide context for next session
+## Canonical References
 
-**CRITICAL RULES:**
-- Work is NOT complete until `git push` succeeds
-- NEVER start new work until previous work is landed
-- NEVER leave uncommitted changes when switching tasks
-- If push fails, resolve and retry until it succeeds
-
-## Issue Tracking CLI
-- `bd create "Task" -p 1` - Create issue
-- `bd ready` - Find unblocked work
-- `bd close <id>` - Complete work
-- `bd dep add <child> <parent>` - Track dependencies
-
-File discovered work as you go. At session end, run `bd sync`.
-
-## Anchor Comments System
-Use these prefixed comments throughout the codebase:
-
-- `AIDEV-NOTE:` - Important context for AI and developers (≤120 chars)
-- `AIDEV-TODO:` - Work items that need attention
-- `AIDEV-QUESTION:` - Uncertainties that need human clarification
-- `AIDEV-DECISION:` - Records of architectural decisions made
-
-Before scanning files, ALWAYS grep for `AIDEV-*` first to understand context.
-Update relevant anchors when modifying associated code.
-NEVER remove AIDEV-NOTE comments without explicit human instruction.
-
-## Commands Reference
-- `[PACKAGE_MANAGER] run build` - Build the project
-- `[PACKAGE_MANAGER] run test` - Run all tests
-- `[PACKAGE_MANAGER] run test:watch` - Run tests in watch mode
-- `[PACKAGE_MANAGER] run lint` - Run linter
-- `[PACKAGE_MANAGER] run typecheck` - Run type checker
-
-## Code Style
-- [TO BE DETERMINED based on source analysis]
-
-## Architecture Patterns
-- [TO BE DETERMINED based on source analysis]
-
-## What AI Must NEVER Do
-1. Skip the TDD cycle
-2. Write large amounts of code without tests
-3. Modify test assertions to make them pass
-4. Remove anchor comments without permission
-5. Commit directly to main branch
-6. Make breaking changes without updating docs
-7. Ignore failing tests
-8. Over-engineer solutions beyond stated requirements
-9. Implement speculative fallbacks or "just in case" error handling
-10. Add backwards compatibility logic without a concrete, exercised use case
-11. Blindly adopt inherited patterns without critical evaluation
-12. **START NEW TASKS WITHOUT LANDING PREVIOUS WORK FIRST**
-13. **SWITCH TASKS WITHOUT COMPLETING LAND PROTOCOL**
-14. **LEAVE UNCOMMITTED CHANGES WHEN RESPONDING TO NEW REQUESTS**
-15. **CONTINUE WORK AFTER USER SAYS "DONE", "STOP", "PAUSE" WITHOUT LANDING**
-16. **IMPLEMENT WITH LIBRARIES NOT SPECIFIED IN requirements.txt/pyproject.toml**
-17. **DEVIATE FROM ARCHITECTURE.md WITHOUT EXPLICIT APPROVAL**
-
-## Domain Glossary
-- **Venue**: A location that can be visited (restaurant, attraction, etc.)
-- **Itinerary**: An ordered schedule of venue visits with timing
-- **Constraint**: A rule that limits itinerary options (hours, distance, etc.)
-- **Slot**: A time block in the itinerary
-- [TO BE EXPANDED after source analysis]
-
-## Inherited Technical Decisions
-See `docs/INHERITED_DECISIONS.md` for architectural patterns and conventions
-reviewed from the original scaffold project.
-
-IMPORTANT: Inherited decisions are a STARTING POINT, not gospel. Critically evaluate
-each decision against the needs of THIS project. Recommend overriding, modifying, or
-deprecating patterns that don't serve our goals. Fresh code in a new project is an
-opportunity to shed accumulated cruft.
-
-## Engineering Philosophy
-
-### Simplicity Over Accommodation
-- **No speculative fallbacks**: Do not implement "just in case" error handling or
-  graceful degradation unless there's a concrete, exercised use case
-- **No legacy compatibility by default**: We're building fresh - don't carry forward
-  backwards compatibility logic that will never be exercised
-- **Fail fast, fail clearly**: Errors should be explicit and debuggable, not hidden
-  behind best-effort recovery that masks root causes
-- **Delete > Comment out > Keep**: When in doubt, remove code. Git remembers.
-
-### The Fallback Test
-Before implementing any fallback, recovery, or compatibility logic, ask:
-1. Is this failure case actually expected in production?
-2. Will this fallback be regularly exercised and tested?
-3. Does the complexity cost justify the theoretical benefit?
-4. Would a clear error message be more valuable than silent recovery?
-
-If the answer to any is "no" or "maybe", DON'T implement the fallback.
-Write a clear error instead and handle the case when it actually occurs.
-
-### Technical Debt Philosophy
-- Code that handles cases that "might happen someday" IS technical debt
-- Untested fallback paths ARE bugs waiting to happen
-- Complexity added for theoretical robustness REDUCES actual reliability
-- Every branch in the code is a branch that needs testing and maintenance
-
-## Issue Tracking
-Use `bd` for all task tracking instead of markdown TODO lists.
-- `bd create "Task" -p 1` - Create issue
-- `bd ready` - Find unblocked work
-- `bd close <id>` - Complete work
-- `bd dep add <child> <parent>` - Track dependencies
-
-File discovered work as you go. At session end, run `bd sync`.
+- Skills router: `@/Users/nohat/play/itingen/.windsurf/rules/skills-router.md`
+- Skills index (generated): `@/Users/nohat/play/itingen/.windsurf/rules/skills-index.generated.md`
+- Workflow router: `@/Users/nohat/play/itingen/.windsurf/rules/workflow-router.md`
+- Architecture: `@/Users/nohat/play/itingen/docs/ARCHITECTURE.md`
