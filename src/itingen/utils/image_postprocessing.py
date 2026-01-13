@@ -8,7 +8,7 @@ Ported from scaffold POC. Provides:
 """
 
 from typing import Union, Tuple, Optional
-from PIL import Image, ImageStat
+from PIL import Image
 import io
 
 
