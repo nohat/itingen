@@ -3,7 +3,7 @@ import os
 import base64
 try:
     from dotenv import load_dotenv
-    load_dotenv()
+    load_dotenv(override=True)  # Force .env file to override any existing env vars
 except ImportError:
     pass  # python-dotenv not installed, fallback to environment variables only
 from google import genai
