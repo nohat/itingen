@@ -21,6 +21,52 @@ This system generates optimized travel itineraries based on venues, constraints,
 - ALWAYS commit after each successful test cycle
 - NEVER commit failing tests (except intentionally in TDD red phase)
 
+### Beads (bd) + Git Integration - CRITICAL
+
+The `bd` daemon runs continuously and commits issue state to the sync branch (master) via a worktree.
+**Feature branches must NEVER include `.beads/issues.jsonl` changes.**
+
+#### How BD Sync Works
+1. **Daemon auto-syncs** - Creates "bd daemon sync" commits on master automatically
+2. **Uses worktree** - `.git/beads-worktrees/master/` is a separate checkout
+3. **JSONL is managed by bd** - Never manually commit `.beads/issues.jsonl`
+
+#### Critical Rules
+- ❌ **NEVER** `git add .beads/issues.jsonl` in feature branches
+- ❌ **NEVER** `git add -A` or `git add .` (captures beads state)
+- ❌ **NEVER** rebase when `.beads/issues.jsonl` shows as modified
+- ✅ **ALWAYS** add specific files: `git add src/ tests/`
+- ✅ **ALWAYS** restore beads before commits: `git restore .beads/issues.jsonl`
+- ✅ **ALWAYS** let `bd sync` handle issue state separately
+
+#### Correct Feature Branch Workflow
+```bash
+# Start feature (from clean master)
+git checkout -b feat/my-feature origin/master
+bd update <issue-id> --status in_progress
+
+# Commit ONLY code (never .beads/)
+git add src/ tests/ docs/
+git commit -m "✨ feat: my feature"
+
+# End session
+bd close <issue-id>
+bd sync                         # Commits to master via worktree - NOT your branch
+git push origin feat/my-feature # Push feature branch only
+```
+
+#### Recovery from Beads/Git Mess
+If your feature branch has spurious beads commits or daemon sync commits:
+```bash
+# Create clean branch with just code changes
+git checkout origin/master
+git checkout -B feat/my-feature-clean
+git checkout feat/my-feature -- src/ tests/ docs/  # Only code files
+git commit -m "✨ feat: my feature"
+git push -f origin feat/my-feature-clean
+git branch -D feat/my-feature
+```
+
 ### Test-Driven Development (TDD) - MANDATORY
 This project uses strict TDD. The cycle is:
 1. **RED**: Write a failing test for the next small piece of functionality
@@ -141,6 +187,9 @@ NEVER remove AIDEV-NOTE comments without explicit human instruction.
 15. **CONTINUE WORK AFTER USER SAYS "DONE", "STOP", "PAUSE" WITHOUT LANDING**
 16. **IMPLEMENT WITH LIBRARIES NOT SPECIFIED IN requirements.txt/pyproject.toml**
 17. **DEVIATE FROM ARCHITECTURE.md WITHOUT EXPLICIT APPROVAL**
+18. **COMMIT `.beads/issues.jsonl` IN FEATURE BRANCHES** - Let bd sync handle it
+19. **USE `git add -A` OR `git add .`** - Always add specific directories
+20. **REBASE WHEN `.beads/issues.jsonl` IS MODIFIED** - Restore it first
 
 ## Domain Glossary
 - **Venue**: A location that can be visited (restaurant, attraction, etc.)
