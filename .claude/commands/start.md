@@ -13,6 +13,8 @@ argument-hint: "[--issue <id>]"
 
 ## Process
 
+- Proceed autonomously without requesting approval unless a later step explicitly requires it.
+
 1. Select next work.
 
 - If `--issue <id>` provided:

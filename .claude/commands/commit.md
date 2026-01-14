@@ -32,7 +32,7 @@ argument-hint: "[--no-verify]"
 
 ### 6. Generate Message
 - Generate commit message in format: `<emoji> <type>(<scope>): <description>`.
-- Show the commit message for approval before committing.
+- Proceed to commit without requesting approval.
 
 ### 7. Commit
 - Create the commit.
@@ -40,6 +40,7 @@ argument-hint: "[--no-verify]"
 ### 8. Push to Remote
 - Push the current branch: `git push origin <branch_name>`.
 - Run `bd sync` to update the issue tracker state on the remote.
+- Create the PR after pushing without requesting approval.
 
 ## Commit Types
 - ✨ feat: New feature
