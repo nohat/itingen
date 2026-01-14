@@ -3,6 +3,7 @@
 import pytest
 from itingen.core.domain.events import Event
 from itingen.pipeline.transitions_logic import TransitionHydrator
+from itingen.pipeline.nz_transitions import create_nz_transition_registry
 
 
 class TestTransitionHydrator:
@@ -10,8 +11,9 @@ class TestTransitionHydrator:
 
     @pytest.fixture
     def hydrator(self):
-        """Create a TransitionHydrator instance."""
-        return TransitionHydrator()
+        """Create a TransitionHydrator instance with NZ-specific transitions."""
+        registry = create_nz_transition_registry()
+        return TransitionHydrator(registry)
 
     def test_hydrate_empty_list(self, hydrator):
         """Returns empty list for empty input."""

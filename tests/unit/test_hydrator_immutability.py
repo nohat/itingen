@@ -153,19 +153,22 @@ class TestHydratorImmutability:
         e1 = Event(kind="drive", location="A")
         e2 = Event(kind="airport_buffer", location="Airport")
         events = [e1, e2]
-        
+
         from itingen.pipeline.transitions_logic import TransitionHydrator
-        hydrator = TransitionHydrator()
-        
+        from itingen.pipeline.nz_transitions import create_nz_transition_registry
+
+        registry = create_nz_transition_registry()
+        hydrator = TransitionHydrator(registry)
+
         results = hydrator.hydrate(events)
-        
+
         assert len(results) == 2
         # e1 is first, no previous event, so no transition usually (or maybe None)
         # e2 should have transition from e1
-        
+
         result_e2 = results[1]
         assert result_e2.transition_from_prev is not None
-        
+
         # Original should be unchanged
         assert e2.transition_from_prev is None
         assert e2 is not result_e2
