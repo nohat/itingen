@@ -102,18 +102,12 @@ class BannerImageHydrator(BaseHydrator[TimelineDay]):
                 )
                 
                 if self.cache:
-                    self.cache.set_image({
-                        "task": "day_banner", 
-                        "cache_key": cache_key
-                    }, processed_bytes)
-                    # Get the path we just set - don't call get_image_path again
                     cache_payload = {
                         "task": "day_banner",
                         "cache_key": cache_key
                     }
-                    # For testing purposes, we'll compute the expected path
-                    fp = compute_fingerprint(cache_payload)
-                    image_path = self.cache.image_cache / f"{fp}.jpg"
+                    self.cache.set_image(cache_payload, processed_bytes)
+                    image_path = self.cache.get_image_path(cache_payload)
             
             # Create enriched day with banner path
             if image_path:

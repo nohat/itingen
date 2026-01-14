@@ -118,14 +118,22 @@ class TestHydratorImmutability:
 
     @patch('itingen.hydrators.ai.images.GeminiClient')
     def test_image_hydrator_immutability(self, mock_client_cls):
+        # Create valid image bytes for post-processing
+        from PIL import Image
+        import io
+        img = Image.new('RGB', (100, 100), color='blue')
+        img_bytes = io.BytesIO()
+        img.save(img_bytes, format='PNG')
+        img_bytes.seek(0)
+
         mock_client = mock_client_cls.return_value
-        mock_client.generate_image_with_gemini.return_value = b"fake_image_bytes"
-        
+        mock_client.generate_image_with_gemini.return_value = img_bytes.getvalue()
+
         # We need a cache mock because ImageHydrator uses cache for file path
         with patch('itingen.hydrators.ai.images.AiCache') as mock_cache_cls:
             mock_cache = mock_cache_cls.return_value
             # It will try to get from cache first (return None), then set, then get path
-            mock_cache.get_image_path.side_effect = [None, "/path/to/image.jpg"]
+            mock_cache.get_image_path.side_effect = [None, "/path/to/image.png"]
             
             event = Event(event_heading="Visit Paris", location="Paris")
             
@@ -136,8 +144,8 @@ class TestHydratorImmutability:
             
             assert len(results) == 1
             result = results[0]
-            
-            assert result.image_path == "/path/to/image.jpg"
+
+            assert result.image_path == "/path/to/image.png"
             assert event.image_path is None
             assert event is not result
 
@@ -199,39 +207,40 @@ class TestHydratorImmutability:
 
     @patch('itingen.hydrators.ai.banner.GeminiClient')
     def test_banner_hydrator_immutability(self, mock_client_cls):
+        # Create valid image bytes for post-processing
+        from PIL import Image
+        import io
+        img = Image.new('RGB', (100, 100), color='blue')
+        img_bytes = io.BytesIO()
+        img.save(img_bytes, format='PNG')
+        img_bytes.seek(0)
+
         mock_client = mock_client_cls.return_value
-        mock_client.generate_image_with_gemini.return_value = b"fake_banner_bytes"
-        
+        mock_client.generate_image_with_gemini.return_value = img_bytes.getvalue()
+
         from itingen.rendering.timeline import TimelineDay
         # TimelineDay is a dataclass
         day = TimelineDay(
-            date_str="2023-01-01", 
-            day_header="Day 1", 
+            date_str="2023-01-01",
+            day_header="Day 1",
             events=[]
         )
-        
+
         with patch('itingen.hydrators.ai.banner.AiCache') as mock_cache_cls:
             mock_cache = mock_cache_cls.return_value
-            # Simulate cache miss
-            mock_cache.get_image_path.return_value = None
-            
-            # The hydrator manually constructs the path using cache.image_cache / filename
-            # So we need to mock image_cache to be a Path-like object
+            # Simulate cache miss on first call, then return path on second call (after set)
             from pathlib import Path
-            mock_cache.image_cache = Path("/path/to")
-            
-            # We also need to mock compute_fingerprint because it's used to generate filename
-            # Since it is imported in the banner module, we must patch it there
-            with patch('itingen.hydrators.ai.banner.compute_fingerprint', return_value="fake_hash"):
-                 from itingen.hydrators.ai.banner import BannerImageHydrator
-                 hydrator = BannerImageHydrator(client=mock_client, cache=mock_cache)
-                 
-                 results = hydrator.hydrate([day])
-                 
-                 assert len(results) == 1
-                 result = results[0]
-                 
-                 expected_path = "/path/to/fake_hash.jpg"
-                 assert result.banner_image_path == expected_path
-                 assert day.banner_image_path is None
-                 assert day is not result
+            expected_path = Path("/path/to/banner.png")
+            mock_cache.get_image_path.side_effect = [None, expected_path]
+
+            from itingen.hydrators.ai.banner import BannerImageHydrator
+            hydrator = BannerImageHydrator(client=mock_client, cache=mock_cache)
+
+            results = hydrator.hydrate([day])
+
+            assert len(results) == 1
+            result = results[0]
+
+            assert result.banner_image_path == str(expected_path)
+            assert day.banner_image_path is None
+            assert day is not result

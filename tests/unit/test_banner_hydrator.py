@@ -235,18 +235,19 @@ class TestBannerImageHydrator:
 
     def test_hydrate_with_cache_miss(self, mock_gemini_client, mock_cache, sample_timeline_day):
         """Test hydration with cache miss generates new image."""
-        # Configure cache to return None (miss)
-        mock_cache.get_image_path.return_value = None
-        
+        # Configure cache to return None on first call (miss), then path on second call (after set)
+        cached_path = Path("/cached/banner.png")
+        mock_cache.get_image_path.side_effect = [None, cached_path]
+
         hydrator = BannerImageHydrator(mock_gemini_client, cache=mock_cache)
-        
+
         result_days = hydrator.hydrate([sample_timeline_day])
-        
+
         assert len(result_days) == 1
         assert hasattr(result_days[0], 'banner_image_path')
-        
-        # Verify cache was checked and image was generated
-        mock_cache.get_image_path.assert_called_once()
+
+        # Verify cache was checked twice (before and after set) and image was generated
+        assert mock_cache.get_image_path.call_count == 2
         mock_cache.set_image.assert_called_once()
         mock_gemini_client.generate_image_with_gemini.assert_called_once()
 
@@ -269,24 +270,24 @@ class TestBannerImageHydrator:
         mock_gemini_client.generate_image_with_gemini.assert_not_called()
 
     def test_hydrate_with_force_refresh(self, mock_gemini_client, mock_cache, sample_timeline_day):
-        """Test hydration with force_refresh ignores cache."""
-        # Configure cache to return a path, but force refresh
+        """Test hydration with force_refresh ignores cache on check but uses it for path retrieval."""
+        # Configure cache to return a path when called after set
         cached_path = Path("/cached/banner.png")
         mock_cache.get_image_path.return_value = cached_path
-        
+
         hydrator = BannerImageHydrator(
-            mock_gemini_client, 
-            cache=mock_cache, 
+            mock_gemini_client,
+            cache=mock_cache,
             force_refresh=True
         )
-        
+
         result_days = hydrator.hydrate([sample_timeline_day])
-        
+
         assert len(result_days) == 1
         assert hasattr(result_days[0], 'banner_image_path')
-        
-        # Verify cache was not checked and new image was generated
-        mock_cache.get_image_path.assert_not_called()
+
+        # Verify cache check was skipped during force refresh, but called once after set to get path
+        mock_cache.get_image_path.assert_called_once()
         mock_cache.set_image.assert_called_once()
         mock_gemini_client.generate_image_with_gemini.assert_called_once()
 
