@@ -36,7 +36,7 @@ class AiCache:
     def get_image_path(self, payload: dict) -> Optional[Path]:
         """Retrieve path to cached image based on payload fingerprint."""
         key = compute_fingerprint(payload)
-        cache_file = self.image_cache / f"{key}.jpg"
+        cache_file = self.image_cache / f"{key}.png"
         if cache_file.exists():
             return cache_file
         return None
@@ -44,7 +44,7 @@ class AiCache:
     def set_image(self, payload: dict, image_data: bytes):
         """Cache image content."""
         key = compute_fingerprint(payload)
-        cache_file = self.image_cache / f"{key}.jpg"
+        cache_file = self.image_cache / f"{key}.png"
         cache_file.write_bytes(image_data)
         
         # Also save the payload for debugging

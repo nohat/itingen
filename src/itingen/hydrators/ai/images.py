@@ -4,6 +4,7 @@ from itingen.core.domain.events import Event
 from itingen.integrations.ai.gemini import GeminiClient
 from itingen.integrations.ai.image_prompts import format_thumbnail_prompt
 from itingen.hydrators.ai.cache import AiCache
+from itingen.utils.image_postprocessing import postprocess_image
 
 class ImageHydrator(BaseHydrator[Event]):
     """Hydrator that generates AI thumbnail images for events using Gemini.
@@ -74,8 +75,16 @@ class ImageHydrator(BaseHydrator[Event]):
                     image_size="1K"
                 )
 
+                # Apply post-processing: crop borders, ensure 1:1 aspect, optimize format
+                processed_bytes = postprocess_image(
+                    image_bytes,
+                    target_aspect=(1, 1),
+                    max_trim_percent=0.22,
+                    prefer_png=True
+                )
+
                 if self.cache:
-                    self.cache.set_image(payload, image_bytes)
+                    self.cache.set_image(payload, processed_bytes)
                     image_path = self.cache.get_image_path(payload)
 
             if image_path:
