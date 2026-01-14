@@ -20,7 +20,7 @@ from itingen.pipeline.nz_transitions import create_nz_transition_registry
 from itingen.rendering.markdown import MarkdownEmitter
 from itingen.rendering.pdf.renderer import PDFEmitter
 from itingen.integrations.ai.gemini import GeminiClient
-from itingen.integrations.ai.transition_prompts import NZ_TRANSITION_STYLE_TEMPLATE
+from itingen.integrations.ai.transition_prompts import TRANSITION_STYLE_TEMPLATE
 from itingen.hydrators.ai.banner import BannerImageHydrator
 from itingen.hydrators.ai.cache import AiCache
 from itingen.hydrators.ai.transitions import GeminiTransitionHydrator
@@ -119,32 +119,23 @@ def _handle_generate(args: argparse.Namespace) -> int:
         orchestrator.add_hydrator(EmotionalAnnotationHydrator())
 
         # Add Transition descriptions
-        # Use AI-powered transitions if flag is set and API key available
         if getattr(args, "ai_transitions", False):
-            try:
-                gemini_client = GeminiClient()
-                output_dir = args.output_dir / args.trip
-                if args.person:
-                    output_dir = output_dir / args.person
-                cache_dir = output_dir / ".ai_cache"
-                ai_cache = AiCache(cache_dir)
-                
-                # Use NZ-specific style template for NZ trips
-                style_template = NZ_TRANSITION_STYLE_TEMPLATE
-                
-                orchestrator.add_hydrator(
-                    GeminiTransitionHydrator(
-                        client=gemini_client,
-                        cache=ai_cache,
-                        style_template=style_template,
-                        fallback_strategy="generic"
-                    )
+            # Use AI-powered transitions
+            gemini_client = GeminiClient()
+            output_dir = args.output_dir / args.trip
+            if args.person:
+                output_dir = output_dir / args.person
+            cache_dir = output_dir / ".ai_cache"
+            ai_cache = AiCache(cache_dir)
+            
+            orchestrator.add_hydrator(
+                GeminiTransitionHydrator(
+                    client=gemini_client,
+                    cache=ai_cache,
+                    style_template=TRANSITION_STYLE_TEMPLATE
                 )
-                print("Using AI-powered transition generation via Gemini API")
-            except ValueError as e:
-                print(f"Warning: Could not initialize Gemini client ({e}). Falling back to registry-based transitions.")
-                transition_registry = create_nz_transition_registry()
-                orchestrator.add_hydrator(TransitionHydrator(transition_registry))
+            )
+            print("Using AI-powered transition generation via Gemini API")
         else:
             # Use traditional registry-based transitions
             transition_registry = create_nz_transition_registry()
