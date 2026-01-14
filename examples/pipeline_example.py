@@ -7,47 +7,18 @@ to process trip data through a pipeline of hydrators and generate output.
 
 from pathlib import Path
 from itingen import PipelineOrchestrator, LocalFileProvider, Event
-from itingen.core.base import BaseHydrator, BaseEmitter
+from itingen.core.base import BaseHydrator
+from itingen.rendering import JsonEmitter
 
 
 class PrintHydrator(BaseHydrator[Event]):
     """Simple hydrator that prints event details."""
-    
+
     def hydrate(self, items: list[Event]) -> list[Event]:
         print(f"\n=== Processing {len(items)} events ===")
         for i, event in enumerate(items):
             print(f"{i+1}. {event.event_heading} ({event.kind}) at {event.location}")
         return items
-
-
-class JsonEmitter(BaseEmitter[Event]):
-    """Emitter that outputs events as JSON."""
-    
-    def emit(self, itinerary: list[Event], output_path: str) -> bool:
-        import json
-        
-        output = {
-            "total_events": len(itinerary),
-            "events": [
-                {
-                    "heading": e.event_heading,
-                    "kind": e.kind,
-                    "location": e.location,
-                    "who": e.who,
-                    "description": e.description
-                }
-                for e in itinerary
-            ]
-        }
-        
-        output_file = Path(f"{output_path}.json")
-        output_file.parent.mkdir(parents=True, exist_ok=True)
-        
-        with open(output_file, "w") as f:
-            json.dump(output, f, indent=2)
-        
-        print(f"\n✓ Output written to: {output_file}")
-        return True
 
 
 def main():
