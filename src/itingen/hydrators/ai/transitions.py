@@ -30,8 +30,7 @@ class GeminiTransitionHydrator(BaseHydrator[Event]):
         client: GeminiClient,
         cache: Optional[AiCache] = None,
         style_template: Optional[str] = None,
-        prompt_template: Optional[str] = None,
-        fallback_strategy: str = "generic"
+        prompt_template: Optional[str] = None
     ):
         """Initialize the Gemini transition hydrator.
         
@@ -40,13 +39,11 @@ class GeminiTransitionHydrator(BaseHydrator[Event]):
             cache: Optional AiCache for caching generated transitions.
             style_template: Optional custom style guidance for prompts.
             prompt_template: Optional custom prompt template.
-            fallback_strategy: Strategy when API fails: "generic", "skip", or "error".
         """
         self.client = client
         self.cache = cache
         self.style_template = style_template or TRANSITION_STYLE_TEMPLATE
         self.prompt_template = prompt_template or TRANSITION_PROMPT_TEMPLATE
-        self.fallback_strategy = fallback_strategy
     
     def hydrate(self, items: List[Event], context=None) -> List[Event]:
         """Add AI-generated transition descriptions to events.
@@ -115,22 +112,17 @@ class GeminiTransitionHydrator(BaseHydrator[Event]):
             return cached_transition
         
         # Generate with Gemini
-        try:
-            prompt = self._build_prompt(prev_ev, curr_ev)
-            transition = self.client.generate_text(prompt)
-            
-            # Clean up response (remove quotes, extra whitespace)
-            transition = transition.strip().strip('"\'')
-            
-            # Cache the result
-            if self.cache:
-                self.cache.set_text(payload, transition)
-            
-            return transition
-            
-        except Exception as e:
-            print(f"Warning: Failed to generate transition with Gemini: {e}")
-            return self._apply_fallback(prev_ev, curr_ev)
+        prompt = self._build_prompt(prev_ev, curr_ev)
+        transition = self.client.generate_text(prompt)
+        
+        # Clean up response (remove quotes, extra whitespace)
+        transition = transition.strip().strip('"\'')
+        
+        # Cache the result
+        if self.cache:
+            self.cache.set_text(payload, transition)
+        
+        return transition
     
     def _build_prompt(self, prev_ev: Event, curr_ev: Event) -> str:
         """Build the Gemini prompt for transition generation.
@@ -156,29 +148,3 @@ class GeminiTransitionHydrator(BaseHydrator[Event]):
             curr_driver=getattr(curr_ev, "driver", "N/A"),
             curr_parking=getattr(curr_ev, "parking", "N/A")
         )
-    
-    def _apply_fallback(self, prev_ev: Event, curr_ev: Event) -> Optional[str]:
-        """Apply fallback strategy when Gemini fails.
-        
-        Args:
-            prev_ev: Previous event.
-            curr_ev: Current event.
-            
-        Returns:
-            Fallback transition string, or None if strategy is "skip".
-            
-        Raises:
-            ValueError: If fallback strategy is "error".
-        """
-        if self.fallback_strategy == "skip":
-            return None
-        elif self.fallback_strategy == "error":
-            raise ValueError(
-                f"Failed to generate transition for {prev_ev.kind} -> {curr_ev.kind}"
-            )
-        else:  # generic
-            prev_loc = (prev_ev.location or prev_ev.travel_to or "").strip()
-            curr_loc = (curr_ev.location or curr_ev.travel_from or curr_ev.travel_to or "").strip()
-            if prev_loc and curr_loc:
-                return f"Move from {prev_loc} to {curr_loc}."
-            return None
