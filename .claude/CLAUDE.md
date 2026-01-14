@@ -36,7 +36,7 @@ Before starting any new task, switching tasks, running `bd ready`, or editing co
 **Canonical:** @/.claude/skills/session-preflight/SKILL.md
 
 Hard gates:
-- If `git status` is not clean, STOP and run `/land`.
+- If `git status` is not clean, prefer `/land`. For emergency solo work, proceed only with explicit request.
 - `.beads/issues.jsonl` should NEVER appear in `git status` (skip-worktree flag must be set).
 - Never use `git add -A` or `git add .`.
 - Always run `grep -r "AIDEV-" src/` before editing related code.
@@ -165,21 +165,21 @@ bd sync
 
 Always execute these checks before starting new work:
 
-1. Check git status. If uncommitted changes exist, execute `/land` first.
+1. Check git status. If uncommitted changes exist, execute `/land` first unless explicitly requested for emergency or solo work.
 2. Check issue tracker. If tasks are in progress, update or land them first.
 3. Verify clean state. Only proceed with new work when everything is properly landed.
 
 ### Ending a Session (MANDATORY)
 
-Always run `/land` before ending work. Work is not complete until the full protocol is finished.
+Run `/land` before ending work when handing off or collaborating. For solo or emergency work, `/land` may be deferred with explicit request.
 
 **Canonical:** @/.claude/commands/land.md
 
 #### Work Continuation Rules
 
-- Never start new tasks without first landing current work.
-- Never switch tasks without completing the land protocol.
-- Never respond to new requests when work is in-progress and uncommitted.
+- Avoid starting new tasks without first landing current work unless explicitly requested for emergency or solo work.
+- Avoid switching tasks without completing the land protocol unless explicitly requested for emergency or solo work.
+- Avoid responding to new requests when work is in-progress and uncommitted unless explicitly requested for emergency or solo work.
 - Never continue work after user says "done", "stop", or "pause" without landing.
 
 #### Push to Remote (MANDATORY)
@@ -191,7 +191,7 @@ git push
 git status  # MUST show "up to date with origin"
 ```
 
-**MANDATORY WORKFLOW:**
+**RECOMMENDED WORKFLOW (when collaborating or handing off):**
 1. **File issues for remaining work** - Create issues for anything that needs follow-up
 2. **Run quality gates** (if code changed) - Tests, linters, builds
 3. **Update issue status** - Close finished work, update in-progress items
@@ -202,7 +202,7 @@ git status  # MUST show "up to date with origin"
    git push
    git status  # MUST show "up to date with origin"
    ```
-5. **Create PR to master** - If not on `master` and no PR exists for the branch:
+5. **Create PR to master** - If collaborating and a PR is needed for review:
    ```bash
    gh pr create --base master --fill
    ```
@@ -225,16 +225,16 @@ git status  # MUST show "up to date with origin"
 2. Write large amounts of code without tests.
 3. Modify test assertions to make them pass.
 4. Remove anchor comments without permission.
-5. Commit directly to `master`.
+5. Commit directly to `master` without explicit request (emergency exceptions only).
 6. Make breaking changes without updating docs.
 7. Ignore failing tests.
 8. Over-engineer solutions beyond stated requirements.
 9. Implement speculative fallbacks or "just in case" error handling.
 10. Add backwards compatibility logic without a concrete, exercised use case.
 11. Blindly adopt inherited patterns without critical evaluation.
-12. Start new tasks without landing previous work first.
-13. Switch tasks without completing land protocol.
-14. Leave uncommitted changes when responding to new requests.
+12. Start new tasks without landing previous work first (unless explicitly requested for emergency or solo work).
+13. Switch tasks without completing land protocol (unless explicitly requested for emergency or solo work).
+14. Leave uncommitted changes when responding to new requests (unless explicitly requested for emergency or solo work).
 15. Continue work after user says "done", "stop", or "pause" without landing.
 16. Implement with libraries not specified in `requirements.txt`/`pyproject.toml`.
 17. Deviate from `docs/ARCHITECTURE.md` without explicit approval.

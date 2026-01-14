@@ -137,6 +137,7 @@ This system generates optimized travel itineraries based on venues, constraints,
 - Commit emojis: ✨ feat | 🐛 fix | 📝 docs | ♻️ refactor | ✅ test | 🔧 chore
 - ALWAYS commit after each successful test cycle
 - NEVER commit failing tests (except intentionally in TDD red phase)
+- Prefer feature branches for regular work; emergency fixes may be committed to main when explicitly requested.
 
 ### Test-Driven Development (TDD) - MANDATORY
 This project uses strict TDD. The cycle is:
@@ -177,13 +178,12 @@ NEVER remove AIDEV-NOTE comments without explicit human instruction.
 2. Write large amounts of code without tests
 3. Modify test assertions to make them pass
 4. Remove anchor comments without permission
-5. Commit directly to main branch
-6. Make breaking changes without updating docs
-7. Ignore failing tests
-8. Over-engineer solutions beyond stated requirements
-9. Implement speculative fallbacks or "just in case" error handling
-10. Add backwards compatibility logic without a concrete, exercised use case
-11. Blindly adopt inherited patterns without critical evaluation
+5. Make breaking changes without updating docs
+6. Ignore failing tests
+7. Over-engineer solutions beyond stated requirements
+8. Implement speculative fallbacks or "just in case" error handling
+9. Add backwards compatibility logic without a concrete, exercised use case
+10. Blindly adopt inherited patterns without critical evaluation
 
 ## Domain Glossary
 - **Venue**: A location that can be visited (restaurant, attraction, etc.)

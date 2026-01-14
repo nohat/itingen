@@ -34,8 +34,8 @@ allowed-tools: Bash(git:*), Bash(bd:*), Bash(gh:*), Bash(npm:*), Bash(python:*),
 ## Process (execute in order)
 
 ### 0. Branch Verification
-- Ensure you are on a feature branch (not `master`).
-- If you are on `master`, switch to a new branch BEFORE committing: `git checkout -b <type>/<description>`.
+- Prefer a feature branch for regular work.
+- If you are on `master`, switch to a new branch BEFORE committing unless explicitly requested for emergency work: `git checkout -b <type>/<description>`.
 - Use `git branch` to verify.
 
 ### 1. Capture Discovered Work
@@ -62,7 +62,7 @@ If code was modified this session:
 
 ### 5. Git Checkpoint
 - Stage and commit working code with descriptive message.
-- **NEVER** commit directly to `master`. Ensure the current branch is a feature branch.
+- Avoid committing directly to `master` unless explicitly requested for emergency work.
 - Push the branch to remote: `git push origin <branch_name>`.
 - Do NOT commit failing tests (except intentional TDD red phase).
 
@@ -76,10 +76,11 @@ If code was modified this session:
 - Verify: `git status` (must show up to date with origin)
 
 ### 8. Create Pull Request (PR) to master
-- If on `master`, do NOT create a PR
-- If a PR already exists for this branch, do NOT create a duplicate
-- Otherwise create a PR targeting `master`:
-  - `gh pr create --base master --fill`
+- If collaborating and a PR is needed for review:
+  - If on `master`, do NOT create a PR
+  - If a PR already exists for this branch, do NOT create a duplicate
+  - Otherwise create a PR targeting `master`:
+    - `gh pr create --base master --fill`
 
 ### 9. Generate Handoff
 Provide a summary for the next session:

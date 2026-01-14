@@ -31,10 +31,10 @@ Rules:
 ### 2. Branch verification
 
 Rules:
-- Confirm you are NOT on `master`.
-- Confirm you are on the intended feature branch for the current issue.
+- Confirm you are NOT on `master` unless explicitly requested for emergency work.
+- Confirm you are on the intended feature branch for the current issue (emergency exceptions allowed with explicit request).
 
-If you are on master and there is no branch for the current issue, create one and switch to it.
+If you are on master and there is no branch for the current issue, create one and switch to it unless explicitly requested for emergency work.
 
 ### 3. Beads safety check
 

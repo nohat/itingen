@@ -14,10 +14,10 @@ description: Land the plane - session end protocol (capture work, commit, sync t
 - Run the full test suite - ABORT if tests fail.
 
 ### 3. Git Checkpoint
-- **Branch Check**: Verify that you are NOT on `master`.
-- If on `master`, switch to a feature branch: `git checkout -b <type>/<description>`.
+- **Branch Check**: Prefer a feature branch for regular work.
+- If on `master`, switch to a feature branch unless explicitly requested for emergency work: `git checkout -b <type>/<description>`.
 - Stage and commit working code with descriptive message.
-- **NEVER** commit directly to `master`.
+- Avoid committing directly to `master` unless explicitly requested for emergency work.
 - Push the branch to remote: `git push origin <branch_name>`.
 - Do NOT commit failing tests (except intentional TDD red phase).
 

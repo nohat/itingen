@@ -14,3 +14,4 @@ This rule routes Windsurf slash commands to their canonical definitions in `.cla
 ## Instructions
 
 When a user uses a slash command, consult the corresponding workflow file in `.windsurf/workflows/` or the command file in `.claude/commands/` and follow its instructions exactly.
+If the user explicitly requests bypassing canonical workflow instructions, comply and note the deviation.

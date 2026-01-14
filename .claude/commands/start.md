@@ -31,7 +31,7 @@ argument-hint: "[--issue <id>]"
 
 4. Verify branch context.
 
-- Ensure you are on a feature branch created from `origin/master` for this work.
+- Ensure you are on a feature branch created from `origin/master` for this work unless explicitly requested for emergency work.
 
 5. Plan before implementing.
 
