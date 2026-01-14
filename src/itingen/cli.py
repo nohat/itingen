@@ -20,8 +20,10 @@ from itingen.pipeline.nz_transitions import create_nz_transition_registry
 from itingen.rendering.markdown import MarkdownEmitter
 from itingen.rendering.pdf.renderer import PDFEmitter
 from itingen.integrations.ai.gemini import GeminiClient
+from itingen.integrations.ai.transition_prompts import TRANSITION_STYLE_TEMPLATE
 from itingen.hydrators.ai.banner import BannerImageHydrator
 from itingen.hydrators.ai.cache import AiCache
+from itingen.hydrators.ai.transitions import GeminiTransitionHydrator
 
 DayBannerGenerator = BannerImageHydrator
 
@@ -58,6 +60,11 @@ def main(args: Optional[List[str]] = None) -> int:
         choices=["gemini-3-pro-image-preview", "gemini-2.5-flash-image"],
         default="gemini-2.5-flash-image",
         help="Model for banner generation (default: gemini-2.5-flash-image for free tier)",
+    )
+    generate_parser.add_argument(
+        "--ai-transitions",
+        action="store_true",
+        help="Use AI-powered transition generation via Gemini API (requires API key; may incur costs)",
     )
 
     # Venues command
@@ -112,8 +119,27 @@ def _handle_generate(args: argparse.Namespace) -> int:
         orchestrator.add_hydrator(EmotionalAnnotationHydrator())
 
         # Add Transition descriptions
-        transition_registry = create_nz_transition_registry()
-        orchestrator.add_hydrator(TransitionHydrator(transition_registry))
+        if getattr(args, "ai_transitions", False):
+            # Use AI-powered transitions
+            gemini_client = GeminiClient()
+            output_dir = args.output_dir / args.trip
+            if args.person:
+                output_dir = output_dir / args.person
+            cache_dir = output_dir / ".ai_cache"
+            ai_cache = AiCache(cache_dir)
+            
+            orchestrator.add_hydrator(
+                GeminiTransitionHydrator(
+                    client=gemini_client,
+                    cache=ai_cache,
+                    style_template=TRANSITION_STYLE_TEMPLATE
+                )
+            )
+            print("Using AI-powered transition generation via Gemini API")
+        else:
+            # Use traditional registry-based transitions
+            transition_registry = create_nz_transition_registry()
+            orchestrator.add_hydrator(TransitionHydrator(transition_registry))
             
         # Add Emitters
         if args.format in ["markdown", "both"]:
