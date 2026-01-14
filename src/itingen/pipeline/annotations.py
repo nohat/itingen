@@ -5,15 +5,16 @@ to events based on their kind and metadata, following the patterns from
 the original NZ trip system.
 """
 
-from typing import List, Tuple
+from typing import List, Tuple, TypeVar
 from itingen.core.base import BaseHydrator
 from itingen.core.domain.events import Event
 
+T = TypeVar('T')
 
 class EmotionalAnnotationHydrator(BaseHydrator[Event]):
     """Adds emotional annotations to stress-heavy event types."""
 
-    def hydrate(self, items: List[Event]) -> List[Event]:
+    def hydrate(self, items: List[T], context=None) -> List[T]:
         """Enrich events with emotional metadata."""
         new_items = []
         for event in items:

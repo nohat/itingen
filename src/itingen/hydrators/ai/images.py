@@ -29,7 +29,7 @@ class ImageHydrator(BaseHydrator[Event]):
         self.cache = cache
         self.model = model
 
-    def hydrate(self, items: List[Event]) -> List[Event]:
+    def hydrate(self, items: List[Event], context=None) -> List[Event]:
         new_items = []
         for event in items:
             # Only generate images for events with a location

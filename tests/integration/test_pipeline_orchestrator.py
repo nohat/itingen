@@ -18,7 +18,7 @@ class LoggingHydrator(BaseHydrator[Event]):
         self.name = name
         self.processed = []
     
-    def hydrate(self, items: list[Event]) -> list[Event]:
+    def hydrate(self, items: list[Event], context=None) -> list[Event]:
         self.processed = [(item.event_heading, item.kind) for item in items]
         return items
 
