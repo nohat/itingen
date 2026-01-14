@@ -63,3 +63,20 @@ def test_image_hydrator_enriches_events(mock_gemini_client, mock_cache, sample_e
     hydrated_events_cached = hydrator.hydrate(sample_events)
     assert hydrated_events_cached[0].image_path == hydrated_events[0].image_path
     mock_gemini_client.generate_image_with_gemini.assert_not_called()
+
+def test_image_hydrator_resizes_thumbnail(mock_gemini_client, mock_cache, sample_events):
+    img = Image.new('RGB', (1500, 1500), color='blue')
+    img_bytes = io.BytesIO()
+    img.save(img_bytes, format='PNG')
+    img_bytes.seek(0)
+
+    mock_gemini_client.generate_image_with_gemini.return_value = img_bytes.getvalue()
+
+    hydrator = ImageHydrator(client=mock_gemini_client, cache=mock_cache)
+    hydrated_events = hydrator.hydrate(sample_events)
+
+    image_path = hydrated_events[0].image_path
+    assert image_path is not None
+
+    resized = Image.open(image_path)
+    assert max(resized.size) == 512
