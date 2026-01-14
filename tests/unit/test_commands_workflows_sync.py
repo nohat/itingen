@@ -1,9 +1,6 @@
 """Tests for scripts/commands_workflows_sync.py"""
 
-import tempfile
 from pathlib import Path
-
-import pytest
 
 # Import the script functions
 import sys
