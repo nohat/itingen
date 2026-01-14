@@ -217,6 +217,6 @@ def test_json_emitter_with_all_fields(tmp_path):
     assert event["duration_seconds"] == 7200
     assert event["travel_from"] == "Hotel"
     assert event["travel_to"] == "Tokyo Tower"
-    assert event["coordination_point"] == True
+    assert event["coordination_point"]
     assert event["emotional_triggers"] == "Crowds, heights"
     assert event["emotional_high_point"] == "Sunset view from observation deck"

@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """Test script to validate Google Gemini API tier and billing status."""
 
-import os
 from itingen.integrations.ai.gemini import GeminiClient
 
 def test_api_tier():
@@ -11,7 +10,7 @@ def test_api_tier():
     try:
         # Initialize client
         client = GeminiClient()
-        print(f"✅ API Key loaded successfully")
+        print("✅ API Key loaded successfully")
         
         # Test 1: Try text generation (should work on all tiers)
         print("\n📝 Testing text generation...")

@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """Simple test to check if billing is enabled by trying a paid model."""
 
-import os
 from itingen.integrations.ai.gemini import GeminiClient
 
 def test_billing_status():
@@ -13,7 +12,7 @@ def test_billing_status():
         # Test with a model that typically requires billing
         print("\n🧪 Testing billing status with gemini-1.5-pro...")
         try:
-            response = client.generate_text("Test", model="gemini-1.5-pro")
+            client.generate_text("Test", model="gemini-1.5-pro")
             print("✅ Paid model accessible - billing is enabled")
             return True
         except Exception as e:

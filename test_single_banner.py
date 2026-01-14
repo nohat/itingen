@@ -8,29 +8,29 @@ generating a banner for 2026-01-02 (middle day of the trip).
 import os
 import sys
 from pathlib import Path
+
 from dotenv import load_dotenv
 from PIL import Image
-
-# Load environment - override any existing env vars
-load_dotenv(override=True)
-
-# Add src to path
-sys.path.insert(0, str(Path(__file__).parent / "src"))
-
-from itingen.providers import FileProvider
-from itingen.pipeline.orchestrator import PipelineOrchestrator
-from itingen.pipeline.sorting import ChronologicalSorter
-from itingen.pipeline.timing import WrapUpHydrator
-from itingen.pipeline.annotations import EmotionalAnnotationHydrator
-from itingen.pipeline.transitions_logic import TransitionHydrator
-from itingen.rendering.timeline import TimelineProcessor
-from itingen.integrations.ai.gemini import GeminiClient
-from itingen.hydrators.ai.banner import BannerImageHydrator
-from itingen.hydrators.ai.cache import AiCache
 
 
 def main():
     """Generate one banner image for the middle day of NZ trip."""
+    # Load environment - override any existing env vars
+    load_dotenv(override=True)
+
+    # Add src to path
+    sys.path.insert(0, str(Path(__file__).parent / "src"))
+
+    from itingen.hydrators.ai.banner import BannerImageHydrator
+    from itingen.hydrators.ai.cache import AiCache
+    from itingen.integrations.ai.gemini import GeminiClient
+    from itingen.pipeline.annotations import EmotionalAnnotationHydrator
+    from itingen.pipeline.orchestrator import PipelineOrchestrator
+    from itingen.pipeline.sorting import ChronologicalSorter
+    from itingen.pipeline.timing import WrapUpHydrator
+    from itingen.pipeline.transitions_logic import TransitionHydrator
+    from itingen.providers import FileProvider
+    from itingen.rendering.timeline import TimelineProcessor
     print("=" * 70)
     print("Testing Banner Generation Pipeline")
     print("=" * 70)
@@ -73,7 +73,7 @@ def main():
     processed_events = events
     for hydrator in orchestrator.hydrators:
         processed_events = hydrator.hydrate(processed_events)
-    print(f"✓ Processed events through pipeline")
+    print("✓ Processed events through pipeline")
     print()
 
     # Convert to timeline days
