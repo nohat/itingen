@@ -1,6 +1,5 @@
 """Tests for event grouping utility functions."""
 
-import pytest
 from itingen.core.domain.events import Event
 from itingen.utils.grouping import group_events_by_date
 
