@@ -201,6 +201,8 @@ def test_json_emitter_with_all_fields(tmp_path):
     emitter = JsonEmitter()
     result_path = emitter.emit(itinerary, str(output_path))
 
+    assert result_path == str(output_path)
+
     with open(output_path, "r") as f:
         data = json.load(f)
 
