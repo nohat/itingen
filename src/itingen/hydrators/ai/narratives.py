@@ -14,9 +14,11 @@ class NarrativeHydrator(BaseHydrator[Event]):
         self.style_template = style_template or NARRATIVE_STYLE_TEMPLATE
         self.prompt_template = prompt_template or NARRATIVE_PROMPT_TEMPLATE
 
-    def hydrate(self, items: List[Event]) -> List[Event]:
+    def hydrate(self, items: List[Event], context=None) -> List[Event]:
+        new_items = []
         for event in items:
             if not event.event_heading:
+                new_items.append(event)
                 continue
 
             payload = {
@@ -46,6 +48,6 @@ class NarrativeHydrator(BaseHydrator[Event]):
                 if self.cache:
                     self.cache.set_text(payload, narrative)
 
-            event.narrative = narrative
+            new_items.append(event.model_copy(update={"narrative": narrative}))
             
-        return items
+        return new_items

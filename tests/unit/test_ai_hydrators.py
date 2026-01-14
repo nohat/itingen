@@ -55,7 +55,7 @@ def test_image_hydrator_enriches_events(mock_gemini_client, mock_cache, sample_e
     hydrated_events = hydrator.hydrate(sample_events)
     
     assert hydrated_events[0].image_path is not None
-    assert str(hydrated_events[0].image_path).endswith(".jpg")  # AiCache uses .jpg extension by default
+    assert str(hydrated_events[0].image_path).endswith(".png")  # AiCache uses .png extension for post-processed images
     mock_gemini_client.generate_image_with_gemini.assert_called_once()
     
     # Test caching

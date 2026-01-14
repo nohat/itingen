@@ -1,9 +1,20 @@
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List, Generic, TypeVar
+from typing import Any, Dict, List, Generic, TypeVar, Optional
+from dataclasses import dataclass
 
 from itingen.core.domain.venues import Venue
 
 T = TypeVar("T")  # The domain model type (e.g., Event or Itinerary)
+
+@dataclass
+class PipelineContext:
+    """Context data passed to hydrators containing venues and configuration.
+    
+    This provides access to venue information and trip-level configuration
+    that hydrators may need for enrichment operations.
+    """
+    venues: Dict[str, Venue]
+    config: Dict[str, Any]
 
 class BaseProvider(ABC, Generic[T]):
     """Abstract base class for trip data providers.
@@ -35,8 +46,17 @@ class BaseHydrator(ABC, Generic[T]):
     """
 
     @abstractmethod
-    def hydrate(self, items: List[T]) -> List[T]:
-        """Enrich the given items with additional data."""
+    def hydrate(self, items: List[T], context: Optional[PipelineContext] = None) -> List[T]:
+        """Enrich the given items with additional data.
+
+        Args:
+            items: The list of domain objects to enrich (e.g., events or itinerary items).
+            context: Optional pipeline context containing shared data such as
+                venues and trip-level configuration. This may be ``None``.
+
+        Returns:
+            The list of enriched items.
+        """
         raise NotImplementedError
 
 class BaseEmitter(ABC, Generic[T]):

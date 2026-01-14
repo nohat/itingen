@@ -56,7 +56,7 @@ class BannerImageHydrator(BaseHydrator[TimelineDay]):
         self.model = model or os.environ.get("BANNER_MODEL", "gemini-3-pro-image-preview")
         self.force_refresh = force_refresh
 
-    def hydrate(self, days: List[TimelineDay]) -> List[TimelineDay]:
+    def hydrate(self, days: List[TimelineDay], context=None) -> List[TimelineDay]:
         """Generate banner images for timeline days.
 
         Args:
@@ -102,19 +102,12 @@ class BannerImageHydrator(BaseHydrator[TimelineDay]):
                 )
                 
                 if self.cache:
-                    self.cache.set_image({
-                        "task": "day_banner", 
-                        "cache_key": cache_key
-                    }, processed_bytes)
-                    # Get the path we just set - don't call get_image_path again
                     cache_payload = {
                         "task": "day_banner",
                         "cache_key": cache_key
                     }
-                    # For testing purposes, we'll compute the expected path
-                    from itingen.utils.fingerprint import compute_fingerprint
-                    fp = compute_fingerprint(cache_payload)
-                    image_path = self.cache.image_cache / f"{fp}.jpg"
+                    self.cache.set_image(cache_payload, processed_bytes)
+                    image_path = self.cache.get_image_path(cache_payload)
             
             # Create enriched day with banner path
             if image_path:
