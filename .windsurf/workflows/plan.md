@@ -2,6 +2,8 @@
 description: Plan the next steps using the issue tracker
 ---
 
+<!-- AUTO-GENERATED: commands_workflows_sync.py -->
+
 # Plan Workflow
 
 ## Usage

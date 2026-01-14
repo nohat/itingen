@@ -2,6 +2,8 @@
 description: Git commit with quality checks
 ---
 
+<!-- AUTO-GENERATED: commands_workflows_sync.py -->
+
 # Commit Workflow
 
 ## Usage
