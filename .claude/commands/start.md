@@ -13,17 +13,17 @@ argument-hint: "[--issue <id>]"
 
 ## Process
 
-1. Run session preflight.
-
-**Canonical:** @/.claude/skills/session-preflight/SKILL.md
-
-2. Select next work.
+1. Select next work.
 
 - If `--issue <id>` provided:
   - Run `bd show <id>`.
 - Otherwise:
   - Run `bd ready --limit 1`.
   - Choose the top unblocked issue and run `bd show <id>`.
+
+2. Run session preflight.
+
+**Canonical:** @/.claude/skills/session-preflight/SKILL.md
 
 3. Claim the issue.
 

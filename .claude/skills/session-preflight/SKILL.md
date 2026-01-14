@@ -34,6 +34,8 @@ Rules:
 - Confirm you are NOT on `master`.
 - Confirm you are on the intended feature branch for the current issue.
 
+If you are on master and there is no branch for the current issue, create one and switch to it.
+
 ### 3. Beads safety check
 
 Rules:
