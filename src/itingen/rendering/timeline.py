@@ -1,7 +1,8 @@
-from typing import List, Dict, Optional
+from typing import List, Optional
 import datetime
 from dataclasses import dataclass
 from itingen.core.domain.events import Event
+from itingen.utils.grouping import group_events_by_date
 
 @dataclass
 class TimelineDay:
@@ -21,23 +22,7 @@ class TimelineProcessor:
     """Process raw events into a structured timeline with days and markers."""
 
     def process(self, itinerary: List[Event]) -> List[TimelineDay]:
-        events_by_date: Dict[str, List[Event]] = {}
-        
-        # 1. Group by date
-        for event in itinerary:
-            date_str = getattr(event, "date", None)
-            if not date_str and event.time_utc:
-                try:
-                    dt = datetime.datetime.fromisoformat(event.time_utc.replace('Z', '+00:00'))
-                    date_str = dt.strftime("%Y-%m-%d")
-                except ValueError:
-                    date_str = "TBD"
-            elif not date_str:
-                date_str = "TBD"
-            
-            if date_str not in events_by_date:
-                events_by_date[date_str] = []
-            events_by_date[date_str].append(event)
+        events_by_date = group_events_by_date(itinerary)
 
         sorted_dates = sorted(events_by_date.keys())
         timeline_days: List[TimelineDay] = []

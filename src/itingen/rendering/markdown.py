@@ -1,9 +1,10 @@
 import datetime
-from typing import List, Dict
+from typing import List
 from pathlib import Path
 from itingen.core.base import BaseEmitter
 from itingen.core.domain.events import Event
 from itingen.utils.duration import format_duration
+from itingen.utils.grouping import group_events_by_date
 
 class MarkdownEmitter(BaseEmitter[Event]):
     """Emitter that generates a Markdown representation of the itinerary."""
@@ -15,24 +16,8 @@ class MarkdownEmitter(BaseEmitter[Event]):
             path = path.with_suffix(".md")
         
         path.parent.mkdir(parents=True, exist_ok=True)
-        
-        # Group events by date
-        events_by_date: Dict[str, List[Event]] = {}
-        for event in itinerary:
-            # Try to get date from extra fields or inferred from time_utc
-            date_str = getattr(event, "date", None)
-            if not date_str and event.time_utc:
-                try:
-                    dt = datetime.datetime.fromisoformat(event.time_utc.replace('Z', '+00:00'))
-                    date_str = dt.strftime("%Y-%m-%d")
-                except ValueError:
-                    date_str = "TBD"
-            elif not date_str:
-                date_str = "TBD"
-            
-            if date_str not in events_by_date:
-                events_by_date[date_str] = []
-            events_by_date[date_str].append(event)
+
+        events_by_date = group_events_by_date(itinerary)
 
         with open(path, "w", encoding="utf-8") as f:
             f.write("# Trip Itinerary\n\n")
