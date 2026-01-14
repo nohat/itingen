@@ -55,8 +55,8 @@ class TripConfig:
         if not config_path.exists():
             raise FileNotFoundError(f"Trip config not found: {config_path}")
 
-        with open(config_path) as f:
-            return yaml.safe_load(f)
+        with open(config_path, encoding="utf-8") as f:
+            return yaml.safe_load(f) or {}
 
     def get_events_dir(self) -> Path:
         """Get path to events directory.

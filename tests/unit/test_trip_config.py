@@ -1,7 +1,6 @@
 """Tests for TripConfig class."""
 import pytest
 import yaml
-from pathlib import Path
 from itingen.config.trip_config import TripConfig
 
 
