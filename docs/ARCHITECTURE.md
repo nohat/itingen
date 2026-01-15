@@ -58,6 +58,14 @@ Key architectural decisions are recorded as ADRs in [docs/decisions/](decisions/
 - **Shared Asset Architecture**: Cache and share AI assets across travelers in the same trip.
 - **Fail-Fast**: Raise explicit errors for missing data or configuration rather than using silent fallbacks.
 
+## Product Documentation
+
+For product strategy and roadmap, see:
+- [North Star Vision](product/NORTH_STAR.md) - Vision and principles
+- [PRD: Input Modality](product/PRD_INPUT_MODALITY.md) - Agentic chat intake system
+- [TDD: Database](product/TDD_DATABASE.md) - Database technical design
+- [UX Decisions Log](product/UX_DECISIONS.md) - Open UX decisions requiring user testing
+
 ## Dependencies
 
 - **Data Processing**: Python 3.x, YAML, Pydantic (suggested for schemas).

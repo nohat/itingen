@@ -99,6 +99,12 @@ See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for system design documentation
 
 See [docs/DATA_STRUCTURES.md](docs/DATA_STRUCTURES.md) for detailed documentation of Event and Venue models.
 
+## Documentation
+
+- [Architecture](docs/ARCHITECTURE.md) - System design
+- [Product Roadmap](docs/product/NORTH_STAR.md) - Vision and north star
+- [Contributing](docs/CONTRIBUTING.md) - Development workflow
+
 ## Contributing
 
 See [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md) for guidelines.

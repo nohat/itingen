@@ -304,3 +304,6 @@ Use `bd` for all task tracking instead of markdown TODO lists.
 - Skills index (generated): `@/.windsurf/rules/skills-index.generated.md`
 - Workflow router: `@/.windsurf/rules/workflow-router.md`
 - Architecture: `@/docs/ARCHITECTURE.md`
+- Product North Star: `@/docs/product/NORTH_STAR.md`
+- Product Roadmap PRD: `@/docs/product/PRD_INPUT_MODALITY.md`
+- UX Decisions Log: `@/docs/product/UX_DECISIONS.md`

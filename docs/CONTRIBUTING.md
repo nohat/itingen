@@ -1,5 +1,12 @@
 # Contributing Guide
 
+## Product Context
+
+Before starting major features, review the product documentation:
+- [North Star](product/NORTH_STAR.md) - Vision and principles
+- [PRD: Input Modality](product/PRD_INPUT_MODALITY.md) - Current roadmap
+- [UX Decisions](product/UX_DECISIONS.md) - Open design questions
+
 ## Development Philosophy
 
 This project maintains high quality through:
