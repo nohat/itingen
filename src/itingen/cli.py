@@ -16,6 +16,7 @@ from itingen.pipeline.filtering import PersonFilter
 from itingen.pipeline.timing import WrapUpHydrator
 from itingen.pipeline.annotations import EmotionalAnnotationHydrator
 from itingen.pipeline.transitions_logic import TransitionHydrator
+from itingen.pipeline.nz_transitions import create_nz_transition_registry
 from itingen.rendering.markdown import MarkdownEmitter
 from itingen.rendering.pdf.renderer import PDFEmitter
 from itingen.integrations.ai.gemini import GeminiClient
@@ -109,9 +110,10 @@ def _handle_generate(args: argparse.Namespace) -> int:
         
         # Add Emotional annotations
         orchestrator.add_hydrator(EmotionalAnnotationHydrator())
-        
+
         # Add Transition descriptions
-        orchestrator.add_hydrator(TransitionHydrator())
+        transition_registry = create_nz_transition_registry()
+        orchestrator.add_hydrator(TransitionHydrator(transition_registry))
             
         # Add Emitters
         if args.format in ["markdown", "both"]:
