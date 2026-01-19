@@ -42,6 +42,7 @@ class ImageHydrator(BaseHydrator[Event]):
             payload = {
                 "task": "thumbnail",
                 "model": self.model,
+                "max_dimension": 512,
                 "heading": event.event_heading or "",
                 "kind": event.kind or "",
                 "location": event.location or "",
@@ -80,7 +81,8 @@ class ImageHydrator(BaseHydrator[Event]):
                     image_bytes,
                     target_aspect=(1, 1),
                     max_trim_percent=0.22,
-                    prefer_png=True
+                    prefer_png=True,
+                    max_dimension=512
                 )
 
                 if self.cache:
