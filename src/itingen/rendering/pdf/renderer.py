@@ -1,25 +1,242 @@
-from typing import List, Optional, Protocol
-from pathlib import Path
-from reportlab.lib.pagesizes import LETTER
+"""PDF renderer — scaffold-equivalent typographic scale + header/footer.
+
+AIDEV-NOTE: Uses ReportLab (not FPDF2) with Unicode font support.
+Typography scale: 11 styles across 3 font families (CormorantGaramond headlines,
+SourceSerif4 body, SourceSans3 UI). Header/footer via onPage callback.
+"""
+
+from typing import Any, Dict, List, Optional, Protocol
+
+from reportlab.lib.enums import TA_LEFT, TA_RIGHT
+from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.lib.units import inch
-from reportlab.platypus import BaseDocTemplate, Frame, PageTemplate, Paragraph, Spacer
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.lib.enums import TA_LEFT, TA_CENTER
-from reportlab.lib import colors
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfgen.canvas import Canvas
+from reportlab.platypus import (
+    BaseDocTemplate,
+    Frame,
+    PageTemplate,
+    Paragraph,
+    Spacer,
+)
+
 from itingen.core.base import BaseEmitter
 from itingen.core.domain.events import Event
+from itingen.rendering.pdf.fonts import (
+    get_body_font,
+    get_headline_font,
+    get_ui_bold_font,
+    get_ui_font,
+    register_fonts,
+)
+from itingen.rendering.pdf.formatting import fmt_time  # noqa: F401 (re-export)
 from itingen.rendering.pdf.themes import PDFTheme
-from itingen.rendering.pdf.components import DayComponent
-from itingen.rendering.pdf.fonts import register_fonts, get_ui_font, get_ui_bold_font
-from itingen.rendering.timeline import TimelineProcessor, TimelineDay
+from itingen.rendering.timeline import TimelineDay, TimelineProcessor
+
+
+class _Pdf14Canvas(Canvas):
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault("pdfVersion", (1, 4))
+        super().__init__(*args, **kwargs)
 
 
 class BannerGenerator(Protocol):
     def generate(self, days: List[TimelineDay]) -> List[TimelineDay]: ...
 
+
+def build_styles(theme: PDFTheme) -> Dict[str, ParagraphStyle]:
+    """Build the 11-style typography scale matching scaffold output."""
+    styles = getSampleStyleSheet()
+
+    ui_font = get_ui_font()
+    ui_bold = get_ui_bold_font()
+    body_font = get_body_font()
+    headline_font = get_headline_font()
+
+    return {
+        "eyebrow": ParagraphStyle(
+            "eyebrow",
+            parent=styles["Normal"],
+            fontName=ui_bold,
+            fontSize=8.5,
+            leading=10.5,
+            textColor=theme.muted,
+            spaceAfter=1,
+            alignment=TA_LEFT,
+        ),
+        "topline": ParagraphStyle(
+            "topline",
+            parent=styles["Normal"],
+            fontName=ui_bold,
+            fontSize=10,
+            leading=12.5,
+            textColor=theme.ink,
+            spaceAfter=2,
+            alignment=TA_LEFT,
+        ),
+        "title": ParagraphStyle(
+            "title",
+            parent=styles["Title"],
+            fontName=headline_font,
+            fontSize=21,
+            leading=23,
+            textColor=theme.ink,
+            spaceAfter=2,
+            alignment=TA_LEFT,
+        ),
+        "subtitle": ParagraphStyle(
+            "subtitle",
+            parent=styles["Normal"],
+            fontName=ui_font,
+            fontSize=9.5,
+            leading=12.5,
+            textColor=theme.muted,
+            spaceAfter=10,
+            alignment=TA_LEFT,
+        ),
+        "subhead": ParagraphStyle(
+            "subhead",
+            parent=styles["Normal"],
+            fontName=ui_font,
+            fontSize=9.5,
+            leading=12.8,
+            textColor=theme.muted,
+            spaceAfter=0,
+            alignment=TA_LEFT,
+        ),
+        "body": ParagraphStyle(
+            "body",
+            parent=styles["Normal"],
+            fontName=body_font,
+            fontSize=10,
+            leading=14,
+            textColor=theme.ink,
+            alignment=TA_LEFT,
+        ),
+        "overview_body": ParagraphStyle(
+            "overview_body",
+            parent=styles["Normal"],
+            fontName=body_font,
+            fontSize=10,
+            leading=15.2,
+            textColor=theme.ink,
+            alignment=TA_LEFT,
+        ),
+        "event_title": ParagraphStyle(
+            "event_title",
+            parent=styles["Normal"],
+            fontName=ui_bold,
+            fontSize=10.8,
+            leading=13.5,
+            textColor=theme.ink,
+            alignment=TA_LEFT,
+        ),
+        "event_time": ParagraphStyle(
+            "event_time",
+            parent=styles["Normal"],
+            fontName=ui_font,
+            fontSize=8.7,
+            leading=11,
+            textColor=theme.muted,
+            alignment=TA_LEFT,
+        ),
+        "event_details": ParagraphStyle(
+            "event_details",
+            parent=styles["Normal"],
+            fontName=ui_font,
+            fontSize=9.2,
+            leading=12.5,
+            textColor=theme.muted,
+            alignment=TA_LEFT,
+        ),
+        "pill": ParagraphStyle(
+            "pill",
+            parent=styles["Normal"],
+            fontName=ui_bold,
+            fontSize=8.5,
+            leading=10,
+            textColor=theme.ink,
+            alignment=TA_LEFT,
+        ),
+        "meta": ParagraphStyle(
+            "meta",
+            parent=styles["Normal"],
+            fontName=ui_font,
+            fontSize=9,
+            leading=12,
+            textColor=theme.muted,
+            spaceAfter=6,
+            alignment=TA_LEFT,
+        ),
+        "muted": ParagraphStyle(
+            "muted",
+            parent=styles["Normal"],
+            fontName=ui_font,
+            fontSize=9,
+            leading=12,
+            textColor=theme.muted,
+            alignment=TA_LEFT,
+        ),
+        "material_icon": ParagraphStyle(
+            "material_icon",
+            parent=styles["Normal"],
+            fontName=(
+                "MaterialIcons"
+                if "MaterialIcons" in pdfmetrics.getRegisteredFontNames()
+                else ui_bold
+            ),
+            fontSize=11,
+            leading=12,
+            textColor=theme.muted,
+            alignment=TA_LEFT,
+        ),
+        "tiny": ParagraphStyle(
+            "tiny",
+            parent=styles["Normal"],
+            fontName=ui_font,
+            fontSize=7,
+            leading=9,
+            textColor=theme.muted,
+            alignment=TA_LEFT,
+        ),
+        "tiny_right": ParagraphStyle(
+            "tiny_right",
+            parent=styles["Normal"],
+            fontName=ui_font,
+            fontSize=7,
+            leading=9,
+            textColor=theme.muted,
+            alignment=TA_RIGHT,
+        ),
+    }
+
+
+def draw_header_footer(canvas, doc, *, theme: PDFTheme) -> None:
+    """Draw page footer with rule and page number."""
+    canvas.saveState()
+    canvas.setFillColor(theme.muted)
+    canvas.setFont("Helvetica", 8)
+
+    # Footer rule
+    canvas.line(
+        theme.margin_left,
+        theme.margin_bottom - 0.20 * inch,
+        doc.pagesize[0] - theme.margin_right,
+        theme.margin_bottom - 0.20 * inch,
+    )
+
+    # Page number
+    canvas.drawRightString(
+        doc.pagesize[0] - theme.margin_right,
+        theme.margin_bottom - 0.35 * inch,
+        f"Page {doc.page}",
+    )
+    canvas.restoreState()
+
+
 class PDFEmitter(BaseEmitter[Event]):
     """Emitter that generates a PDF representation of the itinerary.
-    
+
     AIDEV-NOTE: Uses ReportLab (not FPDF2) with Unicode font support.
     Supports daily aggregation, banners, and thumbnails via TimelineProcessor.
     """
@@ -29,39 +246,41 @@ class PDFEmitter(BaseEmitter[Event]):
         theme: Optional[PDFTheme] = None,
         banner_generator: Optional[BannerGenerator] = None,
     ):
+        from itingen.rendering.pdf.components import DayComponent
+
         self.theme = theme or PDFTheme()
         self.day_component = DayComponent()
         self.timeline_processor = TimelineProcessor()
         self.banner_generator = banner_generator
-        
-        # Register Unicode fonts on initialization
+
         register_fonts()
 
     def emit(self, itinerary: List[Event], output_path: str) -> str:
         """Write the itinerary to a PDF file using ReportLab."""
+        from pathlib import Path
+
         path = Path(output_path)
         if not path.suffix:
             path = path.with_suffix(".pdf")
-        
         path.parent.mkdir(parents=True, exist_ok=True)
-        
-        # Process events into timeline days
+
         timeline_days = self.timeline_processor.process(itinerary)
 
         if self.banner_generator is not None:
             timeline_days = self.banner_generator.generate(timeline_days)
-        
-        # Create ReportLab document
+
+        theme = self.theme
+
         doc = BaseDocTemplate(
             str(path),
-            pagesize=LETTER,
-            leftMargin=0.75 * inch,
-            rightMargin=0.75 * inch,
-            topMargin=0.72 * inch,
-            bottomMargin=0.70 * inch,
+            pagesize=theme.page_size,
+            leftMargin=theme.margin_left,
+            rightMargin=theme.margin_right,
+            topMargin=theme.margin_top,
+            bottomMargin=theme.margin_bottom,
             title="Trip Itinerary",
         )
-        
+
         frame = Frame(
             doc.leftMargin,
             doc.bottomMargin,
@@ -69,101 +288,32 @@ class PDFEmitter(BaseEmitter[Event]):
             doc.height,
             id="normal",
         )
-        
-        doc.addPageTemplates([PageTemplate(id="main", frames=[frame])])
-        
-        # Build styles
-        styles = self._build_styles()
-        
-        # Build story (content)
-        story = []
-        
+
+        def _on_page(canvas, doc_obj):
+            draw_header_footer(canvas, doc_obj, theme=theme)
+
+        doc.addPageTemplates(
+            [PageTemplate(id="main", frames=[frame], onPage=_on_page)]
+        )
+
+        styles = build_styles(theme)
+
+        story: List[Any] = []
+
         # Title page
         story.append(Spacer(1, 2 * inch))
-        story.append(Paragraph("Trip Itinerary", styles["itinerary_title"]))
+        story.append(Paragraph("Trip Itinerary", styles["title"]))
         story.append(Spacer(1, 0.3 * inch))
-        
+
         if timeline_days:
             start_date = timeline_days[0].date_str
             end_date = timeline_days[-1].date_str
-            story.append(Paragraph(f"{start_date} to {end_date}", styles["itinerary_subtitle"]))
-        
-        # Render each day
-        for day in timeline_days:
-            self.day_component.render(story, styles, self.theme, day)
-        
-        doc.build(story)
-        return str(path)
+            story.append(
+                Paragraph(f"{start_date} to {end_date}", styles["subtitle"])
+            )
 
-    def _build_styles(self):
-        """Build ReportLab paragraph styles with Unicode fonts."""
-        styles = getSampleStyleSheet()
-        
-        ui_font = get_ui_font()
-        ui_bold = get_ui_bold_font()
-        
-        # Create custom styles with unique names
-        styles.add(ParagraphStyle(
-            name="itinerary_title",
-            parent=styles["Heading1"],
-            fontName=ui_bold,
-            fontSize=24,
-            leading=28,
-            textColor=colors.HexColor(self.theme.colors.get("primary", "#0F766E")),
-            alignment=TA_CENTER,
-            spaceAfter=12,
-        ))
-        
-        styles.add(ParagraphStyle(
-            name="itinerary_subtitle",
-            parent=styles["Normal"],
-            fontName=ui_font,
-            fontSize=14,
-            leading=18,
-            textColor=colors.HexColor(self.theme.colors.get("text", "#111827")),
-            alignment=TA_CENTER,
-            spaceAfter=20,
-        ))
-        
-        styles.add(ParagraphStyle(
-            name="day_header",
-            parent=styles["Heading2"],
-            fontName=ui_bold,
-            fontSize=18,
-            leading=22,
-            textColor=colors.HexColor(self.theme.colors.get("primary", "#0F766E")),
-            alignment=TA_LEFT,
-            spaceAfter=10,
-        ))
-        
-        styles.add(ParagraphStyle(
-            name="itinerary_body",
-            parent=styles["Normal"],
-            fontName=ui_font,
-            fontSize=10,
-            leading=14,
-            textColor=colors.HexColor(self.theme.colors.get("text", "#111827")),
-            alignment=TA_LEFT,
-        ))
-        
-        styles.add(ParagraphStyle(
-            name="event_heading",
-            parent=styles["Normal"],
-            fontName=ui_bold,
-            fontSize=12,
-            leading=15,
-            textColor=colors.HexColor(self.theme.colors.get("text", "#111827")),
-            alignment=TA_LEFT,
-        ))
-        
-        styles.add(ParagraphStyle(
-            name="event_details",
-            parent=styles["Normal"],
-            fontName=ui_font,
-            fontSize=9,
-            leading=12,
-            textColor=colors.HexColor("#6B7280"),
-            alignment=TA_LEFT,
-        ))
-        
-        return styles
+        for day in timeline_days:
+            self.day_component.render(story, styles, theme, day)
+
+        doc.build(story, canvasmaker=_Pdf14Canvas)
+        return str(path)

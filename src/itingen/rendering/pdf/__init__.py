@@ -1,5 +1,5 @@
 from .renderer import PDFEmitter
 from .themes import PDFTheme
-from .components import EventComponent
+from .components import EventComponent, DayComponent
 
-__all__ = ["PDFEmitter", "PDFTheme", "EventComponent"]
+__all__ = ["PDFEmitter", "PDFTheme", "EventComponent", "DayComponent"]
