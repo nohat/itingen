@@ -15,6 +15,41 @@ This project maintains high quality through:
 3. **Small Commits** - One logical change per commit
 4. **Documentation** - Code changes include doc updates
 
+## Security: Secret Scanning
+
+This repository uses automated secret scanning to prevent accidental commits of API keys and credentials.
+
+### Detected Secret Types
+
+The scanner checks for:
+- **Google API Keys** (`AIza...`)
+- **AWS Access Keys** (`AKIA...`)
+- **GitHub Tokens** (`ghp_...`, `gho_...`, `ghu_...`, `ghs_...`)
+- **Private Keys** (RSA, DSA, EC, OpenSSH, PGP)
+
+### CI Integration
+
+Secret scanning runs automatically in CI via pytest. Pull requests will fail if secrets are detected.
+
+### Local Pre-Commit Hook (Optional)
+
+To catch secrets before committing:
+
+```bash
+# Test the scanner
+./scripts/check_secrets.sh
+
+# To add to your workflow, call it before commits
+# (The bd pre-commit hook handles beads sync automatically)
+```
+
+### If Secrets Are Detected
+
+1. **Remove the secret** from the file immediately
+2. **Rotate the key** - assume it's compromised
+3. **Never commit secrets** - use `.env` files (in `.gitignore`)
+4. **Check history** - if already pushed, consider `git filter-branch` or BFG Repo-Cleaner
+
 ## Workflow for New Features
 
 1. **Plan First**
