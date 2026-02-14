@@ -2,7 +2,7 @@
 
 import sqlite3
 import pytest
-from itingen.db.schema import init_db, SCHEMA_SQL, SCHEMA_VERSION
+from itingen.db.schema import init_db, SCHEMA_VERSION
 
 
 @pytest.fixture

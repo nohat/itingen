@@ -272,9 +272,9 @@ class EventRepository:
                 duration_seconds, event.no_later_than,
                 json.dumps(event.who) if event.who else None,
                 json.dumps(event.depends_on) if event.depends_on else None,
-                1 if event.coordination_point else 0,
-                1 if event.hard_stop else 0,
-                1 if event.inferred else 0,
+                1 if event.coordination_point else (0 if event.coordination_point is not None else None),
+                1 if event.hard_stop else (0 if event.hard_stop is not None else None),
+                1 if event.inferred else (0 if event.inferred is not None else None),
                 event.venue_id, event.travel_from, event.travel_to,
                 event.description, event.narrative, event.image_path,
                 event.transition_from_prev,
@@ -310,10 +310,10 @@ def _row_to_event(row: sqlite3.Row) -> Event:
     depends_val = row["depends_on"]
     kwargs["depends_on"] = json.loads(depends_val) if depends_val else []
 
-    # Boolean fields (stored as INTEGER in SQLite)
-    kwargs["coordination_point"] = bool(row["coordination_point"])
-    kwargs["hard_stop"] = bool(row["hard_stop"])
-    kwargs["inferred"] = bool(row["inferred"])
+    # Boolean fields (stored as INTEGER in SQLite, NULL means None)
+    for bool_field in ("coordination_point", "hard_stop", "inferred"):
+        val = row[bool_field]
+        kwargs[bool_field] = bool(val) if val is not None else None
 
     # duration_seconds goes into extra (same as file_provider behavior)
     if row["duration_seconds"] is not None:
